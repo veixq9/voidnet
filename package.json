@@ -1,0 +1,17 @@
+{
+  "name": "symautre/voidnet",
+  "version": "0.0.1",
+  "private": true,
+  "devDependencies": {
+    "shadow-cljs": "2.26.0"
+  },
+  "dependencies": {
+    "@orbitdb/core": "^1.0.1",
+    "force-graph": "^1.43.4",
+    "helia": "^2.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-force-graph-2d": "^1.25.2",
+    "uuid": "^9.0.1"
+  }
+}
