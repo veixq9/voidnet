@@ -70,20 +70,38 @@
     (fn [state]
       [:div 
        [:h1.w3-h1 "settings"]
-       [:button.w3-btn.w3-border-white.w3-border.w3-round
-        {:style {:width "100%"}
-         :on-click #(swap! dropdown-hide? not)}
-        
-        [:span.w3-align-left.w3-left {:style {}}  (str (if @dropdown-hide? "⮞"  "⮟" ) "  "  "view")]]
-       [:div.w3-container {:class (if @dropdown-hide? :w3-hide :w3-show)}
+       [:p "^under production"]
+       [:div#settings.view [:button.w3-btn.w3-border-white.w3-border.w3-round
+                            {:style {:width "100%"}
+                             :on-click #(swap! dropdown-hide? not)}
+                            
+                            [:span.w3-align-left.w3-left {:style {}}  (str (if @dropdown-hide? "⮞"  "⮟" ) "  "  "view")]]
+        [:div.w3-container {:class (if @dropdown-hide? :w3-hide :w3-show)}
 
-        [:button.w3-btn {:on-click (fn [] (tap> (swap! settings-state assoc :view :port-money)))}
-         [:input {:style {} :type :radio :checked (= :port-money (:view @settings-state))}]
-         [:span.w3-margin "port money"]]
-        [:br]
-        [:button.w3-btn {:on-click (fn [] (tap> (swap! settings-state assoc :view :scroll)))}
-         [:input {:style {} :type :radio :checked (= :scroll (:view @settings-state))}]
-         [:span.w3-margin "scroll"]]]
+         [:button.w3-btn {:on-click (fn [] (tap> (swap! settings-state assoc :view :port-money)))}
+          [:input {:style {} :type :radio :checked (= :port-money (:view @settings-state))}]
+          [:span.w3-margin "port money"]]
+         [:br]
+         [:button.w3-btn {:on-click (fn [] (tap> (swap! settings-state assoc :view :scroll)))}
+          [:input {:style {} :type :radio :checked (= :scroll (:view @settings-state))}]
+          [:span.w3-margin "scroll"]]]]
+
+       (r/with-let [dropdown-hide? (r/atom false)]
+         [:div#settings.mode
+          [:button.w3-btn.w3-border-white.w3-border.w3-round
+           {:style {:width "100%"}
+            :on-click #(swap! dropdown-hide? not)}
+           
+           [:span.w3-align-left.w3-left {:style {}}  (str (if @dropdown-hide? "⮞"  "⮟" ) "  "  "mode")]]
+          [:div.w3-container {:class (if @dropdown-hide? :w3-hide :w3-show)}
+           [:button.w3-btn {:on-click (fn [] (tap> (swap! settings-state assoc :mode :port-money)))}
+            [:input {:style {} :type :radio :checked (= :port-money (:mode @settings-state))}]
+            [:span.w3-margin "_"]]
+           
+           [:br]
+           [:button.w3-btn {:on-click (fn [] (tap> (swap! settings-state assoc :mode :mode)))}
+            [:input {:style {} :type :radio :checked (= :scroll (:mode @settings-state))}]
+            [:span.w3-margin "_"]]]])
        ])))
 
 (defn body
@@ -113,6 +131,8 @@
        [content state]]
       
       [:div.w3-cell.w3-container.w3-border-left {:style {:width "20%" :max-width "30px"}}
+       [:h1.w3-h1 "voidnet://"]
+       [:p "[placeholder]"]
        [:h1.w3-h1 "posts"]
        [post-titles state]
        ]]

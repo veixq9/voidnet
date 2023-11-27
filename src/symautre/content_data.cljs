@@ -1,9 +1,23 @@
 (ns symautre.content-data
-  (:require [symautre.doc]
+  (:require [symautre.doc :refer [doc]]
             [symautre.tools.core :as t]))
 
 (def posts
-  [(symautre.doc/doc {
+  [
+   (doc {
+         :title "Full Digital Anvilist"
+         :body [
+                [:img {:style {:max-width "20%"}:src "https://media.tenor.com/wE_qxJqpxj0AAAAd/nether-portal-minecraft.gif"}]
+                "ambient barks transduce the other
+& all the nites are obsidian
+let's liquid speech for whiles
+would this breach blink across ports enveloped in toilet horizons
+rooks crows ravens dogs
+taste the blank memory of void on superzero shawties  bloodruns
+foam obliviated in entropy edge"
+
+                ]})
+   (symautre.doc/doc {
                       :timestamp (t/timestamp)
                       :timestamp.unix (t/timestamp-unix)
                       :title "Data vs Morph"

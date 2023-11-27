@@ -22,11 +22,6 @@
   #_(:require-macros [symautre.tools.core :as t])
   )
 
-{:warcraft-arabic {
-                   "kodo" "vaheed"}}
-
-
-
 (enable-console-print!)
 (defn
   ^:dev/after-load
@@ -44,6 +39,7 @@
              (js/document.getElementById "main-content")
              
              ))
+
 
 
 
