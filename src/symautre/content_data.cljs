@@ -13,8 +13,8 @@
 let's liquid speech for whiles
 would this breach blink across ports enveloped in toilet horizons
 rooks crows ravens dogs
-taste the blank memory of void on superzero shawties  bloodruns
-foam obliviated in entropy edge"
+taste the blank memory of void on superzero shawties  
+bloodruns & foam obliviated in entropy edge"
 
                 ]})
    (symautre.doc/doc {
