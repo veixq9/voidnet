@@ -4,8 +4,13 @@
             [clojure.java.shell :refer [sh]]))
 
 
-(do (shadow/watch :voidnet)
-    (shadow/browser-repl :voidnet))
+(do
+  
+  (shadow/watch :voidnet)
+  (shadow/repl :voidnet)
+  ;; (shadow/browser-repl :voidnet)
+
+  )
 
 
 (shadow.cljs.devtools.server.dev-http/start   )
