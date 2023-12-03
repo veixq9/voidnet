@@ -9,6 +9,8 @@
   [refactor-nrepl/refactor-nrepl "3.9.0"]
   [taipei.404/html-to-hiccup "0.1.8"]
   [cljs-http "0.1.48"]
+  [com.rpl/specter "1.1.4"]
+  
   ]
 
  ;; :dev-http {8080 "public"}

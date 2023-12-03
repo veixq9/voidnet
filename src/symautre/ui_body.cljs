@@ -1,6 +1,56 @@
 (ns symautre.ui-body
   (:require
-   [reagent.core :as r]))
+   [reagent.core :as r]
+   [symautre.tools.core :as t]))
+
+(defn view
+  [document_]
+  (fn [document_]
+    (let [{:keys [title media body timestamp] :as document_} document_]
+      [:div {:id title :key title}
+       [:h1.w3-h1 title]
+       [:span {:style {:font-style :italic}} (subs (str timestamp) 3 24)]
+       
+       [:div {:style {:white-space :pre-line}}
+        (cond
+          (string? body)
+          [:p body]
+
+          (and (vector? body) (not (keyword? (first body))))
+          (for [x body]
+            [:p x])
+
+          :default
+          body)]])))
+
+(defn edit
+  [doc_]
+  (fn [doc_]
+    (let [transient-state (r/cursor doc_ [:body] )]
+      [:textarea {:style {:width "100%" :color "white" :background-color "black" } :value (pr-str @transient-state)
+                  :on-change #(reset! transient-state %)}])))
+
+(defn document
+  [document_]
+  (let [doc-ratom (r/atom document_)
+        mode (r/atom :view)]
+    (fn [document_]
+      [:div
+       (cond
+         (= :edit @mode)
+         [edit doc-ratom]
+
+         :default
+         [view @doc-ratom]) 
+
+       [:div
+        [:btn.w3-button.w3-border-white.w3-border {:on-click #(swap! mode (fn[mode_] (if (= mode_ :edit) :view :edit)))} "edit" ]
+        [:btn.w3-button.w3-border-white.w3-border
+         {:on-click
+          #()}
+         "copy"]]]
+      )
+    ))
 
 (defn content
   [state]
@@ -8,32 +58,29 @@
     (fn [state]
       (into [:div]
             (interpose [:div [:br ][:hr]]
-                       (for [{:keys [title media body timestamp]} @data]
-                         [:div {:id title :key title}
-                          [:h1.w3-h1 title]
-                          [:span {:style {:font-style :italic}} (subs (str timestamp) 3 24)]
-                          
-                          (into [:div {:style {:white-space :pre-line}}] (for [x body]
-                                                                           [:p x]))]))))))  
+                       (for [document_ @data]
+                         [document document_]))))))
 
-(def links [{:url "https://www.tumblr.com/blog/arrowsfrom"
-             :title "tumblr"}
-            
-            {:url
-             "https://twitter.com/veixq9"
-             :title "twitter"}
-            
-            {:title "soundcloud" :url "https://soundcloud.com/veixq9"}
 
-            {:title "deviantart"
-             :url "https://www.deviantart.com/likebad"}
-            
+(def links
+  [{:url "https://www.tumblr.com/blog/arrowsfrom"
+    :title "tumblr"}
+   
+   {:url
+    "https://twitter.com/veixq9"
+    :title "twitter"}
+   
+   {:title "soundcloud" :url "https://soundcloud.com/veixq9"}
 
-            {:title "mastodon" :url "https://mastodon.social/@veixq9"}
-            
-            {:title 
-             "github" :url "https://github.com/veixq9"}
-            ])
+   {:title "deviantart"
+    :url "https://www.deviantart.com/likebad"}
+   
+
+   {:title "mastodon" :url "https://mastodon.social/@veixq9"}
+   
+   {:title 
+    "github" :url "https://github.com/veixq9"}
+   ])
 
 #_(defn indexes []
     (fn []
@@ -133,8 +180,15 @@
       [:div.w3-cell.w3-container.w3-border-left {:style {:width "20%" :max-width "30px"}}
        [:h1.w3-h1 "voidnet://"]
        [:p "[placeholder]"]
+
+       [:h1.w3-h1 "pinned"]
+       [:p "[placeholder]"]
+       
        [:h1.w3-h1 "posts"]
        [post-titles state]
+
+       [:h1.w3-h1 "trollbox"]
+       [:p "[topic placeholder]"]
        ]]
 
 
