@@ -117,7 +117,9 @@
     (fn [state]
       [:div 
        [:h1.w3-h1 "settings"]
-       [:p "^under production"]
+       [:p "^under construction"]
+       [:p [:span {:style {:color "red"}} "ש "] "color index mode selector " ]
+       
        [:div#settings.view [:button.w3-btn.w3-border-white.w3-border.w3-round
                             {:style {:width "100%"}
                              :on-click #(swap! dropdown-hide? not)}
@@ -154,16 +156,12 @@
 (defn body
   [state]
   (fn [state]
-    [:div.w3-container #_{:style { :font-size "200%"
-
-
-                                  
-                                  }}
-
+    [:div.w3-container #_{:style { :font-size "200%"}}
      
      ;; [:a {:href "/posts.edn"} "posts"]
-     [:div.w3-row {:id "top"} [:h1.w3-center.w3-border [:a {:href "#top" :style {:text-decoration "none"}} "VOIDNET"]]]
+     [:div.w3-row {:id "top"} [:h1.w3-center.w3-border [:a {:href "#top" :style {:text-decoration "none"}} "VOIDNET " "⧜"]]]
      [:div.w3-cell-row
+
 
       [:div.w3-cell.w3-container.w3-left {:style {:width "100%"}}
        [settings state]
