@@ -1,66 +1,26 @@
 (ns symautre.ui-body
   (:require
    [reagent.core :as r]
-   [symautre.tools.core :as t]))
+   [symautre.tools.core :as t]
+   [symautre.doc :refer [ doc document2]]))
 
-(defn view
-  [document_]
-  (fn [document_]
-    (let [{:keys [title media body timestamp] :as document_} document_]
-      [:div {:id title :key title}
-       [:h1.w3-h1 title]
-       [:span {:style {:font-style :italic}} (subs (str timestamp) 3 24)]
-       
-       [:div {:style {:white-space :pre-line}}
-        (cond
-          (string? body)
-          [:p body]
-
-          (and (vector? body) (not (keyword? (first body))))
-          (for [x body]
-            [:p x])
-
-          :default
-          body)]])))
-
-(defn edit
-  [doc_]
-  (fn [doc_]
-    (let [transient-state (r/cursor doc_ [:body] )]
-      [:textarea {:style {:width "100%" :color "white" :background-color "black" } :value (pr-str @transient-state)
-                  :on-change #(reset! transient-state %)}])))
-
-(defn document
-  [document_]
-  (let [doc-ratom (r/atom document_)
-        mode (r/atom :view)]
-    (fn [document_]
-      [:div
-       (cond
-         (= :edit @mode)
-         [edit doc-ratom]
-
-         :default
-         [view @doc-ratom]) 
-
-       [:div
-        [:btn.w3-button.w3-border-white.w3-border {:on-click #(swap! mode (fn[mode_] (if (= mode_ :edit) :view :edit)))} "edit" ]
-        [:btn.w3-button.w3-border-white.w3-border
-         {:on-click
-          #()}
-         "copy"]]]
-      )
-    ))
+#_(defn content
+    [state]
+    (let [data (r/cursor state [:data])]
+      (fn [state]
+        (into [:div]
+              (interpose [:div [:br ][:hr]]
+                         (for [document_ @data]
+                           [document document_]))))))
 
 (defn content
   [state]
-  (let [data (r/cursor state [:data])]
-    (fn [state]
+  (fn [state]
+    (let [doc-ids (r/cursor state [:doc-ids])]
       (into [:div]
             (interpose [:div [:br ][:hr]]
-                       (for [document_ @data]
-                         [document document_]))))))
-
+                       (for [id @doc-ids]
+                         [document2 state id]))))))
 
 (def links
   [{:url "https://www.tumblr.com/blog/arrowsfrom"
@@ -97,18 +57,25 @@
                 [:br]
                 [:br]]))]))
 
+
+(defn post-title
+  [p]
+  (fn [p]
+    [:a.w3-conatiner {:key (:id p) :href (str "#" (:title p))}
+     [:div.w3-h2
+      [:span (:title p)]
+
+      [:span "   "]
+      [:span {:style {:font-style :italic}} (subs (str (:timestamp p)) 3 24)]]]))
+
 (defn post-titles
   [state]
-  (let [data (r/cursor state [:data])]
-    (fn [state]
+  (fn [state]
+    (let [doc-ids (r/cursor state [:doc-ids])]
       (println "rerendering posts")
       (into [:div]
-            (for [p @data]
-              [:a.w3-conatiner {:href (str "#" (:title p))}
-               [:div.w3-h2
-                [:span (:title p)]
-                [:span "   "]
-                [:span {:style {:font-style :italic}} (subs (str (:timestamp p)) 3 24)]]])))))
+            (for [p (map #(get @state %) @doc-ids)]
+              [post-title p])))))
 
 (defn settings
   [state]
@@ -117,7 +84,19 @@
     (fn [state]
       [:div 
        [:h1.w3-h1 "settings"]
-       [:p "^under construction"]
+
+       [:button.w3-btn {:on-click
+                        #(swap! state
+                                (fn [state_]
+                                  (let [new-doc (doc)
+                                        id (:id new-doc)]
+                                    (-> state_
+                                        (assoc id new-doc)
+                                        (update :doc-ids (fn[xs] (concat [(doc)] xs)))))))
+                        
+                        } [:span "new"]]
+       [:p "vermutbar!"]
+       [:p "io.move"]
        [:p [:span {:style {:color "red"}} "ש "] "color index mode selector " ]
        
        [:div#settings.view [:button.w3-btn.w3-border-white.w3-border.w3-round
@@ -159,12 +138,13 @@
     [:div.w3-container #_{:style { :font-size "200%"}}
      
      ;; [:a {:href "/posts.edn"} "posts"]
-     [:div.w3-row {:id "top"} [:h1.w3-center.w3-border [:a {:href "#top" :style {:text-decoration "none"}} "VOIDNET " "⧜"]]]
+     [:div.w3-row {:id "top"}
+      [:h1.w3-right "wallet"]
+      [:h1.w3-center.w3-border [:a {:href "#top" :style {:text-decoration "none"}} "VOIDNET " "⧜"]]]
      [:div.w3-cell-row
-
-
       [:div.w3-cell.w3-container.w3-left {:style {:width "100%"}}
        [settings state]
+
        #_[indexes]
        #_[:div.w3-bar
           [:h1.w3-h1 "settings"]
@@ -188,7 +168,6 @@
        [:h1.w3-h1 "trollbox"]
        [:p "[topic placeholder]"]
        ]]
-
 
      [:br]
      [:br]

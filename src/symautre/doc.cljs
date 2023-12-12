@@ -1,10 +1,14 @@
 (ns symautre.doc
-  (:require [symautre.tools.core :as t :refer [--> uuid timestamp-unix]]))
+  (:require [symautre.tools.core :as t :refer [--> uuid timestamp-unix]]
+            [reagent.core :as r]
+            ))
 
 (defn doc
   ([]
    {
+    
     :id (uuid)
+    :type :document
     :timestamp.unix (timestamp-unix)
     :timestamp (t/timestamp) 
 
@@ -15,6 +19,88 @@
 
   ([m]
    (merge (doc) m)))
+
+(def return doc)
+
+
+
+(defn- view
+  [document_]
+  (fn [document_]
+    (let [{:keys [title media body timestamp] :as document_} document_]
+      [:div {:id title :key title}
+       [:h1.w3-h1 title]
+       [:span {:style {:font-style :italic}} (subs (str timestamp) 3 24)]
+       
+       [:div {:style {:white-space :pre-line}}
+        (cond
+          (string? body)
+          [:p body]
+
+          (and (vector? body) (not (keyword? (first body))))
+          (for [x body]
+            [:p x])
+
+          :default
+          body)]])))
+
+;;; public key address
+;;; local storage
+(defn- edit
+  [doc_ mode]
+  (r/with-let [transient-state (r/atom (:body @doc_))]
+    (fn [doc_ mode]
+      [:div
+       [:textarea {:style {:width "100%" :color "white" :background-color "black" }
+                   :value (pr-str @transient-state)
+                   :on-change #(reset! transient-state (cljs.tools.reader/read-string (-> % .-target .-value)))}]
+       [:button {:on-click #(do (swap! doc_ assoc :body @transient-state)
+                                (swap! mode (fn[mode_] (if (= mode_ :edit) :view :edit))))} "save!"]])))
+
+(defn document2
+  [state id]
+  (let [doc-ratom (r/cursor state [id])
+        mode (r/atom :view)]
+    (fn [state id]
+      [:div {:key id}
+       (cond
+         (= :edit @mode)
+         [edit doc-ratom mode]
+
+         :default
+         [view @doc-ratom]) 
+
+       [:div
+        [:btn.w3-button.w3-border-white.w3-border {:on-click #(swap! mode (fn[mode_] (if (= mode_ :edit) :view :edit)))} "edit" ]
+        [:btn.w3-button.w3-border-white.w3-border
+         {:on-click
+          #()}
+         "copy"]]]
+      )
+    ))
+
+#_(defn document
+    [document_]
+    (let [doc-ratom (r/atom document_)
+          mode (r/atom :view)]
+      (fn [document_]
+        [:div
+         (cond
+           (= :edit @mode)
+           [edit doc-ratom ]
+
+           :default
+           [view @doc-ratom mode]) 
+
+         [:div
+          [:btn.w3-button.w3-border-white.w3-border {:on-click #(swap! mode (fn[mode_] (if (= mode_ :edit) :view :edit)))} "edit" ]
+          [:btn.w3-button.w3-border-white.w3-border
+           {:on-click
+            #()}
+           "copy"]]]
+        )
+      ))
+
 
 
 (comment

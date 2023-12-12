@@ -9,17 +9,20 @@
   ;; (shadow/browser-repl :voidnet)
   )
 
-(defn new-tickChannel
-  [url]
-  (let url [])
+
+(comment
   
-  )
+  (defn new-tickChannel
+    [url]
+    (let url [])
+    
+    )
 
-(new-tickChannel :url "ipfs-atom://oeabfnaukf" :buffer-size )
+  (new-tickChannel :url "ipfs-atom://oeabfnaukf" :buffer-size )
 
-(shadow.cljs.devtools.server.dev-http/start   )
+  (shadow.cljs.devtools.server.dev-http/start   )
 
-shadow/dev
+  shadow/dev
 
-(shadow/watch :browser)
-(shadow/browser-repl :browser)
+  (shadow/watch :browser)
+  (shadow/browser-repl :browser))

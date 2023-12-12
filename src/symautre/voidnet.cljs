@@ -22,6 +22,7 @@
   #_(:require-macros [symautre.tools.core :as t])
   )
 
+
 (enable-console-print!)
 (defn
   ^:dev/after-load
@@ -34,7 +35,11 @@
 
 
   (t/init-clock! state #(swap! state update :clock/counter inc) 0.01)
-  (swap! state assoc :data posts)
+  (let [posts (sort-by :timestamp.unix > posts)]
+    (swap! state assoc-in [:doc-ids] (map :id posts))
+    (doseq [post posts]
+      (swap! state assoc-in [(:id post)] post)))
+
   (rd/render [body state]
              (js/document.getElementById "main-content")
              
