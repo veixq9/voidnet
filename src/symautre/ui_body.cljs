@@ -25,15 +25,16 @@
                            [document2 state id]))))))
 
 (defn content
-  [state doc-ids]
+  [state doc-ids & props]
   (println "generating content first time")
-  (fn [state doc-ids]
-    (println "rendering content")
-    (into [:div]
-          (interpose [:div [:br] [:hr]]
-                     (for [id doc-ids]
-                       [:div {:key id}
-                        [document2 state id]])))))
+  (let [x (r/cursor state [:tab])]
+    (fn [state doc-ids  & props]
+      ;; (println "rendering content")
+      (into [:div {:display @x}]
+            (interpose [:div [:br] [:hr]]
+                       (for [id doc-ids]
+                         [:div {:key id}
+                          [document2 state id]]))))))
 
 #_(defn content
     [state docs]
@@ -116,14 +117,15 @@
 (defn new-doc
   [state]
   (fn [state]
-    [:button.w3-btn {:on-click
-                     #(let [new-doc (doc)
-                            id (:id new-doc)]
-                        (swap! state
-                               (fn [state_]
-                                 (-> state_
-                                     ;; (update :doc-ids (fn [xs] (cons id xs)))
-                                     (assoc id new-doc)))))} [:span "new"]]))
+    [:button.w3-btn.w3-border-white.w3-border.w3-round
+     {:on-click
+      #(let [new-doc (doc)
+             id (:id new-doc)]
+         (swap! state
+                (fn [state_]
+                  (-> state_
+                      ;; (update :doc-ids (fn [xs] (cons id xs)))
+                      (assoc id new-doc)))))} [:span "new"]]))
 
 
 
@@ -187,16 +189,48 @@
     )
   )
 
+(defn tab-item
+  [state id]
+  (fn [state id]
+    (let [this (r/current-component)]
+      (println "hello2 " this)
+      [:button.w3-button.w3-border.w3-cell
+       {
+        ;; :style {:width "100%"}
+        :on-click #(tap> (fn[ss] (swap! ss assoc :tab id))
+                         
+                         ;; (println (-> this (r/ )))
+                         ;; (set! (-> this (r/props ) .-style .-display ) "none")
+                         )}
+       id])))
+
+(defn tab
+  [s]
+  (let [
+        displayables [:foo :bar :baz]
+        display (r/atom :content)]
+    (fn [s]
+      (println "hello "  (r/current-component))
+      (into [:div.w3-cell-row.w3-middle {;; :class "w3-bar w3-black"
+
+                                         :style {:width "100%"}}]
+            (for [x [:new :content :misc]]
+              [tab-item s x]
+              )))))
+
+
 (defn settings
   [state]
   (let [dropdown-hide? (r/atom false)
         settings-state (r/cursor state [:settings])]
     (fn [state]
-      [:div 
+      [:div
        [:h1.w3-h1 "settings"]
 
        [new-doc state]
-       [upload-download-docs state]
+       
+       [:div.w3-container
+        [upload-download-docs state]]
        [:p "vermutbar!"]
        [:p "io.move"]
        [:p [:span {:style {:color "red"}} "ש "] "color index mode selector " ]
@@ -243,7 +277,12 @@
      [:div.w3-row {:id "top"}
       [:h1.w3-right "wallet"]
       [:h1.w3-center.w3-border [:a {:href "#top" :style {:text-decoration "none"}} "voidnet:://VCN88TS"]]]
-     [:div.w3-cell-row
+
+     [:div.w3-row {:style {:width "100%"}}
+      [tab state]
+      ]
+     
+     [:div#left.w3-cell-row
       [:div.w3-cell.w3-container.w3-left {:style {:width "100%"}}
        [settings state]
 
@@ -254,17 +293,29 @@
           [:button.w3-button "foo"]
           ]]
 
-      [:div.w3-container.w3-cell {:style {:min-width "50%" :max-width "30px"}}
+      [:div#mid.w3-container.w3-cell {:style {:min-width "50%" :max-width "30px"}}
        ;; [content state (get-in @state [:doc-ids])]
+
        [content state (map :id (sort-by :timestamp.unix > (filter #(= :document (:type %)) (vals @state))))]
        ;; [content state (filter #(= :document (:type %)) (vals @state))]
        ]
       
-      [:div.w3-cell.w3-container.w3-border-left {:style {:width "20%" :max-width "30px"}}
+      [:div#right.w3-cell.w3-container.w3-border-left {:style {:width "20%" :max-width "30px"}}
        [:h1.w3-h1 "voidnet://"]
        [:p "[placeholder]"]
 
-       [:h1.w3-h1 "pinned"]
+       [:div
+        [:h1.w3-h1 "pinned"]
+        [:p "[placeholder]"]
+        ]
+
+       [:div
+        [:h1.w3-h1 "n!structions"]
+        [:p "fork site"]
+        [:p "add own namespace"]
+
+        ]
+       
        [:p "[placeholder]"]
        
        [:h1.w3-h1 "posts"]

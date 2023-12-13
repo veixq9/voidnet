@@ -40,7 +40,7 @@
 
           (and (vector? body) (not (keyword? (first body))))
           (for [x body]
-            [:p x])
+            [:p {:key (t/uuid)} x])
 
           :default
           body)]])))
@@ -68,7 +68,7 @@
   (let [doc-ratom (r/cursor state [id])
         mode (r/atom :view)]
     (fn [state id]
-      (println "rendering document")
+      ;; (println "rendering document")
       [:div {:key id}
        (cond
          (= :edit @mode)
