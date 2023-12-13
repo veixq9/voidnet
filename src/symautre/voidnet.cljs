@@ -38,18 +38,10 @@
 
   (t/init-clock! state #(swap! state update :clock/counter inc) 0.01)
   #_(let [posts (sort-by :timestamp.unix > posts)]
-      (-> js/window.localStorage (.setItem :posts posts)))
+    (doseq [p posts]
+      (symautre.local-storage/set-local! [(:id p)] p))
+    )
   
-  #_(let [posts (sort-by :timestamp.unix > posts)]
-      (swap! state assoc-in [:doc-ids] (map :id posts))
-      (doseq [post posts]
-        (swap! state assoc-in [(:id post)] post)))
-
-  #_(let [posts (sort-by :timestamp.unix > (cljs.reader/read-string (-> js/window.localStorage (.getItem :posts))))]
-      (swap! state assoc-in [:doc-ids] (map :id posts))
-      (doseq [post posts]
-        (swap! state assoc-in [(:id post)] post)))
-
   (let [posts (sort-by (comp :timestamp.unix val) > (symautre.local-storage/get-local))]
     ;; (swap! state assoc-in [:doc-ids] (keys posts))
     (doseq [[id post] posts]
@@ -63,6 +55,40 @@
              ))
 
 (comment
+
+  (cljs.reader/read-string (pr-str (symautre.local-storage/get-local)))
+
+  (keys @state)
+  
+  (-> (js/document.getElementById "file-input")
+      (.-files)
+      (aget 0)
+      .text
+      (.then #(do (println %)
+                  (swap! state assoc :foo (cljs.reader/read-string %))
+                  )))
+  
+  (-> (js/document.getElementById "file-input")
+      (.-files)
+      (aget 0)
+      .text
+      (.then #(do (println (cljs.reader/read-string %))
+                  #_(swap! state assoc :bar %
+                         :foo (cljs.reader/read-string %))
+                  )))
+
+  (cljs.reader/read-string (:foo @state))
+  (cljs.reader/read-string (:foo @state))
+  (cljs.tools.reader.edn/read-string (:foo @state))
+  (cljs.tools.reader.edn/read-string (js->clj (:foo @state)))
+  (cljs.reader/read-string (js->clj (:foo @state)))
+  (cljs.reader/read-string (:bar @state))
+  (cljs.reader/read-string (type (js->clj (:bar @state))))
+  (cljs.tools.reader/read-string (js->clj (:bar @state)))
+
+  (:bar @state)
+  (:foo @state)
+  
   (symautre.local-storage/clear!)
   (doseq [post (sort-by :timestamp.unix > posts)]
     (symautre.local-storage/set-local! [(:id post)] post))

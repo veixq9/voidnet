@@ -7,11 +7,10 @@
 (defn doc
   ([]
    {
-    
     :id (uuid)
     :type :document
     :timestamp.unix (timestamp-unix)
-    :timestamp (t/timestamp)
+    :timestamp (.toString (t/timestamp))
 
 
     :content ""
