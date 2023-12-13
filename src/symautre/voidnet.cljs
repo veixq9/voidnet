@@ -18,6 +18,7 @@
             ;; [react-force-graph-2d :refer [ForceGraph2D]]
             [symautre.ui-body :refer [body]]
             symautre.local-storage
+            symautre.indexes-home-page
             )
   ;; (:import [force-graph$ForceGraph])
   #_(:require-macros [symautre.tools.core :as t])
@@ -34,7 +35,7 @@
         posts (merge kv-posts-static  posts_)]
     ;; (swap! state assoc-in [:doc-ids] (keys posts))
     (doseq [[id post] posts]
-      (swap! state assoc-in [id] post))))
+      (swap! state assoc-in [id] post)))) 
 
 (defn
   ^:dev/after-load

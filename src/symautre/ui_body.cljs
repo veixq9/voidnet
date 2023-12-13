@@ -242,7 +242,7 @@
      ;; [:a {:href "/posts.edn"} "posts"]
      [:div.w3-row {:id "top"}
       [:h1.w3-right "wallet"]
-      [:h1.w3-center.w3-border [:a {:href "#top" :style {:text-decoration "none"}} "VOIDNET " "⧜"]]]
+      [:h1.w3-center.w3-border [:a {:href "#top" :style {:text-decoration "none"}} "voidnet:://VCN88TS"]]]
      [:div.w3-cell-row
       [:div.w3-cell.w3-container.w3-left {:style {:width "100%"}}
        [settings state]
