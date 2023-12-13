@@ -18,7 +18,7 @@
             ;; [react-force-graph-2d :refer [ForceGraph2D]]
             [symautre.ui-body :refer [body]]
             symautre.local-storage
-            symautre.indexes-home-page
+
             )
   ;; (:import [force-graph$ForceGraph])
   #_(:require-macros [symautre.tools.core :as t])

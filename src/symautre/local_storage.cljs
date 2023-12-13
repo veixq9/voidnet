@@ -1,4 +1,5 @@
 (ns symautre.local-storage
+  (:require [cljs.reader])
   ;; (:refer-clojure [cljs.core :exclude [get ]])
   )
 
