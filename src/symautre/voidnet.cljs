@@ -31,9 +31,11 @@
 (defn load-data!
   [state]
   (let [
-        posts_ (sort-by (comp :timestamp.unix val) > (symautre.local-storage/get-local ))
-        kv-posts-static (reduce (fn [a b] (assoc a (:id b) b)) {} posts)
-        posts (merge kv-posts-static  posts_)]
+        ;; posts_ (sort-by (comp :timestamp.unix val) > (symautre.local-storage/get-local ))
+        ;; kv-posts-static (reduce (fn [a b] (assoc a (:id b) b)) {} posts)
+        ;; posts (merge kv-posts-static  posts_)
+        posts (reduce (fn [a b] (assoc a (:id b) b)) {} posts)
+        ]
     ;; (swap! state assoc-in [:doc-ids] (keys posts))
     (doseq [[id post] posts]
       (swap! state assoc-in [id] post))))
