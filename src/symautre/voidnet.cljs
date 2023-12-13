@@ -26,6 +26,16 @@
 
 (enable-console-print!)
 
+
+(defn load-data!
+  [state]
+  (let [posts_ (sort-by (comp :timestamp.unix val) > (symautre.local-storage/get-local))
+        kv-posts-static (reduce (fn [a b] (assoc a (:id b) b)) {} posts)
+        posts (merge kv-posts-static  posts_)]
+    ;; (swap! state assoc-in [:doc-ids] (keys posts))
+    (doseq [[id post] posts]
+      (swap! state assoc-in [id] post))))
+
 (defn
   ^:dev/after-load
   init []
@@ -38,16 +48,11 @@
 
   (t/init-clock! state #(swap! state update :clock/counter inc) 0.01)
   #_(let [posts (sort-by :timestamp.unix > posts)]
-    (doseq [p posts]
-      (symautre.local-storage/set-local! [(:id p)] p))
-    )
+      (doseq [p posts]
+        (symautre.local-storage/set-local! [(:id p)] p))
+      )
   
-  (let [posts (sort-by (comp :timestamp.unix val) > (symautre.local-storage/get-local))]
-    ;; (swap! state assoc-in [:doc-ids] (keys posts))
-    (doseq [[id post] posts]
-      (swap! state assoc-in [id] post)))
-
-  
+  (load-data! state)  
 
   (rd/render [body state]
              (js/document.getElementById "main-content")
@@ -74,7 +79,7 @@
       .text
       (.then #(do (println (cljs.reader/read-string %))
                   #_(swap! state assoc :bar %
-                         :foo (cljs.reader/read-string %))
+                           :foo (cljs.reader/read-string %))
                   )))
 
   (cljs.reader/read-string (:foo @state))
