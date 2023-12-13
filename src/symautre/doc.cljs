@@ -1,6 +1,7 @@
 (ns symautre.doc
   (:require [symautre.tools.core :as t :refer [--> uuid timestamp-unix]]
             [reagent.core :as r]
+            symautre.local-storage
             ))
 
 (defn doc
@@ -10,7 +11,8 @@
     :id (uuid)
     :type :document
     :timestamp.unix (timestamp-unix)
-    :timestamp (t/timestamp) 
+    :timestamp (t/timestamp)
+
 
     :content ""
 
@@ -48,20 +50,26 @@
 ;;; local storage
 (defn- edit
   [doc_ mode]
-  (r/with-let [transient-state (r/atom (:body @doc_))]
+  (r/with-let [transient-state (r/atom (pr-str (:body @doc_)))]
     (fn [doc_ mode]
       [:div
+
        [:textarea {:style {:width "100%" :color "white" :background-color "black" }
-                   :value (pr-str @transient-state)
-                   :on-change #(reset! transient-state (cljs.tools.reader/read-string (-> % .-target .-value)))}]
-       [:button {:on-click #(do (swap! doc_ assoc :body @transient-state)
-                                (swap! mode (fn[mode_] (if (= mode_ :edit) :view :edit))))} "save!"]])))
+                   :value @transient-state
+                   :on-change #(reset! transient-state (-> % .-target .-value))}]
+
+       [:button {:on-click #(do (swap! doc_ assoc :body (cljs.reader/read-string @transient-state))
+                                (swap! mode (fn[mode_] (if (= mode_ :edit) :view :edit))))}
+        "save!"]])))
+
+
 
 (defn document2
   [state id]
   (let [doc-ratom (r/cursor state [id])
         mode (r/atom :view)]
     (fn [state id]
+      (println "rendering document")
       [:div {:key id}
        (cond
          (= :edit @mode)
@@ -75,7 +83,31 @@
         [:btn.w3-button.w3-border-white.w3-border
          {:on-click
           #()}
-         "copy"]]]
+         "copy"]
+
+
+        [:btn.w3-button.w3-border-white.w3-border
+         {
+          :on-click
+          #(do (println "persisting " @doc-ratom)
+               (symautre.local-storage/set-local! [id] @doc-ratom))
+
+          ;; (-> js/window.localStorage (.getItem :posts ))
+          }
+         "persist!"]
+
+        [:btn.w3-button.w3-border-white.w3-border
+         {
+          :on-click
+          #(tap> (fn[s] (do (println "deleting " @doc-ratom)
+                            (symautre.local-storage/dissoc-local! id)
+                            (swap! s dissoc id)
+                            )))
+
+          ;; (-> js/window.localStorage (.getItem :posts ))
+          }
+         "delete!"]
+        ]]
       )
     ))
 
@@ -104,7 +136,12 @@
 
 
 (comment
+  (doc)
 
+  (let [x (doc)]
+    (symautre.local-storage/set-local! (:id x) x))
+
+  
   (doc {
         :meta/id "author-0ef50a62-503b-4c16-ab68-f94c8ff65ab1"
         :doc/id "23020e4a-f3d6-4275-9be3-6b67d003ad4f"

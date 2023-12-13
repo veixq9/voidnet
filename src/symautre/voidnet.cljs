@@ -17,6 +17,7 @@
             ;; [react-force-graph]
             ;; [react-force-graph-2d :refer [ForceGraph2D]]
             [symautre.ui-body :refer [body]]
+            symautre.local-storage
             )
   ;; (:import [force-graph$ForceGraph])
   #_(:require-macros [symautre.tools.core :as t])
@@ -24,6 +25,7 @@
 
 
 (enable-console-print!)
+
 (defn
   ^:dev/after-load
   init []
@@ -35,15 +37,51 @@
 
 
   (t/init-clock! state #(swap! state update :clock/counter inc) 0.01)
-  (let [posts (sort-by :timestamp.unix > posts)]
-    (swap! state assoc-in [:doc-ids] (map :id posts))
-    (doseq [post posts]
-      (swap! state assoc-in [(:id post)] post)))
+  #_(let [posts (sort-by :timestamp.unix > posts)]
+      (-> js/window.localStorage (.setItem :posts posts)))
+  
+  #_(let [posts (sort-by :timestamp.unix > posts)]
+      (swap! state assoc-in [:doc-ids] (map :id posts))
+      (doseq [post posts]
+        (swap! state assoc-in [(:id post)] post)))
+
+  #_(let [posts (sort-by :timestamp.unix > (cljs.reader/read-string (-> js/window.localStorage (.getItem :posts))))]
+      (swap! state assoc-in [:doc-ids] (map :id posts))
+      (doseq [post posts]
+        (swap! state assoc-in [(:id post)] post)))
+
+  (let [posts (sort-by (comp :timestamp.unix val) > (symautre.local-storage/get-local))]
+    ;; (swap! state assoc-in [:doc-ids] (keys posts))
+    (doseq [[id post] posts]
+      (swap! state assoc-in [id] post)))
+
+  
 
   (rd/render [body state]
              (js/document.getElementById "main-content")
              
              ))
+
+(comment
+  (symautre.local-storage/clear!)
+  (doseq [post (sort-by :timestamp.unix > posts)]
+    (symautre.local-storage/set-local! [(:id post)] post))
+  
+  (count (symautre.local-storage/get-local))
+  
+  (doseq [post (sort-by :timestamp.unix > (cljs.reader/read-string (-> js/window.localStorage (.getItem :posts))))]
+    (-> js/window.localStorage (.setItem (:id post) post)))
+  
+  (symautre.local-storage/get :posts )
+  
+  (-> js/window.localStorage (.getItem :posts))
+
+  (js/Directory )
+
+  (println (js/console.dir js/window.localStorage.))
+
+  (.log js/console js/window.localStorage)
+  )
 
 
 

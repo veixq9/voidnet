@@ -13,14 +13,36 @@
                          (for [document_ @data]
                            [document document_]))))))
 
-(defn content
+#_(defn content
   [state]
   (fn [state]
     (let [doc-ids (r/cursor state [:doc-ids])]
       (into [:div]
-            (interpose [:div [:br ][:hr]]
+            (interpose [:div [:br] [:hr]]
                        (for [id @doc-ids]
                          [document2 state id]))))))
+
+(defn content
+  [state doc-ids]
+  (println "generating content first time")
+  (fn [state doc-ids]
+    (println "rendering content")
+    (into [:div]
+          (interpose [:div [:br] [:hr]]
+                     (for [id doc-ids]
+                       [:div {:key id}
+                        [document2 state id]])))))
+
+#_(defn content
+  [state docs]
+  (println "generating content first time")
+  (fn [state docs]
+    (println "rendering content")
+    (into [:div]
+          (interpose [:div [:br] [:hr]]
+                     (for [doc docs]
+                       [:div {:key (:id doc)}
+                        [document2 state id]])))))
 
 (def links
   [{:url "https://www.tumblr.com/blog/arrowsfrom"
@@ -61,21 +83,45 @@
 (defn post-title
   [p]
   (fn [p]
-    [:a.w3-conatiner {:key (:id p) :href (str "#" (:title p))}
+    [:a.w3-conatiner { :href (str "#" (:title p))}
      [:div.w3-h2
       [:span (:title p)]
 
       [:span "   "]
       [:span {:style {:font-style :italic}} (subs (str (:timestamp p)) 3 24)]]]))
 
-(defn post-titles
+#_(defn post-titles
+    [state]
+    (r/with-let [doc-ids (r/cursor state [:doc-ids])]
+      (fn [state]
+        (println "rerendering post titles")
+        (into [:div]
+              (for [p (map #(get @state %) @doc-ids)]
+                [:div {:key (:id p)}
+                 [post-title p]]
+                )))))
+
+#_(defn post-titles
+    [state posts]
+    (fn [state]
+      (println "rerendering post titles")
+      (into [:div]
+            (for [t titles]
+              [:div {:key (:id p)}
+               [post-title t]]
+              ))))
+
+(defn new-doc
   [state]
   (fn [state]
-    (let [doc-ids (r/cursor state [:doc-ids])]
-      (println "rerendering posts")
-      (into [:div]
-            (for [p (map #(get @state %) @doc-ids)]
-              [post-title p])))))
+    [:button.w3-btn {:on-click
+                     #(let [new-doc (doc)
+                            id (:id new-doc)]
+                        (swap! state
+                               (fn [state_]
+                                 (-> state_
+                                     ;; (update :doc-ids (fn [xs] (cons id xs)))
+                                     (assoc id new-doc)))))} [:span "new"]]))
 
 (defn settings
   [state]
@@ -85,16 +131,7 @@
       [:div 
        [:h1.w3-h1 "settings"]
 
-       [:button.w3-btn {:on-click
-                        #(swap! state
-                                (fn [state_]
-                                  (let [new-doc (doc)
-                                        id (:id new-doc)]
-                                    (-> state_
-                                        (assoc id new-doc)
-                                        (update :doc-ids (fn[xs] (concat [(doc)] xs)))))))
-                        
-                        } [:span "new"]]
+       [new-doc state]
        [:p "vermutbar!"]
        [:p "io.move"]
        [:p [:span {:style {:color "red"}} "ש "] "color index mode selector " ]
@@ -153,7 +190,10 @@
           ]]
 
       [:div.w3-container.w3-cell {:style {:min-width "50%" :max-width "30px"}}
-       [content state]]
+       ;; [content state (get-in @state [:doc-ids])]
+       [content state (map :id (sort-by :timestamp.unix > (filter #(= :document (:type %)) (vals @state))))]
+       ;; [content state (filter #(= :document (:type %)) (vals @state))]
+       ]
       
       [:div.w3-cell.w3-container.w3-border-left {:style {:width "20%" :max-width "30px"}}
        [:h1.w3-h1 "voidnet://"]
@@ -163,11 +203,13 @@
        [:p "[placeholder]"]
        
        [:h1.w3-h1 "posts"]
-       [post-titles state]
+       (let [posts (sort-by :timestamp.unix > (vals (filter #(= (:type (val %)) :document)  @state )))]
+         (into [:div]
+               (for [p posts]
+                 [post-title p])))
 
        [:h1.w3-h1 "trollbox"]
-       [:p "[topic placeholder]"]
-       ]]
+       [:p "[topic placeholder]"]]]
 
      [:br]
      [:br]
@@ -186,3 +228,5 @@
 
                 ]))]]
      ]))
+
+
