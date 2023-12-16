@@ -52,7 +52,7 @@
      `(defn ~sym [fn#] (fn# (pr-str ~code)))))
 
 
-]
+ ]
 
 [:time
  (defn timestamp-unix
@@ -77,6 +77,96 @@
        [:div
         "Seconds Elapsed: " @seconds-elapsed])))]
 
-[:edn->hiccup]
-[:node-tree]
+[:edn->hiccup
+
+ (defn edn->hiccup
+   [edn]
+   [:div.w3-container
+    (cond
+      (map? edn)
+      [:div
+       [:span.edn-brackets  "{"]
+       (into [:div {:key (uuid)}]
+             (for [[k v] edn]
+               [:div.w3-container.w3-row {:key (uuid)}
+                [:div.w3-cell {:min-width "10%" :clear :right :color "lightgreen" }  (edn->hiccup k)]
+                [:div.w3-cell {:style {:color "lightgrey"} } (edn->hiccup v)]]))
+       [:span.edn-brackets  "}"]
+       ]
+
+      ;; (list? edn)
+      ;; [:pre (pr-str edn)]
+      #_[:pre (with-out-str (cljs.pprint/pprint edn))]
+      
+      (sequential? edn)
+      [:div.w3-row
+       (for [x edn]
+         [:div.w3-container.w3-cell-col {:key (uuid)} (edn->hiccup x)])]
+
+      (instance? cljs.core/Keyword edn)
+      [:p.w3-left.edn-kw (pr-str edn) #_(clojure.string/replace (pr-str edn) #_(name edn) "-" " ")]
+
+      (and (string? edn) (some? (re-matches #"http.*" edn)))
+      [:a {:href edn} [:p edn]]
+
+      (string? edn)
+      [:p.w3-left (pr-str edn) ]
+
+      (cljs.core/boolean? edn)
+      [:p (str edn)]
+
+      (nil? edn)
+      [:p "nil"]
+
+      :default
+      [:p.w3-left (pr-str edn)])]
+   )
+
+
+ (defn collapsible
+   [k v]
+   (fn [k v]
+     (r/with-let [open? (r/atom true)]
+       [:div.w3-container.w3-row {:key (uuid)}
+        [:div.w3-cell:active {;;:class (if @open? "w3-button")
+                              :on-click #(swap! open? not)}
+         #_[:span {:class (if @open? "w3-border"  ;;  "↓" "→"
+                              ) } ]
+         [:span.edn-brackets k]]
+
+        [:div.w3-cell {:style {:display (if @open? "block" "none")}}
+         (if (map? v)
+           (into [:div]
+                 (for [[k' v'] v]
+                   [collapsible k' v']))
+           [:div (pr-str v)])]])))
+ ]
+
+
+(comment
+  
+  
+  [:node-tree]
+  (defn node-tree
+    [edn]
+    (cond
+      (map? edn)
+      {:root (reduce (fn [acc [k v]] (assoc acc k v))
+                     {}
+                     (for [[k v] edn]
+                       [k (node-tree v)]))}
+
+      (vector? edn)
+      nil
+
+      :default
+      edn
+      ))
+
+  (node-tree {:foo "bar" :num [1 2 3]
+              :deep {:y 0 :z {:poo "good"
+                              :pepe "meme"
+                              :nice {:kill 1000}}
+                     :w "shawarma"
+                     }}))
 

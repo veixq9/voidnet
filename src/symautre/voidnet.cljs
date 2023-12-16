@@ -18,9 +18,10 @@
             ;; [react-force-graph-2d :refer [ForceGraph2D]]
             [symautre.ui-body :refer [body]]
             symautre.local-storage
-
+            ajax.core
             )
   ;; (:import [force-graph$ForceGraph])
+
   #_(:require-macros [symautre.tools.core :as t])
   )
 
@@ -30,15 +31,22 @@
 
 (defn load-data!
   [state]
-  (let [
-        ;; posts_ (sort-by (comp :timestamp.unix val) > (symautre.local-storage/get-local ))
-        ;; kv-posts-static (reduce (fn [a b] (assoc a (:id b) b)) {} posts)
-        ;; posts (merge kv-posts-static  posts_)
-        posts (reduce (fn [a b] (assoc a (:id b) b)) {} posts)
-        ]
-    ;; (swap! state assoc-in [:doc-ids] (keys posts))
-    (doseq [[id post] posts]
-      (swap! state assoc-in [id] post))))
+  (let [posts-map (reduce (fn [a b] (assoc a (:id b) b)) {} posts)]
+
+    ;; local storage
+    ;; (symautre.local-storage/init!)
+    (let [posts (sort-by :timestamp.unix > posts)]
+      #_(doseq [p (merge posts (symautre.local-storage/get-local))]
+          (symautre.local-storage/set-local! [(:id p)] p)))
+
+    (swap! state merge posts-map (symautre.local-storage/get-local))
+    #_(doseq [[id post] posts]
+        (swap! state assoc-in [id] post))
+    #_(ajax.core/GET "posts.edn" {
+                                  ;; :content-type "text/edn"
+                                  :handler #(swap! state assoc :posts.edn %)
+                                  })
+    ))
 
 (defn
   ^:dev/after-load
@@ -51,10 +59,7 @@
 
 
   (t/init-clock! state #(swap! state update :clock/counter inc) 0.01)
-  #_(let [posts (sort-by :timestamp.unix > posts)]
-      (doseq [p posts]
-        (symautre.local-storage/set-local! [(:id p)] p))
-      )
+
   
   (load-data! state)  
 
@@ -64,6 +69,14 @@
              ))
 
 (comment
+
+
+
+  (cljs.reader/read-string (:posts.edn @state))
+  
+  (type (js->clj ))
+
+  (-> (ajax.core/GET "posts.edn" {:content-type :edn}) .-body)
 
   (cljs.reader/read-string (pr-str (symautre.local-storage/get-local)))
 

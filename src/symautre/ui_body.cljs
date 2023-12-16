@@ -4,6 +4,7 @@
    [symautre.tools.core :as t]
    [symautre.doc :refer [ doc document2]]
    [symautre.local-storage]
+   [symautre.data.sample-data]
    ))
 
 #_(defn content
@@ -24,28 +25,116 @@
                          (for [id @doc-ids]
                            [document2 state id]))))))
 
+#_(defn content
+    [state doc-ids & props]
+    (println "generating content first time")
+    (r/with-let [tab (r/cursor state [:tab])]
+      (fn [state doc-ids  & props]
+        ;; (println "rendering content")
+        (into [:div {:style {:display (if (= :content @tab) "block" "none")}}]
+              (interpose [:div [:br] [:hr]]
+                         (for [id doc-ids]
+                           [:div {:key id}
+                            [document2 state id]]))))))
+
+
+
+(declare upload-download-docs new-doc)
 (defn content
   [state doc-ids & props]
   (println "generating content first time")
-  (let [x (r/cursor state [:tab])]
+  (r/with-let [tab (r/cursor state [:tab])]
     (fn [state doc-ids  & props]
-      ;; (println "rendering content")
-      (into [:div {:display @x}]
+      (println "rendering content")
+      (into [:div]
             (interpose [:div [:br] [:hr]]
                        (for [id doc-ids]
                          [:div {:key id}
                           [document2 state id]]))))))
 
-#_(defn content
-    [state docs]
-    (println "generating content first time")
-    (fn [state docs]
-      (println "rendering content")
-      (into [:div]
-            (interpose [:div [:br] [:hr]]
-                       (for [doc docs]
-                         [:div {:key (:id doc)}
-                          [document2 state id]])))))
+
+#_(defn misc
+    [state]
+    (r/with-let [tab (r/cursor state [:tab])]
+      (fn [state doc-ids  & props]
+        ;; (println "rendering content")
+        [:div {:style {:display (if (= :misc @tab) "block" "none")}}
+         [upload-download-docs state]
+         ]
+        
+        )))
+
+(defn mid-column
+  [state]
+  (swap! state assoc :tab :content)
+  (r/with-let [tab (r/cursor state [:tab])]
+    (fn [state]
+      (case @tab
+        
+        :content
+        (let [pinned-id (:posts/pinned @state)
+              doc-ids (remove #{pinned-id} (map :id (sort-by :timestamp.unix > (filter #(= :document (:type %)) (vals @state)))))]
+          (into [:div
+                 (when (some? pinned-id)
+                   [:div {:key pinned-id ;; :style {:background-color "grey"}
+                          }
+                    [:span.w3-right "📌"]
+                    [document2 state pinned-id]
+                    [:div [:br] [:hr]]])]
+                
+                (interpose [:div [:br] [:hr]]
+                           (for [id doc-ids]
+                             [:div {:key id}
+                              [document2 state id]]))))
+        #_[content state (remove nil? (cons (:posts/pinned @state) (map :id (sort-by :timestamp.unix > (filter #(= :document (:type %)) (vals @state))))))]
+        
+        :io
+        [upload-download-docs state]
+
+        :misc
+        [:div
+         [t/collapsible :root symautre.data.sample-data/sample-map  ]
+         [:br]
+         [:hr]
+         [t/edn->hiccup symautre.data.sample-data/sample-map  ]
+         
+         (r/with-let [pinned (r/cursor state [:posts/pinned])]
+           [:div
+            [:h1.w3-h1 "pinned"]
+            (if-let [pinned_ @pinned]
+              [document2 state pinned_])])
+
+         #_(r/with-let [id (r/cursor state [:posts/pinned])]
+             (let [id_ @id]
+               [pinned state id_]))
+
+         [:div
+          [:h1.w3-h1 "pubsub model"]
+          [:h1.w3-h1 "new color new weather"]
+          ]
+
+         [:div
+          [:h1.w3-h1 "n!structions"]
+          [:p "fork site"]
+          [:p "add own namespace"]]
+         
+
+         [:h1.w3-h1 "trollbox"]
+         [:p "[topic placeholder]"]
+
+         [:div
+          [:h1.w3-h1 "state"] 
+          [:p (pr-str (remove #(= :document (:type (val %))) @state))]
+          [:br]
+          [:p (pr-str @state)]]]
+        
+        )
+
+
+      
+      )))
+
+
 
 (def links
   [{:url "https://www.tumblr.com/blog/arrowsfrom"
@@ -125,7 +214,7 @@
                 (fn [state_]
                   (-> state_
                       ;; (update :doc-ids (fn [xs] (cons id xs)))
-                      (assoc id new-doc)))))} [:span "new"]]))
+                      (assoc id new-doc)))))} [:span "new!"]]))
 
 
 
@@ -165,7 +254,7 @@
   [state]
   (fn [state]
     [:div
-     [:span "in"]
+     [:span "upload"]
      [:input {:id "file-input" :type :file
               :on-change
               #(tap> (fn [state]
@@ -178,9 +267,10 @@
                                                    (symautre.local-storage/set-local! [k] v))
                                                  (swap! state merge (symautre.local-storage/get-local))
                                                  ))))))} ]
-     [:p "out"]
-     [:button.w3-btn {:id "file-output"
-                      :on-click #(save-file "myfile.edn" "text/edn" (pr-str (symautre.local-storage/get-local)))} "download"]
+     [:div
+      [:span  "download"]
+      [:button.w3-btn {:id "file-output"
+                       :on-click #(save-file "myfile.edn" "text/edn" (pr-str (symautre.local-storage/get-local)))} "download"]]
      #_[:button.w3-btn {:id "file-output" :on-click #(tap> (fn [state]
                                                              (println "downloading file")
                                                              (let [url (js/URL.createObjectURL (js/Blob. (clj->js (vector (str @state))) #js {:type "text/edn"}))]
@@ -191,100 +281,143 @@
 
 (defn tab-item
   [state id]
-  (fn [state id]
-    (let [this (r/current-component)]
-      (println "hello2 " this)
-      [:button.w3-button.w3-border.w3-cell
-       {
-        ;; :style {:width "100%"}
-        :on-click #(tap> (fn[ss] (swap! ss assoc :tab id))
-                         
-                         ;; (println (-> this (r/ )))
-                         ;; (set! (-> this (r/props ) .-style .-display ) "none")
-                         )}
-       id])))
+  (r/with-let [local-state (r/cursor state [:tab])]
+    (fn [state id]
+      (let [this (r/current-component)]
+        (println "hello2 " this)
+        [:div {:key id
+               :class (str "w3-third tablink  w3-padding")
+               :style {:float :left
+                       :border-bottom "5px solid grey"
+                       
+                       :min-width "20%"
+                       :border-color (if (= id @local-state) "red" "grey")
+                       }
+               :on-click #(tap> (fn[ss] (swap! ss assoc :tab id))
+                                
+                                ;; (println (-> this (r/ )))
+                                ;; (set! (-> this (r/props ) .-style .-display ) "none")
+                                )}
+         [:a id]
+         ]))))
 
 (defn tab
   [s]
+  (tap> (fn [state] (swap! state assoc-in [:tab] :content)))
   (let [
-        displayables [:foo :bar :baz]
+        displayables [:content :io :misc]
         display (r/atom :content)]
     (fn [s]
       (println "hello "  (r/current-component))
-      (into [:div.w3-cell-row.w3-middle {;; :class "w3-bar w3-black"
-
-                                         :style {:width "100%"}}]
-            (for [x [:new :content :misc]]
+      
+      (into [:div {:style {:width "100%" :cursor :pointer}}]
+            (for [x displayables]
               [tab-item s x]
               )))))
 
+(defn dropdown
+  [state title & xs]
+  (fn [state title & xs]
+    (r/with-let [dropdown-hide? (r/cursor state [:controls title :dropdown])]
+      [:div#controls.view [:button.w3-btn.w3-border-white.w3-border.w3-round
+                           {:style {:width "100%"}
+                            :on-click #(swap! dropdown-hide? not)}
+                           [:span.w3-align-left.w3-left {:style {}}  (str (if @dropdown-hide? "⮞"  "⮟" ) "  "  title)]]
+       (into [:div.w3-container {:class (if @dropdown-hide? :w3-hide :w3-show)}
 
-(defn settings
+              ;; [:button.w3-btn.w3-border-white.w3-border.w3-round {:on-click #()} "button"]
+              ]
+             xs)]
+      )))
+
+(defn controls
   [state]
-  (let [dropdown-hide? (r/atom false)
-        settings-state (r/cursor state [:settings])]
+  (fn [state]
+    [dropdown state "controls"
+     [new-doc state]
+     [:button.w3-btn.w3-border-white.w3-border.w3-round
+      {:on-click #(tap>
+                   (fn [s]
+                     (println "saving state to local storage")
+                     (symautre.local-storage/set-local!
+                      (into {} (remove (fn [[id v]]
+                                         (not (or (map? v) (string? v) (keyword? v) (number? v))) ) @s))))
+)}
+      #_(symautre.local-storage/get-local)
+      "persist!"]
+     [dropdown state "view"
+      [:div {:key (t/uuid)}
+       [(fn [state]
+          [:button.w3-btn {:key (t/uuid) :on-click #(tap> (fn[s](swap! s assoc-in [:controls :view ] :port-money)))}
+           [:input {:style {} :type :radio :checked (= :port-money @(r/cursor state [:controls :view]))}]
+           [:span.w3-margin "port money"]]) state]]
+      [(fn [state]
+         [:button.w3-btn {:key (t/uuid) :on-click #(tap> (fn[s](swap! s assoc-in [:controls :view ] :scroll)))}
+          [:input {:style {} :type :radio :checked (= :scroll @(r/cursor state [:controls :view]))}]
+          [:span.w3-margin "scroll"]]) state]]])
+  )
+
+(defn pinned
+  [state id]
+  (fn [state id]
+    ;; let [pinned (r/reaction (get-in @state [:posts/pinned]))]
+    [:div
+     [:h1.w3-h1 "pinned"]
+     (if (some? id)
+       [document2 state id]
+       [:p "placeholder"]
+       )
+     ]
+    ))
+
+#_[:post-titles
+   (r/track!
     (fn [state]
-      [:div
-       [:h1.w3-h1 "settings"]
+      (tap> (fn [s] (swap! s (sort-by :timestamp.unix > (vals (filter #(= (:type (val %)) :document)  @state )))))))
+    state)
 
-       [new-doc state]
-       
-       [:div.w3-container
-        [upload-download-docs state]]
-       [:p "vermutbar!"]
-       [:p "io.move"]
-       [:p [:span {:style {:color "red"}} "ש "] "color index mode selector " ]
-       
-       [:div#settings.view [:button.w3-btn.w3-border-white.w3-border.w3-round
-                            {:style {:width "100%"}
-                             :on-click #(swap! dropdown-hide? not)}
-                            
-                            [:span.w3-align-left.w3-left {:style {}}  (str (if @dropdown-hide? "⮞"  "⮟" ) "  "  "view")]]
-        [:div.w3-container {:class (if @dropdown-hide? :w3-hide :w3-show)}
+   (defn post-titles
+     [state posts]
+     (fn [state posts]
+       (println "rendering post titles")
+       [:div#post-titles
+        [:h1.w3-h1 "posts"]
+        (into [:div]
+              (for [p posts]
+                [post-title p]))]) )
 
-         [:button.w3-btn {:on-click (fn [] (tap> (swap! settings-state assoc :view :port-money)))}
-          [:input {:style {} :type :radio :checked (= :port-money (:view @settings-state))}]
-          [:span.w3-margin "port money"]]
-         [:br]
-         [:button.w3-btn {:on-click (fn [] (tap> (swap! settings-state assoc :view :scroll)))}
-          [:input {:style {} :type :radio :checked (= :scroll (:view @settings-state))}]
-          [:span.w3-margin "scroll"]]]]
 
-       (r/with-let [dropdown-hide? (r/atom false)]
-         [:div#settings.mode
-          [:button.w3-btn.w3-border-white.w3-border.w3-round
-           {:style {:width "100%"}
-            :on-click #(swap! dropdown-hide? not)}
-           
-           [:span.w3-align-left.w3-left {:style {}}  (str (if @dropdown-hide? "⮞"  "⮟" ) "  "  "mode")]]
-          [:div.w3-container {:class (if @dropdown-hide? :w3-hide :w3-show)}
-           [:button.w3-btn {:on-click (fn [] (tap> (swap! settings-state assoc :mode :port-money)))}
-            [:input {:style {} :type :radio :checked (= :port-money (:mode @settings-state))}]
-            [:span.w3-margin "_"]]
-           
-           [:br]
-           [:button.w3-btn {:on-click (fn [] (tap> (swap! settings-state assoc :mode :mode)))}
-            [:input {:style {} :type :radio :checked (= :scroll (:mode @settings-state))}]
-            [:span.w3-margin "_"]]]])
-       ])))
+   [post-titles state]
+
+   ]
 
 (defn body
   [state]
   (fn [state]
-    [:div.w3-container #_{:style { :font-size "200%"}}
+    (println "rendering body")
+    [:div.w3-container {:style {
+
+                                :background-color "#090909"
+                                ;; :font-size "200%"
+
+                                }}
      
      ;; [:a {:href "/posts.edn"} "posts"]
      [:div.w3-row {:id "top"}
       [:h1.w3-right "wallet"]
-      [:h1.w3-center.w3-border [:a {:href "#top" :style {:text-decoration "none"}} "voidnet:://VCN88TS"]]]
+      [:h1.w3-center [:a {:href "#top" :style {:text-decoration "none"}} "voidnet:://VCN88TS"]]]
 
-     [:div.w3-row {:style {:width "100%"}}
+     [:div#tab.w3-cell-row {:style {:width "100%"}}
       [tab state]
+
+      
       ]
+
+     [:br]
      
-     [:div#left.w3-cell-row
+     [:div.w3-cell-row
       [:div.w3-cell.w3-container.w3-left {:style {:width "100%"}}
-       [settings state]
+       [controls state]
 
        #_[indexes]
        #_[:div.w3-bar
@@ -294,38 +427,19 @@
           ]]
 
       [:div#mid.w3-container.w3-cell {:style {:min-width "50%" :max-width "30px"}}
-       ;; [content state (get-in @state [:doc-ids])]
-
-       [content state (map :id (sort-by :timestamp.unix > (filter #(= :document (:type %)) (vals @state))))]
+       #_[content state (get-in @state [:doc-ids])]
+       
+       #_[content state (map :id (sort-by :timestamp.unix > (filter #(= :document (:type %)) (vals @state))))]
        ;; [content state (filter #(= :document (:type %)) (vals @state))]
+
+       [mid-column state]
        ]
       
       [:div#right.w3-cell.w3-container.w3-border-left {:style {:width "20%" :max-width "30px"}}
        [:h1.w3-h1 "voidnet://"]
        [:p "[placeholder]"]
 
-       [:div
-        [:h1.w3-h1 "pinned"]
-        [:p "[placeholder]"]
-        ]
-
-       [:div
-        [:h1.w3-h1 "n!structions"]
-        [:p "fork site"]
-        [:p "add own namespace"]
-
-        ]
-       
-       [:p "[placeholder]"]
-       
-       [:h1.w3-h1 "posts"]
-       (let [posts (sort-by :timestamp.unix > (vals (filter #(= (:type (val %)) :document)  @state )))]
-         (into [:div]
-               (for [p posts]
-                 [post-title p])))
-
-       [:h1.w3-h1 "trollbox"]
-       [:p "[topic placeholder]"]]]
+       ]]
 
      [:br]
      [:br]
