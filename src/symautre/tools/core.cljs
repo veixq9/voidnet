@@ -66,6 +66,7 @@
 
  (defn init-clock!
    [state f interval-in-secs]
+   (println "starting clock")
    (swap! state assoc :clock/interval (js/setInterval #(tap> f) (* 1e3 interval-in-secs))))
  ]
 

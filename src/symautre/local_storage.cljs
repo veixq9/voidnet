@@ -12,8 +12,10 @@
 
 (defn get-local
   ([]
-   (cljs.reader/read-string (-> js/window.localStorage (.getItem :clojure)))
-   )
+   (let [x (-> js/window.localStorage (.getItem :clojure))]
+     (if (string? x)
+       (cljs.reader/read-string x)
+       nil)))
   ([k & ks]
    (cljs.core/get-in (get-local) (concat [k] ks))))
 

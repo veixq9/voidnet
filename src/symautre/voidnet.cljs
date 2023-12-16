@@ -31,6 +31,7 @@
 
 (defn load-data!
   [state]
+  (println "loading data")
   (let [posts-map (reduce (fn [a b] (assoc a (:id b) b)) {} posts)]
 
     ;; local storage
@@ -40,6 +41,7 @@
           (symautre.local-storage/set-local! [(:id p)] p)))
 
     (swap! state merge posts-map (symautre.local-storage/get-local))
+    (println "loading data done!")
     #_(doseq [[id post] posts]
         (swap! state assoc-in [id] post))
     #_(ajax.core/GET "posts.edn" {
@@ -63,6 +65,7 @@
   
   (load-data! state)  
 
+  (println "rendering view")
   (rd/render [body state]
              (js/document.getElementById "main-content")
              
