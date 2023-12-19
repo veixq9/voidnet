@@ -2,133 +2,135 @@
   (:require
    [reagent.core :as r]
    [symautre.tools.core :as t]
-   [symautre.doc :refer [ doc document2]]
+   [symautre.doc :refer [ doc document]]
    [symautre.local-storage]
    [symautre.data.sample-data]
-   ))
 
-#_(defn content
-    [state]
-    (let [data (r/cursor state [:data])]
-      (fn [state]
-        (into [:div]
-              (interpose [:div [:br ][:hr]]
-                         (for [document_ @data]
-                           [document document_]))))))
-
-#_(defn content
-    [state]
-    (fn [state]
-      (let [doc-ids (r/cursor state [:doc-ids])]
-        (into [:div]
-              (interpose [:div [:br] [:hr]]
-                         (for [id @doc-ids]
-                           [document2 state id]))))))
-
-#_(defn content
-    [state doc-ids & props]
-    (println "generating content first time")
-    (r/with-let [tab (r/cursor state [:tab])]
-      (fn [state doc-ids  & props]
-        ;; (println "rendering content")
-        (into [:div {:style {:display (if (= :content @tab) "block" "none")}}]
-              (interpose [:div [:br] [:hr]]
-                         (for [id doc-ids]
-                           [:div {:key id}
-                            [document2 state id]]))))))
-
-
+   [clojure.core.async :as a]))
 
 (declare upload-download-docs new-doc)
+
 (defn content
-  [state doc-ids & props]
-  (println "generating content first time")
-  (r/with-let [tab (r/cursor state [:tab])]
-    (fn [state doc-ids  & props]
-      (println "rendering content")
-      (into [:div]
-            (interpose [:div [:br] [:hr]]
-                       (for [id doc-ids]
-                         [:div {:key id}
-                          [document2 state id]]))))))
+  [state]
+  (let [pinned-id (:posts/pinned @state)
+        doc-ids_ (remove #{pinned-id} (map :id (sort-by :timestamp.unix > (filter #(= :document (:type %)) (vals @state)))))
+        doc-ids (if pinned-id (cons pinned-id doc-ids_) doc-ids_)
+        ]
+    (into [:div]
+          (for [id doc-ids]
+            [:div.w3-container.w3-border-bottom {:key id}
+             (when (= id pinned-id) [:span.w3-right "🖈"])
+             [document state id]]))))
 
 
-#_(defn misc
-    [state]
-    (r/with-let [tab (r/cursor state [:tab])]
-      (fn [state doc-ids  & props]
-        ;; (println "rendering content")
-        [:div {:style {:display (if (= :misc @tab) "block" "none")}}
-         [upload-download-docs state]
-         ]
-        
-        )))
+(defn animation-shite
+  [state]
+  (fn [state]
+    (r/with-let [t (r/atom 0)
+                 interval-id (r/atom nil)
+                 data ["ambient barks transduce the other"
+                       "& all the nites are obsidian"
+                       "let's liquid speech for whiles"
+                       "would this breach blink across ports enveloped in toilet horizons"
+                       "rooks crows ravens dogs"
+                       "taste the blank memory of void on superzero shawties  "
+                       "bloodruns & foam obliviated in entropy edge"]
+                 dt 3000
+                 frame (fn [i t data_] (r/with-let [show? (r/atom false)]
+                                         [:p {:class (if (> @t (* i dt)) "fade-in-image" "hidden")} data_]))
+
+                 interval-fn #(js/setInterval
+                               (fn [] (swap! t + dt))
+                               dt)
+
+                 frames (into [:div] (mapv vector (repeat frame) (range) (repeat t) data))]
+
+      (into [:div
+             [:h1 "Full Digital Anvilist"]
+             [:div
+              [:img.w3-container
+               {
+                :style {
+                        :float :left
+                        :width "30%"}
+                :src
+                "https://media.tenor.com/wE_qxJqpxj0AAAAd/nether-portal-minecraft.gif"}]
+              [:div {:style {:float :left}} frames]]]
+            
+            [(if-not @interval-id
+               [:button.w3-button.w3-xxlarge {:on-click #(do (reset! t 0)
+                                                             (reset! interval-id (interval-fn)))}
+                "⏵"]
+               [:button.w3-button.w3-xxlarge {:on-click #(do (reset! t 0)
+                                                             (js/clearInterval @interval-id)
+                                                             (reset! interval-id nil))}])
+             [:div {:style {:clear :both}}]
+             [:hr]]
+
+            )
+
+
+      )))
+
+(defn misc
+  [state]
+  (fn [state]
+    [:div
+     [animation-shite state]
+
+     
+     
+     [t/collapsible :root symautre.data.sample-data/sample-map  ]
+     [:br]
+     [:hr]
+     [t/edn->hiccup symautre.data.sample-data/sample-map  ]
+     
+     (r/with-let [pinned (r/cursor state [:posts/pinned])]
+       [:div
+        [:h1.w3-h1 "pinned"]
+        (if-let [pinned_ @pinned]
+          [document state pinned_])])
+
+     #_(r/with-let [id (r/cursor state [:posts/pinned])]
+         (let [id_ @id]
+           [pinned state id_]))
+
+     [:div
+      [:h1.w3-h1 "pubsub model"]
+      [:h1.w3-h1 "new color new weather"]
+      ]
+
+     [:div
+      [:h1.w3-h1 "n!structions"]
+      [:p "fork site"]
+      [:p "add own namespace"]]
+     
+
+     [:h1.w3-h1 "trollbox"]
+     [:p "[topic placeholder]"]
+
+     [:div
+      [:h1.w3-h1 "state"] 
+      [:p (pr-str (remove #(= :document (:type (val %))) @state))]
+      [:br]
+      [:p (pr-str @state)]]]))
 
 (defn mid-column
   [state]
-  (swap! state assoc :tab :content)
   (r/with-let [tab (r/cursor state [:tab])]
+    (if-not (some? @tab) (reset! tab :content))
     (fn [state]
-      (case @tab
-        
-        :content
-        (let [pinned-id (:posts/pinned @state)
-              doc-ids (remove #{pinned-id} (map :id (sort-by :timestamp.unix > (filter #(= :document (:type %)) (vals @state)))))]
-          (into [:div
-                 (when (some? pinned-id)
-                   [:div {:key pinned-id ;; :style {:background-color "grey"}
-                          }
-                    [:span.w3-right "📌"]
-                    [document2 state pinned-id]
-                    [:div [:br] [:hr]]])]
-                
-                (interpose [:div [:br] [:hr]]
-                           (for [id doc-ids]
-                             [:div {:key id}
-                              [document2 state id]]))))
-        #_[content state (remove nil? (cons (:posts/pinned @state) (map :id (sort-by :timestamp.unix > (filter #(= :document (:type %)) (vals @state))))))]
-        
-        :io
-        [upload-download-docs state]
-
-        :misc
-        [:div
-         [t/collapsible :root symautre.data.sample-data/sample-map  ]
-         [:br]
-         [:hr]
-         [t/edn->hiccup symautre.data.sample-data/sample-map  ]
+      [:div.w3-border
+       (case @tab
          
-         (r/with-let [pinned (r/cursor state [:posts/pinned])]
-           [:div
-            [:h1.w3-h1 "pinned"]
-            (if-let [pinned_ @pinned]
-              [document2 state pinned_])])
+         :content
+         [content state]
 
-         #_(r/with-let [id (r/cursor state [:posts/pinned])]
-             (let [id_ @id]
-               [pinned state id_]))
+         :io
+         [upload-download-docs state]
 
-         [:div
-          [:h1.w3-h1 "pubsub model"]
-          [:h1.w3-h1 "new color new weather"]
-          ]
-
-         [:div
-          [:h1.w3-h1 "n!structions"]
-          [:p "fork site"]
-          [:p "add own namespace"]]
-         
-
-         [:h1.w3-h1 "trollbox"]
-         [:p "[topic placeholder]"]
-
-         [:div
-          [:h1.w3-h1 "state"] 
-          [:p (pr-str (remove #(= :document (:type (val %))) @state))]
-          [:br]
-          [:p (pr-str @state)]]]
-        
-        )
+         :misc
+         [misc state])]
 
 
       
@@ -139,19 +141,19 @@
 (def links
   [{:url "https://www.tumblr.com/blog/arrowsfrom"
     :title "tumblr"}
-   
+
    {:url
     "https://twitter.com/veixq9"
     :title "twitter"}
-   
+
    {:title "soundcloud" :url "https://soundcloud.com/veixq9"}
 
    {:title "deviantart"
     :url "https://www.deviantart.com/likebad"}
-   
+
 
    {:title "mastodon" :url "https://mastodon.social/@veixq9"}
-   
+
    {:title 
     "github" :url "https://github.com/veixq9"}
    ])
@@ -342,18 +344,18 @@
                      (symautre.local-storage/set-local!
                       (into {} (remove (fn [[id v]]
                                          (not (or (map? v) (string? v) (keyword? v) (number? v))) ) @s))))
-)}
+                   )}
       #_(symautre.local-storage/get-local)
       "persist!"]
      [dropdown state "view"
       [:div {:key (t/uuid)}
        [(fn [state]
           [:button.w3-btn {:key (t/uuid) :on-click #(tap> (fn[s](swap! s assoc-in [:controls :view ] :port-money)))}
-           [:input {:style {} :type :radio :checked (= :port-money @(r/cursor state [:controls :view]))}]
+           [:input {:style {} :type :radio :checked (= :port-money @(r/cursor state [:controls :view])) :on-change #()}]
            [:span.w3-margin "port money"]]) state]]
       [(fn [state]
          [:button.w3-btn {:key (t/uuid) :on-click #(tap> (fn[s](swap! s assoc-in [:controls :view ] :scroll)))}
-          [:input {:style {} :type :radio :checked (= :scroll @(r/cursor state [:controls :view]))}]
+          [:input {:style {} :type :radio :checked (= :scroll @(r/cursor state [:controls :view])) :on-change #()}]
           [:span.w3-margin "scroll"]]) state]]])
   )
 
@@ -364,7 +366,7 @@
     [:div
      [:h1.w3-h1 "pinned"]
      (if (some? id)
-       [document2 state id]
+       [document state id]
        [:p "placeholder"]
        )
      ]
@@ -408,34 +410,19 @@
       [:h1.w3-center [:a {:href "#top" :style {:text-decoration "none"}} "voidnet:://VCN88TS"]]]
 
      [:div#tab.w3-cell-row {:style {:width "100%"}}
-      [tab state]
-
-      
-      ]
+      [tab state]]
 
      [:br]
      
-     [:div.w3-cell-row
-      [:div.w3-cell.w3-container.w3-left {:style {:width "100%"}}
-       [controls state]
+     [:div#cols.w3-cell-row
 
-       #_[indexes]
-       #_[:div.w3-bar
-          [:h1.w3-h1 "settings"]
-          [:h1.w3-bar-item "foo"]
-          [:button.w3-button "foo"]
-          ]]
+      [:div#left-col.w3-cell.w3-container.w3-left {:style {:width "20%"}}
+       [controls state]]
 
-      [:div#mid.w3-container.w3-cell {:style {:min-width "50%" :max-width "30px"}}
-       #_[content state (get-in @state [:doc-ids])]
-       
-       #_[content state (map :id (sort-by :timestamp.unix > (filter #(= :document (:type %)) (vals @state))))]
-       ;; [content state (filter #(= :document (:type %)) (vals @state))]
-
-       [mid-column state]
-       ]
+      [:div#mid-col.w3-container.w3-cell {:style {:float :left :min-width "50%" :max-width "30px"}}
+       [mid-column state]]
       
-      [:div#right.w3-cell.w3-container.w3-border-left {:style {:width "20%" :max-width "30px"}}
+      [:div#right-col.w3-cell.w3-container.w3-border-left {:style {:float :left :height "100%" :width "20%" :max-width "30px"}}
        [:h1.w3-h1 "voidnet://"]
        [:p "[placeholder]"]
 

@@ -28,19 +28,15 @@
 
 (enable-console-print!)
 
-
 (defn load-data!
   [state]
   (println "loading data")
-  (let [posts-map (reduce (fn [a b] (assoc a (:id b) b)) {} posts)]
+  (let [posts-map (reduce (fn [a b] (assoc a (:id b) b)) {} posts)
 
-    ;; local storage
-    ;; (symautre.local-storage/init!)
-    (let [posts (sort-by :timestamp.unix > posts)]
-      #_(doseq [p (merge posts (symautre.local-storage/get-local))]
-          (symautre.local-storage/set-local! [(:id p)] p)))
+        local-storage-data_ (symautre.local-storage/get-local)
+        local-storage-data (if (= 'null local-storage-data_) nil local-storage-data_)]
 
-    (swap! state merge posts-map (symautre.local-storage/get-local))
+    (swap! state merge posts-map local-storage-data)
     (println "loading data done!")
     #_(doseq [[id post] posts]
         (swap! state assoc-in [id] post))
@@ -73,7 +69,7 @@
 
 (comment
 
-
+  (-> (js/navigator.clipboard.writeText "foo") (.then #(println %)))
 
   (cljs.reader/read-string (:posts.edn @state))
   
