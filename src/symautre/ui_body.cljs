@@ -5,6 +5,7 @@
    [symautre.doc :refer [ doc document]]
    [symautre.local-storage]
    [symautre.data.sample-data]
+   [symautre.web3 :refer [wallet]]
 
    [clojure.core.async :as a]))
 
@@ -406,7 +407,7 @@
      
      ;; [:a {:href "/posts.edn"} "posts"]
      [:div.w3-row {:id "top"}
-      [:h1.w3-right "wallet"]
+      [wallet state]
       [:h1.w3-center [:a {:href "#top" :style {:text-decoration "none"}} "voidnet:://VCN88TS"]]]
 
      [:div#tab.w3-cell-row {:style {:width "100%"}}

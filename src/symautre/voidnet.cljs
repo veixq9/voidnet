@@ -53,7 +53,12 @@
   (def state (r/atom {}))
   (def event-log (r/atom nil))
   (swap! state assoc :system/event-chan (a/chan))
-  (add-tap #(do (swap! event-log conj %) (% state)))
+  (add-tap #(do (swap! event-log conj %)
+                (cond (map? %)
+                      ((:fn %) state)
+
+                      :default
+                      (% state))))
 
 
   (t/init-clock! state #(swap! state update :clock/counter inc) 0.01)

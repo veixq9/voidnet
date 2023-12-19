@@ -1,14 +1,17 @@
 (ns symautre.tools.core
-  (:refer-clojure :exclude [uuid])
+  (:refer-clojure :exclude [uuid subs])
   (:require ["uuid" :as uuidjs]
             [reagent.core :as r]
             #_[cljs.core :excluding [uuid]]))
+
+
 
 (defn uuid
   []
   ((-> uuidjs .-v4)))
 
 [:cell
+ ;; does not work in cljs
  (defmacro cell
    ([body]
     `(quote (cell ~body)))
@@ -62,7 +65,11 @@
  (defn timestamp
    "for unix use 'timestamp-unix'"
    []
-   (new js/Date))
+   (-> (new js/Date ) .toISOString))
+
+ (def now timestamp)
+
+ 
 
  (defn init-clock!
    [state f interval-in-secs]
@@ -144,6 +151,32 @@
  ]
 
 
+;; ================= inspection ========================================
+(defn dir
+  [x]
+  (js/console.dir x))
+
+(defn str->json
+  [string_]
+  (-> js/JSON (.parse string_)))
+
+(defn json->str
+  [json_]
+  (-> js/JSON (.stringify json_)))
+
+;; ================= encode decode crypto ========================================
+(defn encode
+  "String -> Uint8Array"
+  [s]
+  (-> (new js/TextEncoder) (.encode  s)))
+
+(defn decode
+  "Uint8Array -> String"
+  [uintarray]
+  (-> (new js/TextDecoder) (.decode uintarray)))
+
+
+
 (comment
   
   
@@ -170,4 +203,83 @@
                               :nice {:kill 1000}}
                      :w "shawarma"
                      }}))
+
+
+;; ================= comfy & readable ========================================
+(def ++ inc)
+(def -- dec)
+
+;; ================= string ========================================
+(defn remove-white-space
+  [string_]
+  (clojure.string/replace string_ #"[\ \t\n]" ""))
+
+;; ================= range stuff: inclusive range,  ======================================
+(def rangev
+  (>>> range vec))
+
+(assert (= (rangev 2 10 3) (into [] (range 2 9 3)) [2 5 8]))
+
+(defn range+
+  "end inclusive range"
+  ([]
+   (range))
+  ([end]
+   (range (inc end)))
+  ([start end]
+   (range start (inc end)))
+  ([start end step]
+   (range start (inc end) step)))
+
+(assert (and
+         (= (take 10 (range+)) (take 10 (range)))
+         (= (range+ 0) '(0))
+         (= (range+ 1) '(0 1))
+         (= (range+ 3) '(0 1 2 3))
+         (= (range+ 2 3) '(2 3))
+         (= (range+ 99 99) '(99))
+         (= (range+ 99 99) (range 99 100))
+         (= (range+ 1000 1006 5) (range 1000 1006 5))
+         (= (range+ 1000 1006 2) (concat (range 1000 1006 2) '(1006)))))
+
+(def rangev+
+  (>>> range+ vec))
+        
+(assert (= (rangev+ 2 10 2) (conj (into [] (range 2 10 2)) 10) [2 4 6 8 10]))
+
+(defn subs
+  ([s start_]
+   (subs s start_ -1))
+  ([s start_ end_]
+   (let [length (count s)
+         convet-negative #(if (neg? %)
+                            (+ length % 1)
+                            %)
+         start (convet-negative start_)
+         end (convet-negative end_)]
+
+     (clojure.core/subs s start end))))
+
+(let [s "fuck you bobby!"]
+
+  (assert (= s (subs s 0 -1)))
+  (assert (= s (subs s 0 -1)))
+  (assert (= s (subs s 0)))
+  (assert (= (subs s -3 -1) (subs s (- (count s) 2))  (subs s -3))))
+
+;; ================= find fixpoint ========================================
+(defn iterate-fix
+  "applies f until application becomes idempotent"
+  [f x]
+  (reduce (fn [b a] (cond (= b a) (reduced b) :default a))  (iterate f x)))
+
+
+;; ================= html ========================================
+#_(defn html->hiccup
+  [string_]
+  (-> (hickory.core/as-hiccup
+     (hickory.core/parse
+      string_))
+      first nnext next first nnext first))
+
 
