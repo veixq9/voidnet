@@ -1,0 +1,194 @@
+{
+ :paths ["src"
+         "resources"
+         ]
+ :deps {
+        org.clojure/clojure {:mvn/version "1.11.1"}
+
+        ;; cljs
+        org.clojure/clojurescript {:mvn/version "LATEST"}
+        keechma/keechma {:mvn/version "0.3.14"}
+        reagent {:mvn/version "LATEST"}
+
+        com.cognitect/transit-cljs {:mvn/version "LATEST"}
+        com.andrewmcveigh/cljs-time {:mvn/version "LATEST"}
+
+        http-kit {:mvn/version "2.7.0"}
+        ;; cljs-http {:mvn/version "0.1.46"}
+        ;; clj-http/clj-http {:mvn/version "3.12.3"}
+        cljs-ajax {:mvn/version "LATEST"}
+
+        
+        ;; distributions/distributions {:mvn/version "0.1.2"}
+
+        ;; db
+        com.xtdb/xtdb-core {:mvn/version "LATEST"}
+        ;; com.xtdb/xtdb-lucene {:mvn/version   "LATEST" }
+	;; com.xtdb/xtdb-rocksdb {:mvn/version "1.21.0"}
+        ;; com.xtdb/xtdb-lmdb {:mvn/version "LATEST"}
+
+        ;; com.novemberain/monger {:mvn/version "3.1.0"}
+
+        ;; io.replikativ/konserve {:mvn/version "0.7.271"}
+        
+        ;; org.clojure/data.csv {:mvn/version "1.0.0"}
+        
+        integrant/integrant {:mvn/version "LATEST"}
+
+        ;; router
+        metosin/reitit {:mvn/version "0.6.0"}
+        compojure {:mvn/version "LATEST"}
+
+
+        ;; inspection
+        ;; djblue/portal {:mvn/version "0.44.0"}
+
+
+        ;; net.cgrand/xforms {:mvn/version "LATEST"}
+        ;; rewrite-clj/rewrite-clj {:mvn/version "1.0.699-alpha"}
+
+        ;; nrepl/nrepl {:mvn/version "1.1.0-alpha1"}
+
+        org.clojure/tools.deps.alpha {:mvn/version "LATEST"}
+        ;; org.clojure/tools.deps.alpha {:mvn/version "0.9.745"}
+        ;; org.clojure/tools.deps {:mvn/version "0.18.1354"}
+        ;; org.clojure/tools.deps.alpha {:mvn/version "0.11.910"}
+        ;; org.clojure/tools.deps.alpha {:mvn/version "0.15.1254"}
+
+        ;; tools
+        com.rpl/specter {:mvn/version "LATEST"}
+        manifold/manifold {:mvn/version "LATEST"}
+        org.clj-commons/byte-streams {:mvn/version "LATEST"}
+
+        ;; http
+        ring/ring-core {:mvn/version "1.11.0-RC2"}
+        ring/ring-jetty-adapter {:mvn/version "1.11.0-RC2"}
+        ;; ring-cors/ring-cors {:mvn/version "0.1.13"}
+        com.cemerick/url {:mvn/version "0.1.1"}
+
+        ;; html
+        ;; sablono/sablono {:mvn/version "0.8.6"}
+        ;; enlive/enlive {:mvn/version "1.1.6"}
+        ;; clj-tagsoup/clj-tagsoup {:mvn/version "LATEST"}
+
+        
+        clojure.java-time/clojure.java-time {:mvn/version "LATEST"}
+        ;; org.threeten/threeten-extra {:mvn/version "1.2"}
+        
+
+        ;; ================= data & ai & algebra ========================================
+        kixi/stats {:mvn/version "LATEST"}
+        ;; uncomplicate/neanderthal {:mvn/version "0.39.0"}
+        ;; ;; org.uncomplicate/clojure-sound {:mvn/version "0.3.0"}
+        ;; ;; uncomplicate/clojure-sound {:mvn/version "0.4.0-SNAPSHOT"}
+
+        ;; net.mikera/core.matrix {:mvn/version "0.62.0"}
+        ;; uncomplicate/deep-diamond {:mvn/version "0.19.1"}
+        ;; uncomplicate/clojurecuda {:mvn/version "0.12.0"}
+        
+        ;; criterium/criterium {:mvn/version "0.4.6"}
+
+        ;; incanter/incanter-core {:mvn/version "1.9.3"}
+        
+
+        ;; zero.one/geni {:mvn/version "0.0.38"}
+        
+        ;; ================= serialization & ... ========================================
+        com.taoensso/nippy {:mvn/version "3.1.1"}
+        org.clojure/data.json {:mvn/version "2.2.1"}
+
+        ;; dk.ative/docjure {:mvn/version "1.16.0"}
+        
+        
+        ;; tesser.core/tesser.core {:mvn/version "LATEST"}
+
+        ;; tesser.math/tesser.math {:mvn/version "LATEST"}
+
+        ;; org.clojure/algo.monads {:mvn/version "0.1.6"}
+        ;; org.clojure/core.match {:mvn/version "1.0.0"}
+
+
+        ;; com.fluree/alphabase           {:mvn/version "3.2.2"}
+        ;; com.fluee/db                   {:git/url "https://github.com/fluree/db.git"
+        ;;                                 :git/sha "52dd1e0744019547d13173f02b6b450c75a08bcd"}
+
+
+        ;; com.fluree/raft                {:mvn/version "1.0.0-beta1"}
+        ;; com.fluree/crypto              {:mvn/version "0.3.9"}
+
+
+        ;; com.github.sebhoss/bc-clj {:mvn/version "3.0.0"}
+
+        ;; webdriver
+        ;; etaoin/etaoin {:mvn/version "1.0.38"}
+
+        ;; ;; auth
+        ;; buddy/buddy-core {:mvn/version "1.11.423"}
+
+        ;; ;; crypto & web3
+        ;; cljs-web3-next/cljs-web3-next {:mvn/version "0.1.4"}
+
+        ;; org.web3j/core {:mvn/version "5.0.0"}
+
+        ;; io.replikativ/hasch {:mvn/version "0.3.7"}
+
+        ;; ;; com.mmorrell/solanaj {:mvn/version "1.8"}
+        ;; com.paymennt/solanaj {:mvn/version "0.0.7"}
+        ;; ;; org.p2p/solanaj {:mvn/version "1.7"}
+        ;; ;; org.purejava/tweetnacl-java {:mvn/version "1.1.2"}
+
+
+        ;; caesium/caesium {:mvn/version "0.15.0"}
+        ;; com.github.Marcelo-Theodoro/clj-secp256k1 {:mvn/version "0.3.0"}
+        ;; org.bitcoinj/bitcoinj-core {:mvn/version "0.16.1"}
+
+        ;; org.clj-commons/hickory {:mvn/version "0.7.3"}
+
+        ;; ;; python
+        ;; clj-python/libpython-clj {:mvn/version "LATEST"}
+        ;; scicloj/tablecloth {:mvn/version "LATEST"}
+
+        ;; local
+        ;; {:local/root "/home/ethan/active/tessocog/tools/project.jar"}
+        ;; org.tessocog/data {:mvn/version "0.1.3"}
+        ;; org.tessocog/documental {:mvn/version "LATEST"}
+        #_{:local/root "/home/ethan/active/tessocog/data/project.jar"}
+
+
+        ;; io.github.adam-james-v/svg-clj {:mvn/version "0.0.11"}
+
+        ;; io.github.nextjournal/clerk {:mvn/version "0.13.842"}
+
+        ;; music
+        ;; overtone/overtone {:mvn/version "LATEST"}
+        ;; overtone/overtone {:mvn/version "0.10.6"}
+        ;; overtone/overtone {:mvn/version "0.9.1"}
+
+
+
+        ;; ================= convex ========================================
+        ;; world.convex/convex-core {:mvn/version "0.7.9"}
+        ;; world.convex/convex-peer {:mvn/version "0.7.9"}
+
+        ;; world.convex/cvm.clj {:mvn/version "LATEST"}
+        ;; world.convex/gen.clj {:mvn/version "LATEST"}
+        ;; world.convex/net.clj {:mvn/version "LATEST"}
+
+        ;; badigeon/badigeon {:mvn/version "1.7"}
+        
+
+        ;; io.github.humbleui/humbleui {:git/sha "c3eb2ec04fcccb40cc4a3da44ccda0ef3ccacc01"}
+
+        ;; mvxcvi/multiformats {:mvn/version "0.3.107"}
+
+
+        ;; ;; cljs
+        ;; ;; district0x/district-ui-ipfs {:mvn/version "1.0.1"}
+
+
+        ;; leipzig/leipzig {:mvn/version "0.10.0"}
+
+        ;; datascript/datascript {:mvn/version "1.5.3"}
+
+        ;; me.raynes/fs {:mvn/version "1.4.6"}
+        }}

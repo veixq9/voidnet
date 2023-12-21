@@ -405,7 +405,7 @@
      
      ;; [:a {:href "/posts.edn"} "posts"]
      [:div.w3-row {:id "top"}
-      [wallet state]
+      #_[wallet state]
       [:h1.w3-center [:a {:href "#top" :style {:text-decoration "none"}} "voidnet:://VCN88TS"]]]
 
      [:div#tab.w3-cell-row {:style {:width "100%"}}
