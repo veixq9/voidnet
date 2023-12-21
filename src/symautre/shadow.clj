@@ -10,6 +10,14 @@
   ;; (shadow/browser-repl :voidnet)
   )
 
+(do
+  (shadow/watch :voidnet-node)
+  (shadow/node-repl )
+
+  )
+
+
+
 
 (comment
   

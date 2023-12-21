@@ -48,15 +48,16 @@
 
 (defn wallet
   [state]
-  (connect!)
+
   (r/with-let [addr (r/cursor state [:actor.evm/address])]
     (fn [state]
       [:div#wallet.w3-right
        (if (metamask-installed?)
-         (if @addr
-           [:div
-            [:span (str (subs @addr 0 7) "..." (t/subs @addr -6 -1))]]
-           [connect-btn])         
+         (do (connect!)
+             (if @addr
+               [:div
+                [:span (str (subs @addr 0 7) "..." (t/subs @addr -6 -1))]]
+               [connect-btn]))         
          [:p "install metamask!"])])))
 
 

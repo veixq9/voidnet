@@ -137,8 +137,6 @@
       
       )))
 
-
-
 (def links
   [{:url "https://www.tumblr.com/blog/arrowsfrom"
     :title "tumblr"}

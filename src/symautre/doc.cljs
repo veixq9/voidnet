@@ -134,17 +134,12 @@
                  ;; :tooltip "pin"
 
                  :on-click
-                 #(tap> (fn[s] (do (println "pinning " @doc-ratom)
-                                   (symautre.local-storage/assoc-local! :posts/pinned id)
-                                   (swap! s assoc :posts/pinned id))))}
+                 #(tap> (fn[s] (do (println "toggling pin for " @doc-ratom)
+                                   (if (= (:posts/pinned @state) (:id @doc-ratom))
+                                     (swap! s dissoc :posts/pinned id)
+                                     (swap! s assoc :posts/pinned id)))))}
                 "🖈"]
-               ]) display] ]
-
-          ) 
-
-        ])
-     )
-   )]
+               ]) display]])])))]
 
 #_(defn document
     [document_]

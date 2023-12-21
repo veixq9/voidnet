@@ -41,10 +41,9 @@
                        }
             }
 
-
-
-
-
-  }
- 
+  :voidnet-node
+  {:target :node-script,
+   :output-to "public/voidnet/js/electron-init.js",
+   :main symautre.voidnet.electron-init/init
+   :port 3006}} 
  }
