@@ -1,4 +1,5 @@
 # Voidnet
+heavily under construction
 
 ## features
 
@@ -23,8 +24,8 @@ note: 'this' is the closed environment in which a particular actor is operating
 - this.actions.copy(token-belonging-to-actor-x)
 
 ## notes
-some actors may purely be in the business of curating others' creations
-an actor may be assigned its own environment inside a contract
+some actors may purely be in the business of curating others' creations  
+an actor may be assigned its own environment inside a contract  
 
 ## roadmap
 
