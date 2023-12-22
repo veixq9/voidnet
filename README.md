@@ -9,10 +9,10 @@ heavily under construction
 
 ## features
 
-## UI
+### UI
 - UΙ for creation of of immutable tokens
 
-## tokens
+### tokens
 - token deployment
 - token temporality (token play)
 - storage of tokens on IPFS with data-intrinsic identifiers
