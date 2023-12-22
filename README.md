@@ -1,5 +1,11 @@
-# Voidnet
+# VOIDNET
 heavily under construction
+
+## Philosophical points
+- **immutability**: all else being equal, immutability is the default.
+- intrinsic data indexing. Content Identifiers are it.
+
+
 
 ## features
 
