@@ -26,7 +26,7 @@ note: 'this' is the closed environment in which a particular actor is operating
 - UI pixel art creation through embedded https://github.com/veixq9/crybrush  
 - this.view(:succint)  
 - token temporality design
-- this.deploy(token)
+- this.deploy(token convexVM)
 - this.explore(other-actor)
 - this.actions.copy(token-belonging-to-actor-x)
 

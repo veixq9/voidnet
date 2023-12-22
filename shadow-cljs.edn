@@ -41,6 +41,30 @@
                        }
             }
 
+  ;; :voidnet-node {
+  ;;                ;; :asset-path "public/voidnet"
+  ;;                :modules {:main {:init-fn symautre.voidnet-node/init}}
+  ;;                :output-dir "resources/public/voidnet-node/js"
+  ;;                :output-to "resources/public/voidnet-node/js/script.js"
+  ;;                :target :node-script
+  ;;                :main symautre.voidnet-node/init
+
+  ;;                :devtools {:repl-init-ns symautre.voidnet-node/init, :repl-pprint true},
+  ;;                :port 3010
+                 
+  ;;                ;; :nrepl {:port 9000 
+  ;;                ;;         :middleware []} ; optional list of namespace-qualified symbols 
+  ;;                ;; :dev-http {8081 "public/voidnet"}
+  ;;                ;; :devtools {:after-load  symautre.voidnet-node/init
+  ;;                ;;            :http-root   "resources/public/voidnet-node"
+  ;;                ;;            :http-port   3005
+  ;;                ;;            ;; :preloads    [shadow.cljs.devtools.client.hud
+  ;;                ;;            ;;               day8.re-frame-10x.preload
+  ;;                ;;            ;;               dirac.runtime.preload
+  ;;                ;;            ;;               devtools.preload]
+  ;;                ;;            }
+  ;;                }
+
 
 
 
