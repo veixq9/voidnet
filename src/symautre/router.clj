@@ -15,11 +15,12 @@
                                    (println req)
                                    (println "(:body req) => " (:body req))
                                    (let [slurped (slurp (:body req))
+                                         _ (println "(slurp (:body req))=> " slurped)
                                          add-result (ipfs/add slurped)]
-                                     (println "(slurp (:body req))=> " slurped)
+                                     
                                      (println "add result " add-result)
                                      {:status 200
-                                      :body add-result
+                                      :body (pr-str add-result)
                                       }))
 }}]]]
      ["/*" (ring/create-resource-handler {

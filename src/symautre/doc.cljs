@@ -2,7 +2,9 @@
   (:require [symautre.tools.core :as t :refer [--> uuid timestamp-unix]]
             [reagent.core :as r]
             symautre.local-storage
-            ))
+            [cljs-http.client ]
+
+            [clojure.core.async :as a]))
 
 (defn doc
   ([]
@@ -96,6 +98,18 @@
               [:div#buttons.w3-container.w3-cell-row.w3-tiny {:style {:visibility (if @display "visible" "hidden")}}
                [button state doc-ratom  {:id "edit" :on-click #(swap! mode (fn[mode_] (if (= mode_ :edit) :view :edit)))} "✎"  ]
 
+               [button state doc-ratom
+                {
+                 :id "ipfs-save"
+                 :on-click
+                 #(do (println "saving to ipfs: " @doc-ratom)
+                      (a/go (println (a/<! (cljs-http.client/post "/api/v0/add" {:body @doc-ratom}))))
+                      )
+
+
+                 }
+                "ipfs!"]
+               
                [button state doc-ratom
                 {
                  :id "save"

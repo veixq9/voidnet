@@ -393,7 +393,7 @@
 
 (defn tab
   [s]
-  (tap> (fn [state] (swap! state assoc-in [:tab] :misc)))
+  (tap> (fn [state] (swap! state assoc-in [:tab] :content)))
   (let [
         displayables [:content :io :misc]
         display (r/atom :content)]

@@ -24,6 +24,7 @@ note: 'this' is the closed environment in which a particular actor is operating
 
 ## notes
 some actors may purely be in the business of curating others' creations
+an actor may be assigned its own environment inside a contract
 
 ## roadmap
 
@@ -38,3 +39,4 @@ some actors may purely be in the business of curating others' creations
 - Web3
 - EthereumVM
 - ConvexVM
+- OrbitDB

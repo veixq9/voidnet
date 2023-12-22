@@ -25,6 +25,7 @@
       ))
 
 (comment
+  (read-string (cat "QmS7FDjMhn7QaV4xaZ3eHajA8ApmUwhqD6uAPyhFK83yrk"))
   (assert (= (-> (http/post "http://localhost:3030/api/v0/add" {:body "my stuffxxe 222"})
                  deref
                  :body
