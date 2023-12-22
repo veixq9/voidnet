@@ -74,6 +74,8 @@
 
 (comment
 
+  
+  
   (-> (js/navigator.clipboard.writeText "foo") (.then #(println %)))
 
   (cljs.reader/read-string (:posts.edn @state))

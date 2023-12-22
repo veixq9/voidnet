@@ -299,7 +299,7 @@
   (fn [state]
     [:button.w3-btn.w3-border-white.w3-border.w3-round
      {:on-click
-      #(let [new-doc (doc)
+      #(let [new-doc (doc (select-keys @state [:actor.evm/address ]))
              id (:id new-doc)]
          (swap! state
                 (fn [state_]
@@ -552,7 +552,7 @@
 
             [doc/document state @modal]])
          (r/cursor state [:modal])]
-      #_[wallet state]
+      [wallet state]
       [:h1.w3-center [:a {:href "#top" :style {:text-decoration "none"}} "voidnet:://VCN88TS"]]]
 
      [:div#tab.w3-cell-row {:style {:width "100%"}}
