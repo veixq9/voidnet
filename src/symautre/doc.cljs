@@ -30,135 +30,223 @@
   (fn[state doc-ratom & more]
     (into [:button.w3-cell.w3-button] more)))
 
-[:view
+(defn- view
+  [document_]
+  (fn [document_]
+    (let [{:keys [title media body timestamp] :as document_} document_]
+      [:div {:id title :key title}
+       [:h1.w3-h1 title]
+       [:span {:style {:font-style :italic}} (subs (str timestamp) 3 24)]
+       
+       [:div {:style {:white-space :pre-line}}
+        (cond
+          (string? body)
+          [:p body]
 
- (defn- view
-   [document_]
-   (fn [document_]
-     (let [{:keys [title media body timestamp] :as document_} document_]
-       [:div {:id title :key title}
-        [:h1.w3-h1 title]
-        [:span {:style {:font-style :italic}} (subs (str timestamp) 3 24)]
-        
-        [:div {:style {:white-space :pre-line}}
-         (cond
-           (string? body)
-           [:p body]
+          (and (vector? body) (not (keyword? (first body))))
+          (for [x body]
+            [:p {:key (t/uuid)} x])
 
-           (and (vector? body) (not (keyword? (first body))))
-           (for [x body]
-             [:p {:key (t/uuid)} x])
-
-           :default
-           body)]])))
+          :default
+          body)]])))
 
 ;;; public key address
 ;;; local storage
- (defn- edit
-   [doc_ mode]
-   (r/with-let [transient-state (r/atom (pr-str (:body @doc_)))]
-     (fn [doc_ mode]
-       [:div
+(defn- edit
+  [doc_ mode]
+  (r/with-let [transient-state (r/atom (pr-str (:body @doc_)))]
+    (fn [doc_ mode]
+      [:div
 
-        [:textarea {:style {:width "100%" :color "white" :background-color "black" }
-                    :value @transient-state
-                    :on-change #(reset! transient-state (-> % .-target .-value))}]
+       [:textarea {:style {:width "100%" :color "white" :background-color "black" }
+                   :value @transient-state
+                   :on-change #(reset! transient-state (-> % .-target .-value))}]
 
-        [:button {:on-click #(tap> (fn[s] (do (swap! doc_ assoc :body (cljs.reader/read-string @transient-state))
-                                              (swap! mode (fn[mode_] (if (= mode_ :edit) :view :edit))))))}
-         "confirm"]
-        
-        [:button {:on-click #(tap> (fn[s] (swap! mode (fn[mode_] (if (= mode_ :edit) :view :edit)))))}
-         "cancel"]
-        ])))
-
-
-
- (defn document
-   [state id]
-   (fn [state id]
-     (r/with-let [doc-ratom (r/cursor state [id])
-                  mode (r/atom :view)
-                  display (r/atom false)]
-       (println "rendering document")
-       [:div {:key id
-              :on-mouse-enter #(do (println "hover")
-                                   (swap! display not))
-              :on-mouse-leave #(do (println "mouse out")
-                                   (swap! display not))}
-        (cond
-          (= :edit @mode)
-          [edit doc-ratom mode]
-
-          :default
-          [:div
-           [view @doc-ratom]
-           
-           [(fn [display]
-              [:div#buttons.w3-container.w3-cell-row.w3-tiny {:style {:visibility (if @display "visible" "hidden")}}
-               [button state doc-ratom  {:id "edit" :on-click #(swap! mode (fn[mode_] (if (= mode_ :edit) :view :edit)))} "✎"  ]
-
-               [button state doc-ratom
-                {
-                 :id "ipfs-save"
-                 :on-click
-                 #(do (println "saving to ipfs: " @doc-ratom)
-                      (a/go (println (a/<! (cljs-http.client/post "/api/v0/add" {:body @doc-ratom}))))
-                      )
-
-
-                 }
-                "ipfs!"]
-               
-               [button state doc-ratom
-                {
-                 :id "save"
-                 :on-click
-                 #(do (println "persisting " @doc-ratom)
-                      (symautre.local-storage/set-local! [id] @doc-ratom))
-
-                 ;; (-> js/window.localStorage (.getItem :posts ))
-                 }
-                "🖫"]
-
-               
-               [button state doc-ratom
-                {
-                 :id "clipboard"
-                 :on-click
-                 #(do (js/navigator.clipboard.writeText @doc-ratom))}
-                "📋"]               
-
-               [button state doc-ratom {
-                                        :id "delete"
-
-                                        :on-click
-                                        #(tap> (fn[s] (do (println "deleting " @doc-ratom)
-                                                          (symautre.local-storage/dissoc-local! id)
-                                                          (swap! s dissoc id)
-                                                          )))}
-                "⛝"]
+       [:button {:on-click #(tap> (fn[s] (do (swap! doc_ assoc :body (cljs.reader/read-string @transient-state))
+                                             (swap! mode (fn[mode_] (if (= mode_ :edit) :view :edit))))))}
+        "confirm"]
+       
+       [:button {:on-click #(tap> (fn[s] (swap! mode (fn[mode_] (if (= mode_ :edit) :view :edit)))))}
+        "cancel"]
+       ])))
 
 
 
+(defn document-old
+  [state id]
+  (fn [state id]
+    (r/with-let [doc-ratom (r/cursor state [id])
+                 mode (r/atom :view)
+                 display (r/atom false)
+                 style (r/atom {})
+                 class (r/atom "")                  ]
+      (println "rendering document")
+      [:div {:key id
+             ;; :class @class
+             :style @style
+             :on-mouse-enter #(do (println "hover")
+                                  (swap! display not))
+             :on-mouse-leave #(do (println "mouse out")
+                                  (swap! display not))}
+       (cond
+         (= :edit @mode)
+         [edit doc-ratom mode]
 
-               [button state doc-ratom
-                {
-                 :id "pin"
-                 ;; :tooltip "pin"
+         :default
+         [:div
+          [view @doc-ratom]
+          
+          [(fn [display]
+             [:div#buttons.w3-container.w3-cell-row.w3-tiny {:style {:visibility (if @display "visible" "hidden")}}
+              [button state doc-ratom  {:id "edit" :on-click #(swap! mode (fn[mode_] (if (= mode_ :edit) :view :edit)))} "✎"  ]
+              [button state doc-ratom  {:id "fullscreen" :on-click #(do (swap! state assoc :modal id))} "⛶"]
+              
+              [button state doc-ratom
+               {
+                :id "ipfs-save"
+                :on-click
+                #(do (println "saving to ipfs: " @doc-ratom)
+                     (a/go (println (a/<! (cljs-http.client/post "/api/v0/add" {:body @doc-ratom}))))
+                     )
 
-                 :on-click
-                 #(tap> (fn[s] (do (println "pinning " @doc-ratom)
-                                   (symautre.local-storage/assoc-local! :posts/pinned id)
-                                   (swap! s assoc :posts/pinned id))))}
-                "🖈"]
-               ]) display] ]
 
-          ) 
+                }
+               "ipfs!"]
+              
+              [button state doc-ratom
+               {
+                :id "save"
+                :on-click
+                #(do (println "persisting " @doc-ratom)
+                     (symautre.local-storage/set-local! [id] @doc-ratom))
 
-        ])
-     )
-   )]
+                ;; (-> js/window.localStorage (.getItem :posts ))
+                }
+               "🖫"]
+
+              
+              [button state doc-ratom
+               {
+                :id "clipboard"
+                :on-click
+                #(do (js/navigator.clipboard.writeText @doc-ratom))}
+               "📋"]               
+
+              [button state doc-ratom {
+                                       :id "delete"
+
+                                       :on-click
+                                       #(tap> (fn[s] (do (println "deleting " @doc-ratom)
+                                                         (symautre.local-storage/dissoc-local! id)
+                                                         (swap! s dissoc id)
+                                                         )))}
+               "⛝"]
+
+
+
+
+              [button state doc-ratom
+               {
+                :id "pin"
+                ;; :tooltip "pin"
+
+                :on-click
+                #(tap> (fn[s] (do (println "pinning " @doc-ratom)
+                                  (symautre.local-storage/assoc-local! :posts/pinned id)
+                                  (swap! s assoc :posts/pinned id))))}
+               "🖈"]
+              ]) display] ]
+
+         ) 
+
+       ])
+    )
+  )
+
+(defn buttons
+  [state doc-ratom]
+  (fn [state doc-ratom]
+    (let [id (:id @doc-ratom)
+          mode (r/cursor state [:ui id])]
+      [:div#buttons.w3-container.w3-cell-row.w3-tiny
+       [button state doc-ratom  {:id "edit" :on-click #(swap! mode (fn[mode_] (if (= mode_ :edit) :view :edit)))} "✎"  ]
+       [button state doc-ratom  {:id "fullscreen" :on-click #(do (swap! state assoc :modal id))} "⛶"]
+       
+       [button state doc-ratom
+        {
+         :id "ipfs-save"
+         :on-click
+         #(do (println "saving to ipfs: " @doc-ratom)
+              (a/go (println (a/<! (cljs-http.client/post "/api/v0/add" {:body @doc-ratom}))))
+              )
+
+
+         }
+        "ipfs!"]
+       
+       [button state doc-ratom
+        {
+         :id "save"
+         :on-click
+         #(do (println "persisting " @doc-ratom)
+              (symautre.local-storage/set-local! [id] @doc-ratom))
+
+         ;; (-> js/window.localStorage (.getItem :posts ))
+         }
+        "🖫"]
+
+       
+       [button state doc-ratom
+        {
+         :id "clipboard"
+         :on-click
+         #(do (js/navigator.clipboard.writeText @doc-ratom))}
+        "📋"]               
+
+       [button state doc-ratom {
+                                :id "delete"
+
+                                :on-click
+                                #(tap> (fn[s] (do (println "deleting " @doc-ratom)
+                                                  (symautre.local-storage/dissoc-local! id)
+                                                  (swap! s dissoc id)
+                                                  )))}
+        "⛝"]
+
+
+
+
+       [button state doc-ratom
+        {
+         :id "pin"
+         ;; :tooltip "pin"
+
+         :on-click
+         #(tap> (fn[s] (do (println "pinning " @doc-ratom)
+                           (symautre.local-storage/assoc-local! :posts/pinned id)
+                           (swap! s assoc :posts/pinned ))))}
+        "🖈"]
+       ])))
+
+(defn document
+  [state id]
+  (fn [state id]
+    (r/with-let [doc-ratom (r/cursor state [id])
+                 mode (r/atom :view)]
+      (println "rendering document " id)
+      [:div.w3-container {:key id}
+       (cond
+         (= :edit @mode)
+         [edit doc-ratom mode]
+
+         :default
+         [:div
+          [view @doc-ratom]])
+       [:div {:style {:float :bottom}} [buttons state doc-ratom]]
+
+       ])
+    )
+  )
 
 #_(defn document
     [document_]

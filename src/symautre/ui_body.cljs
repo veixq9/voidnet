@@ -7,7 +7,8 @@
    [symautre.data.sample-data]
    [symautre.web3 :refer [wallet]]
 
-   [clojure.core.async :as a]))
+   [clojure.core.async :as a]
+   [symautre.doc :as doc]))
 
 (declare upload-download-docs new-doc)
 
@@ -151,7 +152,7 @@
 
            :play [:button.w3-button.w3-xxlarge
                   {:on-click  #(do (reset! player :pause)
-                                 )}
+                                   )}
                   "⏸"]
 
            :pause [:button.w3-button.w3-xxlarge {
@@ -481,19 +482,76 @@
 
    ]
 
+(defn modal
+  [state modal]
+  (fn [state modal]
+    [:div.w3-container.w3-border
+     {:style
+      {:position :absolute
+       :z-index 3
+       :background-color "#090909"
+       ;; :background-color "darkblue"
+       ;; :color "green"
+       :display (if modal "block" "none")
+       :width "80%"
+       ;; :height "100%"
+       :top "5%"
+       :left "10%"
+       ;; :bottom 0
+       ;; :left 0
+       ;; :right 0
+
+       :align-items :center
+       :justify-content :center
+       ;; :padding "140px"
+       :padding-left "10px"
+       ;; :padding-right "10px"
+       ;; :margin-top "1%"
+       ;; :margin-left "1%"
+       ;; :left 0
+       ;; :top 0
+       ;; :float :center
+       ;; :padding-left "10%"
+       ;; :margin-top "3%"
+       ;; :padding-left "10px"
+       
+       }}
+
+     [:div
+      [:div {:style {:float :right}}
+       [:button.w3-button {:on-click #(swap! state dissoc :modal)} "x"]
+       ]
+      [:br]
+      (when modal
+        [doc/document state modal])]]))
+
 (defn body
   [state]
   (fn [state]
     (println "rendering body")
     [:div.w3-container {:style {
-
                                 :background-color "#090909"
                                 ;; :font-size "200%"
-
                                 }}
+
+
      
      ;; [:a {:href "/posts.edn"} "posts"]
+     
      [:div.w3-row {:id "top"}
+      ;; [modal state @(r/cursor state [:modal])] 
+      [modal state @(r/cursor state [:modal])] 
+      #_[(fn [modal]
+           [:div {:style {:position :absolute :z-index 3 :background-color "black"
+                          :color "green"
+                          :display (if @modal "block" "none")
+                          :width "80%" :height "100%"
+                          :padding-left "10px"
+                          :padding-top "10px"
+                          }}
+
+            [doc/document state @modal]])
+         (r/cursor state [:modal])]
       #_[wallet state]
       [:h1.w3-center [:a {:href "#top" :style {:text-decoration "none"}} "voidnet:://VCN88TS"]]]
 
@@ -508,6 +566,8 @@
        [controls state]]
 
       [:div#mid-col.w3-container.w3-cell {:style {:float :left :min-width "50%" :max-width "30px"}}
+       
+       
        [mid-column state]]
       
       [:div#right-col.w3-cell.w3-container.w3-border-left {:style {:float :left :height "100%" :width "20%" :max-width "30px"}}
