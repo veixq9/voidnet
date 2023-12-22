@@ -2,9 +2,7 @@
   (:require [symautre.tools.core :as t :refer [--> uuid timestamp-unix]]
             [reagent.core :as r]
             symautre.local-storage
-            [cljs-http.client :as client]
-
-            [clojure.core.async :as a]))
+            ))
 
 (defn doc
   ([]
@@ -100,18 +98,12 @@
 
                [button state doc-ratom
                 {
-                 :id "supersave"
-                 :on-click
-                 #(do (println "supersaving " @doc-ratom)
-                      (a/go (println (a/<! (client/post "/api/v0/add" {:body @doc-ratom})))))}
-                "supersave!"]
-               
-               [button state doc-ratom
-                {
                  :id "save"
                  :on-click
                  #(do (println "persisting " @doc-ratom)
                       (symautre.local-storage/set-local! [id] @doc-ratom))
+
+                 ;; (-> js/window.localStorage (.getItem :posts ))
                  }
                 "🖫"]
 
@@ -142,12 +134,17 @@
                  ;; :tooltip "pin"
 
                  :on-click
-                 #(tap> (fn[s] (do (println "toggling pin for " @doc-ratom)
-                                   (if (= (:posts/pinned @state) (:id @doc-ratom))
-                                     (swap! s dissoc :posts/pinned id)
-                                     (swap! s assoc :posts/pinned id)))))}
+                 #(tap> (fn[s] (do (println "pinning " @doc-ratom)
+                                   (symautre.local-storage/assoc-local! :posts/pinned id)
+                                   (swap! s assoc :posts/pinned id))))}
                 "🖈"]
-               ]) display]])])))]
+               ]) display] ]
+
+          ) 
+
+        ])
+     )
+   )]
 
 #_(defn document
     [document_]
@@ -198,18 +195,3 @@
 
 
 
-(comment
-  (client/post "/api/v0/add" {:body (pr-str {:author.id "johnny", :meta "author declaration", :content "", :timestamp.unix 1700646706787, :author.public-key "", :author "johnnys public key or some id", :id "0ef50a62-503b-4c16-ab68-f94c8ff65ab1", :author.email "johnny@foo.bar", :timestamp #inst "2023-11-22T09:51:46.787-00:00"})})
-
-
-
-  (a/go (println
-         (a/<! (client/post "/api/v0/add" {:body (pr-str {:author.id "johnny", :meta "author declaration", :content "", :timestamp.unix 1700646706787, :author.public-key "", :author "johnnys public key or some id", :id "0ef50a62-503b-4c16-ab68-f94c8ff65ab1", :author.email "johnny@foo.bar", :timestamp #inst "2023-11-22T09:51:46.787-00:00"})}))))
-
-  (a/go (println
-         (a/<! (client/post "/api/v0/add" {:body (pr-str "djangos")}))))
-
-  
-
-  
-  )

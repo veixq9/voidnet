@@ -28,7 +28,7 @@
   :voidnet {
             ;; :asset-path "public/voidnet"
             :modules {:main {:init-fn symautre.voidnet/init}}
-            :output-dir "resources/public/voidnet/js"
+            :output-dir "public/voidnet/js"
             :target :browser
             ;; :dev-http {8081 "public/voidnet"}
             :devtools {:after-load  symautre.voidnet/init
@@ -41,9 +41,10 @@
                        }
             }
 
-  :voidnet-node
-  {:target :node-script,
-   :output-to "public/voidnet/js/electron-init.js",
-   :main symautre.voidnet.electron-init/init
-   :port 3006}} 
+
+
+
+
+  }
+ 
  }
