@@ -16,12 +16,16 @@ heavily under construction
 ## upcoming
 note: 'this' is the closed environment in which a particular actor is operating
 
-- token temporality design
 - UI color slider
+- UI pixel art creation through embedded https://github.com/veixq9/crybrush  
+- this.view(:succint)  
+- token temporality design
 - this.deploy(token)
-- this.view(:succint)
 - this.explore(other-actor)
 - this.actions.copy(token-belonging-to-actor-x)
+
+
+
 
 ## notes
 some actors may purely be in the business of curating others' creations  
