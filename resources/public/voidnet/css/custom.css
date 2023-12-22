@@ -6,10 +6,28 @@ html{overflow-x:hidden}
 
 .fade-in-image { animation: fadeIn 5s; }
 @keyframes fadeIn {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+    0% { opacity: 0; }
+    100% { opacity: 1; }
 }
 
 
 
 .hidden { visibility: hidden; }
+
+
+
+
+.cursor-blinking {
+    /*code commented for brevity*/
+    animation: cursor-blink 1.5s steps(2) infinite;
+}
+
+@keyframes cursor-blink {
+    0% {
+	opacity: 0;
+    }
+
+    100% {
+	opacity: 1;
+    }
+}

@@ -24,11 +24,12 @@
       (get "Name")
       ))
 
-(assert (= (-> (http/post "http://localhost:3030/api/v0/add" {:body "my stuffxxe 222"})
-               deref
-               :body
-               slurp)
-           "QmWeJd6MsS48FRZC3WiX9fXNPPcBAr6NCybsH12AY3oVKk"))
+(comment
+  (assert (= (-> (http/post "http://localhost:3030/api/v0/add" {:body "my stuffxxe 222"})
+                 deref
+                 :body
+                 slurp)
+             "QmWeJd6MsS48FRZC3WiX9fXNPPcBAr6NCybsH12AY3oVKk")))
 
 
 

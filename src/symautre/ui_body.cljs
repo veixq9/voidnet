@@ -23,7 +23,6 @@
              (when (= id pinned-id) [:span.w3-right "🖈"])
              [document state id]]))))
 
-
 (defn animation-shite
   [state]
   (fn [state]
@@ -36,15 +35,18 @@
                        "rooks crows ravens dogs"
                        "taste the blank memory of void on superzero shawties  "
                        "bloodruns & foam obliviated in entropy edge"]
-                 dt 3000
-                 frame (fn [i t data_] (r/with-let [show? (r/atom false)]
-                                         [:p {:class (if (> @t (* i dt)) "fade-in-image" "hidden")} data_]))
+                 dt 2000
+                 frame (fn [i t data_] [:div {:class (if (> @t (* i dt)) "fade-in-image" "hidden")}
+                                        [:p  data_]])
 
                  interval-fn #(js/setInterval
                                (fn [] (swap! t + dt))
                                dt)
 
-                 frames (into [:div] (mapv vector (repeat frame) (range) (repeat t) data))]
+                 frames (into [:div] (mapv vector (repeat frame) (range) (repeat t) data))
+                 ]
+
+
 
       (into [:div
              [:h1 "Full Digital Anvilist"]
@@ -56,7 +58,21 @@
                         :width "30%"}
                 :src
                 "https://media.tenor.com/wE_qxJqpxj0AAAAd/nether-portal-minecraft.gif"}]
-              [:div {:style {:float :left}} frames]]]
+              
+              
+
+              [:div {:style {:float :left}} frames]
+              #_(doseq [x data]
+                  
+                  )
+              
+              
+
+              #_(r/with-let [x (atom (cycle ["■" ""]))]
+                  [(fn [t]
+                     @t
+                     (swap! x rest)
+                     [:span {:style {:display "block"}} (first @x)]) t])]]
             
             [(if-not @interval-id
                [:button.w3-button.w3-xxlarge {:on-click #(do (reset! t 0)
@@ -68,16 +84,88 @@
              [:div {:style {:clear :both}}]
              [:hr]]
 
-            )
+            ))))
 
+(defn animation-shite-2
+  [state]
+  (fn [state]
+    (r/with-let [t (r/atom 0)
+                 interval-id (r/atom nil)
+                 data ["ambient barks transduce the other"
+                       "& all the nites are obsidian"
+                       "let's liquid speech for whiles"
+                       "would this breach blink across ports enveloped in toilet horizons"
+                       "rooks crows ravens dogs"
+                       "taste the blank memory of void on superzero shawties  "
+                       "bloodruns & foam obliviated in entropy edge"]
+                 dt 2000
+                 display-data (r/atom [])
+                 data-chan-atom (atom (a/to-chan! data))
 
-      )))
+                 ]
+
+      (r/with-let [player (r/atom :stop)]
+        [:div.w3-container
+         [:h1 "Full Digital Anvilist"]
+         [:div.w3-container
+          [:img
+           {
+            :style {
+                    :float :left
+                    :width "30%"}
+            :src
+            "https://media.tenor.com/wE_qxJqpxj0AAAAd/nether-portal-minecraft.gif"}]
+          
+          
+
+          [:div.w3-container {:style {:float :left :clear :left}}
+           (conj (into [:div]
+                       (for [x @display-data]
+                         [:p {:class "fade-in-image" } x]))
+                 (when (and (= @player :play) (not (empty? @display-data)))
+                   [:span {:class "cursor-blinking"} "█"])
+                 [:br])]]
+
+         (case @player
+           :stop [:button.w3-button.w3-xxlarge
+                  {
+                   :on-click #(do
+                                (reset! display-data [])
+                                (reset! data-chan-atom (a/to-chan! data))
+                                (reset! player :play)
+                                (a/go-loop [c @data-chan-atom]
+                                  (case @player
+                                    :play
+                                    (let [x (a/<! c)]
+                                      (if (some? x)
+                                        (do  (swap! display-data conj x)
+                                             (a/<! (a/timeout dt))
+                                             (recur c))
+                                        (do (reset! player :stop)
+                                            )))
+                                    :pause
+                                    (do (a/<! (a/timeout 1000))
+                                        (recur c)))))
+                   } "⏵"]
+           
+
+           :play [:button.w3-button.w3-xxlarge
+                  {:on-click  #(do (reset! player :pause)
+                                 )}
+                  "⏸"]
+
+           :pause [:button.w3-button.w3-xxlarge {
+                                                 :on-click #(do (reset! player :play))}
+                   "⏵"])
+
+         [:br]
+         [:hr]]))))
 
 (defn misc
   [state]
   (fn [state]
     [:div
-     [animation-shite state]
+     [animation-shite-2 state]
 
      
      
@@ -98,8 +186,7 @@
 
      [:div
       [:h1.w3-h1 "pubsub model"]
-      [:h1.w3-h1 "new color new weather"]
-      ]
+      [:h1.w3-h1 "new color new weather"]]
 
      [:div
       [:h1.w3-h1 "n!structions"]
@@ -111,7 +198,7 @@
      [:p "[topic placeholder]"]
 
      [:div
-      [:h1.w3-h1 "state"] 
+      [:h1.w3-h1 "state"]
       [:p (pr-str (remove #(= :document (:type (val %))) @state))]
       [:br]
       [:p (pr-str @state)]]]))
@@ -306,7 +393,7 @@
 
 (defn tab
   [s]
-  (tap> (fn [state] (swap! state assoc-in [:tab] :content)))
+  (tap> (fn [state] (swap! state assoc-in [:tab] :misc)))
   (let [
         displayables [:content :io :misc]
         display (r/atom :content)]
@@ -407,7 +494,7 @@
      
      ;; [:a {:href "/posts.edn"} "posts"]
      [:div.w3-row {:id "top"}
-      [wallet state]
+      #_[wallet state]
       [:h1.w3-center [:a {:href "#top" :style {:text-decoration "none"}} "voidnet:://VCN88TS"]]]
 
      [:div#tab.w3-cell-row {:style {:width "100%"}}

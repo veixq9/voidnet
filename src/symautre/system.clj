@@ -12,6 +12,7 @@
     (if (some? (:http @system)) ((:http @system)))
     (swap! system assoc :http
            #_(ring.adapter.jetty/run-jetty router/app {:port 3030})
+
            (org.httpkit.server/run-server
             router/app
             #_{:port 3030}
@@ -19,4 +20,8 @@
 
     ;; (add-tap (fn [e] (swap! system update :log #(cons e %))))
     ))
+
+(comment
+  
+  (init))
 

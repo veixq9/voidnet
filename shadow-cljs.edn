@@ -28,11 +28,11 @@
   :voidnet {
             ;; :asset-path "public/voidnet"
             :modules {:main {:init-fn symautre.voidnet/init}}
-            :output-dir "public/voidnet/js"
+            :output-dir "resources/public/voidnet/js"
             :target :browser
             ;; :dev-http {8081 "public/voidnet"}
             :devtools {:after-load  symautre.voidnet/init
-                       :http-root   "public/voidnet"
+                       :http-root   "resources/public/voidnet"
                        :http-port   3005
                        ;; :preloads    [shadow.cljs.devtools.client.hud
                        ;;               day8.re-frame-10x.preload
