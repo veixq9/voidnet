@@ -7,9 +7,9 @@ create NFTs and save them to IPFS
 
 ## tech
 
-Clojure
-Clojurescript
-IPFS
-Web3
-EthereumVM
-ConvexVM
+- Clojure
+- Clojurescript
+- IPFS
+- Web3
+- EthereumVM
+- ConvexVM
