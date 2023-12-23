@@ -198,11 +198,12 @@
      [:h1.w3-h1 "trollbox"]
      [:p "[topic placeholder]"]
 
-     [:div
-      [:h1.w3-h1 "state"]
-      [:p (pr-str (remove #(= :document (:type (val %))) @state))]
-      [:br]
-      [:p (pr-str @state)]]]))
+     #_[:p (pr-str @state)]
+     #_[:div
+        [:h1.w3-h1 "state"]
+        [:p (pr-str (remove #(= :document (:type (val %))) @state))]
+        [:br]
+        [:p (pr-str @state)]]]))
 
 (defn mid-column
   [state]
@@ -527,6 +528,19 @@
       (when modal
         [doc/document state modal])]]))
 
+(defn control-bar
+  [state]
+  (r/with-let [selected (r/cursor state [:selected])]
+    (reset! selected {:id "" :controls "double click an item to interact with its methods"})
+    (fn [state]
+      (println "rendering control bar")
+      [:div.w3-container.w3-bottom {:style {:background-color "black"}}
+       #_[:p.w3-center "control bar"]
+       [:div.w3-center
+        [:span (subs (:id @selected) 0 10)]
+        (:controls @selected)]]
+      )))
+
 (defn body
   [state]
   (fn [state]
@@ -561,6 +575,10 @@
         [tab state]]
 
      [:br]
+
+     [control-bar state]
+
+
      
      [:div#columns.w3-cell-row
 

@@ -242,7 +242,7 @@
         "🖈"]
        ])))
 
-(defn document
+(defn document-old-2
   [state id]
   (fn [state id]
     (r/with-let [doc-ratom (r/cursor state [id])
@@ -259,41 +259,61 @@
          :default
          [:div
           [view @doc-ratom]])
-       [:div {:style {:float :bottom}} [buttons state doc-ratom]]
+       [:div {:style {:float :bottom}} [buttons state doc-ratom]]])))
 
-       ])
-    )
-  )
+(defn document
+  [state id]
+  (r/with-let [doc-ratom (r/cursor state [id])
+               mode (r/cursor state [:ui :edit id])
+               selected (r/cursor state [:selected])]
+    (fn [state id]
+      (println "rendering document " id)
+      [:div.w3-container {:key id
+                          :style (if (= id (:id @selected))
+                                   {
+                                    :border-right "3px solid #f44336"
+                                    }
+                                   {})
+                          :on-double-click #(do
 
-#_(defn document
-  [document_]
-  (let [doc-ratom (r/atom document_)
-        mode (r/atom :view)]
-    (fn [document_]
-      [:div
+                                              (swap! selected assoc :id id :controls [buttons state doc-ratom]))}
        (cond
          (= :edit @mode)
-         [edit doc-ratom ]
+         [edit doc-ratom mode]
+
+         (= :super-edit @mode)
+         [super-edit doc-ratom mode]
 
          :default
-         [view @doc-ratom mode]) 
+         [:div
+          [view @doc-ratom]])
+       ])))
 
-       [:div
-        [:button.w3-button.w3-border-white.w3-border {:on-click #(swap! mode (fn[mode_] (if (= mode_ :edit) :view :edit)))} "edit" ]
-        [:button.w3-button.w3-border-white.w3-border
-         {:on-click
-          #()}
-         "copy"]]]
-      )
-    ))
+#_(defn document
+    [document_]
+    (let [doc-ratom (r/atom document_)
+          mode (r/atom :view)]
+      (fn [document_]
+        [:div
+         (cond
+           (= :edit @mode)
+           [edit doc-ratom ]
+
+           :default
+           [view @doc-ratom mode]) 
+
+         [:div
+          [:button.w3-button.w3-border-white.w3-border {:on-click #(swap! mode (fn[mode_] (if (= mode_ :edit) :view :edit)))} "edit" ]
+          [:button.w3-button.w3-border-white.w3-border
+           {:on-click
+            #()}
+           "copy"]]]
+        )
+      ))
 
 
 
 (comment
-
-
-  
-
   (let [x (doc)]
     (symautre.local-storage/set-local! (:id x) x))
 
@@ -310,9 +330,3 @@
   {:author.id "johnny", :meta "author declaration", :content "", :timestamp.unix 1700647158359, :author.public-key "", :author nil, :id "0ef50a62-503b-4c16-ab68-f94c8ff65ab1", :author.email "johnny@foo.bar", :timestamp #inst "2023-11-22T09:59:18.359-00:00"}
 
   {:author.id "johnny", :meta "author declaration", :content "", :timestamp.unix 1700646706787, :author.public-key "", :author "johnnys public key or some id", :id "0ef50a62-503b-4c16-ab68-f94c8ff65ab1", :author.email "johnny@foo.bar", :timestamp #inst "2023-11-22T09:51:46.787-00:00"})
-
-
-
-
-
-
