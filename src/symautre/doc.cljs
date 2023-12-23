@@ -290,7 +290,9 @@
 
 
 (comment
-  (doc)
+
+
+  
 
   (let [x (doc)]
     (symautre.local-storage/set-local! (:id x) x))

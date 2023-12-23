@@ -295,17 +295,19 @@
               ))))
 
 (defn new-doc
-  [state]
-  (fn [state]
-    [:button.w3-btn.w3-border-white.w3-border.w3-round
-     {:on-click
+  [state & more]
+  (fn [state & more]
+    [:button.w3-btn.w3-border-white.w3-border.w3-round.w3-hover-red
+     {:style {:float :left}
+      :on-click
       #(let [new-doc (doc (select-keys @state [:actor.evm/address ]))
              id (:id new-doc)]
          (swap! state
                 (fn [state_]
                   (-> state_
                       ;; (update :doc-ids (fn [xs] (cons id xs)))
-                      (assoc id new-doc)))))} [:span "new!"]]))
+                      (assoc id new-doc)))))}
+     [:span (if (empty? more) "new" (apply str more))]]))
 
 
 
@@ -421,32 +423,32 @@
              xs)]
       )))
 
-(defn controls
-  [state]
-  (fn [state]
-    [dropdown state "controls"
-     [new-doc state]
-     [:button.w3-btn.w3-border-white.w3-border.w3-round
-      {:on-click #(tap>
-                   (fn [s]
-                     (println "saving state to local storage")
-                     (symautre.local-storage/set-local!
-                      (into {} (remove (fn [[id v]]
-                                         (not (or (map? v) (string? v) (keyword? v) (number? v))) ) @s))))
-                   )}
-      #_(symautre.local-storage/get-local)
-      "persist!"]
-     [dropdown state "view"
-      [:div {:key (t/uuid)}
-       [(fn [state]
-          [:button.w3-btn {:key (t/uuid) :on-click #(tap> (fn[s](swap! s assoc-in [:controls :view ] :port-money)))}
-           [:input {:style {} :type :radio :checked (= :port-money @(r/cursor state [:controls :view])) :on-change #()}]
-           [:span.w3-margin "port money"]]) state]]
-      [(fn [state]
-         [:button.w3-btn {:key (t/uuid) :on-click #(tap> (fn[s](swap! s assoc-in [:controls :view ] :scroll)))}
-          [:input {:style {} :type :radio :checked (= :scroll @(r/cursor state [:controls :view])) :on-change #()}]
-          [:span.w3-margin "scroll"]]) state]]])
-  )
+#_(defn controls
+    [state]
+    (fn [state]
+      [dropdown state "controls"
+       [new-doc state]
+       [:button.w3-btn.w3-border-white.w3-border.w3-round
+        {:on-click #(tap>
+                     (fn [s]
+                       (println "saving state to local storage")
+                       (symautre.local-storage/set-local!
+                        (into {} (remove (fn [[id v]]
+                                           (not (or (map? v) (string? v) (keyword? v) (number? v))) ) @s))))
+                     )}
+        #_(symautre.local-storage/get-local)
+        "persist!"]
+       [dropdown state "view"
+        [:div {:key (t/uuid)}
+         [(fn [state]
+            [:button.w3-btn {:key (t/uuid) :on-click #(tap> (fn[s](swap! s assoc-in [:controls :view ] :port-money)))}
+             [:input {:style {} :type :radio :checked (= :port-money @(r/cursor state [:controls :view])) :on-change #()}]
+             [:span.w3-margin "port money"]]) state]]
+        [(fn [state]
+           [:button.w3-btn {:key (t/uuid) :on-click #(tap> (fn[s](swap! s assoc-in [:controls :view ] :scroll)))}
+            [:input {:style {} :type :radio :checked (= :scroll @(r/cursor state [:controls :view])) :on-change #()}]
+            [:span.w3-margin "scroll"]]) state]]])
+    )
 
 (defn pinned
   [state id]
@@ -555,22 +557,34 @@
       [wallet state]
       [:h1.w3-center [:a {:href "#top" :style {:text-decoration "none"}} "voidnet:://VCN88TS"]]]
 
-     [:div#tab.w3-cell-row {:style {:width "100%"}}
-      [tab state]]
+     #_[:div#tab.w3-cell-row {:style {:width "100%"}}
+        [tab state]]
 
      [:br]
      
-     [:div#cols.w3-cell-row
+     [:div#columns.w3-cell-row
 
-      [:div#left-col.w3-cell.w3-container.w3-left {:style {:width "20%"}}
-       [controls state]]
-
-      [:div#mid-col.w3-container.w3-cell {:style {:float :left :min-width "50%" :max-width "30px"}}
+      [:div#left-column.w3-cell.w3-container.w3-left {:style {:width "20%"}}
        
+       [(fn [state]
+          [:div
+
+           [:div.w3-container [new-doc state "new!"]]
+           [:br]
+           #_[(fn [state]
+                [:div.w3-container {:style {:clear :left :float :left}}
+                 [:label {:float :right} "view:"]
+                 [:button.w3-btn {:key (t/uuid) :on-click #(tap> (fn[s](swap! s assoc-in [:controls :view ] :scroll)))}
+                  [:input {:style {} :type :radio :checked (= :scroll @(r/cursor state [:controls :view])) :on-change #()}]
+                  [:span.w3-margin "scroll"]]]) state]]) state]
+       #_[controls state]]
+
+      [:div#mid-column.w3-container.w3-cell {:style {:float :left :min-width "50%" :max-width "30px"}}
+       [tab state]
        
        [mid-column state]]
       
-      [:div#right-col.w3-cell.w3-container.w3-border-left {:style {:float :left :height "100%" :width "20%" :max-width "30px"}}
+      [:div#right-col.w3-cell.w3-container {:style {:float :left :height "100%" :width "20%" :max-width "30px"}}
        [:h1.w3-h1 "voidnet://"]
        [:p "[placeholder]"]
 

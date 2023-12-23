@@ -48,7 +48,6 @@
 
 (defn wallet
   [state]
-  (connect!)
   (r/with-let [addr (r/cursor state [:actor.evm/address])]
     (fn [state]
       [:div#wallet.w3-right
