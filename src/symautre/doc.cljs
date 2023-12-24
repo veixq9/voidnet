@@ -15,9 +15,10 @@
     :timestamp (.toString (t/timestamp))
 
 
-    :content ""
+    ;; :content ""
     :ipfs/id ""
     ;; :author nil
+    :body #{}
     })
 
   ([m]
@@ -35,7 +36,7 @@
   (fn [document_]
     (let [{:keys [title media body timestamp] :as document_} document_]
       [:div {:id title :key title}
-       [:h1.w3-h1 title]
+       [:h4.w3-bold title]
        [:span {:style {:font-style :italic}} (subs (str timestamp) 3 24)]
        
        [:div {:style {:white-space :pre-line}}
@@ -48,7 +49,8 @@
             [:p {:key (t/uuid)} x])
 
           :default
-          body)]])))
+          body
+)]])))
 
 ;;; public key address
 ;;; local storage
@@ -318,6 +320,12 @@
   (def foo (atom nil))
   (a/go
     (reset! foo (a/<! (cljs-http.client/get "/posts/posts2.edn" ))))
+  (def foo (atom nil))
+  (a/go
+    (reset! foo (a/<! (cljs-http.client/get "/posts/posts2.edn" ))))
+  (def foo (atom nil))
+  (a/go
+    (reset! foo (a/<! (cljs-http.client/get "/posts/posts2.edn" ))))
   foo
   (-> @foo :body)
 
@@ -341,7 +349,10 @@
   {:author.id "johnny", :meta "author declaration", :content "", :timestamp.unix 1700647158359, :author.public-key "", :author nil, :id "0ef50a62-503b-4c16-ab68-f94c8ff65ab1", :author.email "johnny@foo.bar", :timestamp #inst "2023-11-22T09:59:18.359-00:00"}
 
   {:author.id "johnny", :meta "author declaration", :content "", :timestamp.unix 1700646706787, :author.public-key "", :author "johnnys public key or some id", :id "0ef50a62-503b-4c16-ab68-f94c8ff65ab1", :author.email "johnny@foo.bar", :timestamp #inst "2023-11-22T09:51:46.787-00:00"})
+
 (comment
   (doc)
+  {:id "aed21d96-ddea-4352-ba33-a5f89298dcb7", :type :document, :timestamp.unix 1703390743821, :timestamp "2023-12-24T04:05:43.821Z", :content "", :ipfs/id ""}
+  
   
   )

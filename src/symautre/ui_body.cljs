@@ -549,12 +549,26 @@
     (reset! selected {:id "" :controls "click an item to interact with its methods"})
     (fn [state]
       (println "rendering control bar")
-      [:div.w3-container.w3-bottom {:style {:background-color "black"}}
-       #_[:p.w3-center "control bar"]
-       [:div.w3-center
-        [:span (subs (:id @selected) 0 10)]
-        (:controls @selected)]]
+      (when (some? @selected) 
+        [:div.w3-center.w3-black.w3-border {:style {:position :fixed
+                                                 ;; :top "90%"
+                                                 :bottom "0%"
+                                                 :left "50%"
+                                                 ;; :margin "5% auto"
+                                                 :min-height "10%"
+                                                 :width "100%"
+                                                 :transform "translateX(-50%)"
+                                                 ;; :margin-right "10%"
+                                                 ;;           :width "100%"
+                                                 }}
+         [:div {:style {:float :right}}
+          [:button.w3-button {:on-click #(swap! state dissoc :selected)} "x"]]
+         [:span (subs (:id @selected) 0 20)]
+         (:controls @selected)])
       )))
+
+     
+
 
 (defn left-column
   [state]
@@ -566,7 +580,10 @@
 
       [:div.w3-container [new-doc state "new!"]]
       [:hr]
-      [slider state]
+
+      ;; [slider state]
+      ;; [symautre.slider/randomize state]
+      [symautre.slider/slider-button state]
       [:br]
       #_[(fn [state]
            [:div.w3-container {:style {:clear :left :float :left}}
@@ -587,6 +604,22 @@
                                 ;; :background-color "#090909"
                                 ;; :font-size "200%"
                                 }}
+
+     #_[:div.w3-center.w3-black.w3-border {:style {:position :fixed
+                                                 ;; :top "90%"
+                                                 :bottom "0%"
+                                                 :left "50%"
+                                                 ;; :margin "5% auto"
+                                                 :min-height "10%"
+                                                 :width "100%"
+                                                 :transform "translateX(-50%)"
+                                                 ;; :margin-right "10%"
+                                                 ;;           :width "100%"
+                                                 }}
+        ]
+     [control-bar state]
+
+
 
 
      
@@ -614,7 +647,7 @@
 
      [:br]
 
-     [control-bar state]
+     
 
 
      
@@ -640,7 +673,6 @@
      [:br]
      [:hr]
      [footer-links state]
-     [:br]
-     ]))
+     [:br]]))
 
 

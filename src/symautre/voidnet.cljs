@@ -6,6 +6,7 @@
             [clojure.core.async :as a]
             cljs.reader
 
+            cljs.js
             [symautre.tools.core :as t]
             [symautre.content-data :refer [posts]]
             ;; [ipfs-core]
@@ -30,21 +31,69 @@
 (defn load-data!
   [state]
   (println "loading data")
-  (let [posts-map (reduce (fn [a b] (assoc a (:id b) b)) {} posts)
+  (a/go (let [
 
-        local-storage-data_ (symautre.local-storage/get-local)
-        local-storage-data (if (= 'null local-storage-data_) nil local-storage-data_)]
+              local-storage-data_ (symautre.local-storage/get-local)
+              local-storage-data (if (= 'null local-storage-data_) nil local-storage-data_)
 
-    (swap! state merge posts-map local-storage-data)
-    (swap! state assoc :posts/pinned "df4cba34-6922-4aae-90ff-521f7886d3c9")
-    (println "loading data done!")
-    #_(doseq [[id post] posts]
-        (swap! state assoc-in [id] post))
-    #_(ajax.core/GET "posts.edn" {
-                                  ;; :content-type "text/edn"
-                                  :handler #(swap! state assoc :posts.edn %)
-                                  })
-    ))
+              pf (:body (a/<! (cljs-http.client/get "/posts/posts.edn" )))
+              pf2 (:body (a/<! (cljs-http.client/get "/posts/posts2.edn" )))
+
+              
+              posts-map (reduce (fn [a b] (assoc a (:id b) b)) {} (concat posts pf pf2))
+              ]
+          (println pf)
+
+          ;; (swap! state merge posts-map local-storage-data)
+          (swap! state merge posts-map )
+          (swap! state assoc :posts/pinned "df4cba34-6922-4aae-90ff-521f7886d3c9")
+          (println "loading data done!")
+          #_(doseq [[id post] posts]
+              (swap! state assoc-in [id] post))
+          #_(ajax.core/GET "posts.edn" {
+                                        ;; :content-type "text/edn"
+                                        :handler #(swap! state assoc :posts.edn %)
+                                        })
+          )))
+
+
+
+
+
+(comment
+  (:body (get @state "aed21d96-ddea-4352-ba33-a5f89298dcb7"))
+
+
+  
+  
+  (cljs.js/eval
+   (cljs.env/default-compiler-env)
+   (quote (:body (get @state "aed21d96-ddea-4352-ba33-a5f89298dcb7")))
+
+
+   {:eval cljs.js/js-eval
+    ;; :load (partial boot/load compile-state-ref)
+    }
+   :value)
+  
+  (cljs.js/eval-str
+   (cljs.env/default-compiler-env)
+   ;; (pr-str (:body (get @state "aed21d96-ddea-4352-ba33-a5f89298dcb7")))
+   (pr-str '(cljs.core/+ 1 2))
+   "[test]"
+   {:eval cljs.js/js-eval
+    ;; :load (partial boot/load compile-state-ref)
+    }
+   print)
+
+  
+  
+  (cljs.js/eval (cljs.env/default-compiler-env) (:body (get @state "aed21d96-ddea-4352-ba33-a5f89298dcb7")) println)
+
+  (cljs.js/eval-str (cljs.env/default-compiler-env) (pr-str (:body (get @state "aed21d96-ddea-4352-ba33-a5f89298dcb7"))) println)
+  (keys @state)
+  (first @state)
+  )
 
 (defn
   ^:dev/after-load
@@ -73,6 +122,15 @@
              ))
 
 (comment
+  (keys @state)
+  (:selected @state)
+  (:control @state)
+
+  (get @state nil)
+  (:slider @state)
+  (http/get "")
+  (a/go
+    (reset! foo (a/<! (cljs-http.client/get "/posts/posts2.edn" ))))
   {:id "df4cba34-6922-4aae-90ff-521f7886d3c9", :title "P%litics", :content "", :author nil, :body ["1/2 the population believes 1/3 of the population experiences panic attacks because the other 1/2 does not exist"], :type :document}
   (:slider @state)
   (-> (js/navigator.clipboard.writeText "foo") (.then #(println %)))
