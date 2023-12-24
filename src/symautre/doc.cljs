@@ -178,7 +178,7 @@
   (fn [state doc-ratom]
     (let [id (:id @doc-ratom)
           mode (r/cursor state [:ui :edit id])]
-      [:div#buttons.w3-container.w3-cell-row.w3-tiny
+      [:div#buttons.w3-container.w3-cell-row.w3-xxlarge
 
        [button state doc-ratom  {:id "edit" :on-click #(swap! mode (fn[mode_] (if (= mode_ :edit) :view :edit)))} "✎"  ]
 
@@ -274,9 +274,8 @@
                                     :border-right "3px solid #f44336"
                                     }
                                    {})
-                          :on-double-click #(do
-
-                                              (swap! selected assoc :id id :controls [buttons state doc-ratom]))}
+                          :on-click #(do
+                                       (swap! selected assoc :id id :controls [buttons state doc-ratom]))}
        (cond
          (= :edit @mode)
          [edit doc-ratom mode]
@@ -330,3 +329,7 @@
   {:author.id "johnny", :meta "author declaration", :content "", :timestamp.unix 1700647158359, :author.public-key "", :author nil, :id "0ef50a62-503b-4c16-ab68-f94c8ff65ab1", :author.email "johnny@foo.bar", :timestamp #inst "2023-11-22T09:59:18.359-00:00"}
 
   {:author.id "johnny", :meta "author declaration", :content "", :timestamp.unix 1700646706787, :author.public-key "", :author "johnnys public key or some id", :id "0ef50a62-503b-4c16-ab68-f94c8ff65ab1", :author.email "johnny@foo.bar", :timestamp #inst "2023-11-22T09:51:46.787-00:00"})
+(comment
+  (doc)
+  
+  )
