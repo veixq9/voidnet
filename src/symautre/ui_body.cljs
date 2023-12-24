@@ -228,26 +228,40 @@
       )))
 
 
+(defn footer-links
+  [state]
+  (let [links   [{:url "https://www.tumblr.com/blog/arrowsfrom"
+                  :title "tumblr"}
 
-(def links
-  [{:url "https://www.tumblr.com/blog/arrowsfrom"
-    :title "tumblr"}
+                 {:url
+                  "https://twitter.com/veixq9"
+                  :title "twitter"}
 
-   {:url
-    "https://twitter.com/veixq9"
-    :title "twitter"}
+                 {:title "soundcloud" :url "https://soundcloud.com/veixq9"}
 
-   {:title "soundcloud" :url "https://soundcloud.com/veixq9"}
-
-   {:title "deviantart"
-    :url "https://www.deviantart.com/likebad"}
+                 {:title "deviantart"
+                  :url "https://www.deviantart.com/likebad"}
 
 
-   {:title "mastodon" :url "https://mastodon.social/@veixq9"}
+                 {:title "mastodon" :url "https://mastodon.social/@veixq9"}
 
-   {:title 
-    "github" :url "https://github.com/veixq9"}
-   ])
+                 {:title 
+                  "github" :url "https://github.com/veixq9"}
+                 ]
+        ]
+    (fn [state]
+      [:div.w3-container.w3-display-bottom-right
+       [:div.w3-cell-row.w3-container {:style {:justify-content :center :display :flex}}
+        (into [:div]
+              (for [{:keys [url title timestamp]} links]
+                [:div.w3-cell.w3-container
+                 [:a {:key url
+                      ;;:src url
+                      :href url} title]
+
+                 ]))]])))
+
+
 
 #_(defn indexes []
     (fn []
@@ -532,7 +546,7 @@
 (defn control-bar
   [state]
   (r/with-let [selected (r/cursor state [:selected])]
-    (reset! selected {:id "" :controls "double click an item to interact with its methods"})
+    (reset! selected {:id "" :controls "click an item to interact with its methods"})
     (fn [state]
       (println "rendering control bar")
       [:div.w3-container.w3-bottom {:style {:background-color "black"}}
@@ -541,6 +555,28 @@
         [:span (subs (:id @selected) 0 10)]
         (:controls @selected)]]
       )))
+
+(defn left-column
+  [state]
+  (fn [state]
+    [:div#left-column.w3-cell.w3-container.w3-left {:style {:width "20%"}}
+     
+     
+     [:div
+
+      [:div.w3-container [new-doc state "new!"]]
+      [:hr]
+      [slider state]
+      [:br]
+      #_[(fn [state]
+           [:div.w3-container {:style {:clear :left :float :left}}
+            [:label {:float :right} "view:"]
+            [:button.w3-btn {:key (t/uuid) :on-click #(tap> (fn[s](swap! s assoc-in [:controls :view ] :scroll)))}
+             [:input {:style {} :type :radio :checked (= :scroll @(r/cursor state [:controls :view])) :on-change #()}]
+             [:span.w3-margin "scroll"]]]) state]]
+
+     
+     #_[controls state]]))
 
 (defn body
   [state]
@@ -584,24 +620,7 @@
      
      [:div#columns.w3-cell-row
 
-      [:div#left-column.w3-cell.w3-container.w3-left {:style {:width "20%"}}
-       
-       
-       [(fn [state]
-          [:div
-
-           [:div.w3-container [new-doc state "new!"]]
-           [:br]
-           
-           #_[(fn [state]
-                [:div.w3-container {:style {:clear :left :float :left}}
-                 [:label {:float :right} "view:"]
-                 [:button.w3-btn {:key (t/uuid) :on-click #(tap> (fn[s](swap! s assoc-in [:controls :view ] :scroll)))}
-                  [:input {:style {} :type :radio :checked (= :scroll @(r/cursor state [:controls :view])) :on-change #()}]
-                  [:span.w3-margin "scroll"]]]) state]]) state]
-
-       [slider state]
-       #_[controls state]]
+      [left-column state]
 
       [:div#mid-column.w3-container.w3-cell {:style {:float :left :min-width "50%" :max-width "30px"}}
        [tab state]
@@ -620,16 +639,8 @@
      [:br]
      [:br]
      [:hr]
-     [:div.w3-container.w3-display-bottom-right
-      [:div.w3-cell-row.w3-container {:style {:justify-content :center :display :flex}}
-       (into [:div]
-             (for [{:keys [url title timestamp]} links]
-               [:div.w3-cell.w3-container
-                [:a {:key url
-                     ;;:src url
-                     :href url} title]
-
-                ]))]]
+     [footer-links state]
+     [:br]
      ]))
 
 
