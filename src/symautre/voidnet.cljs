@@ -25,7 +25,6 @@
   #_(:require-macros [symautre.tools.core :as t])
   )
 
-
 (enable-console-print!)
 
 (defn load-data!
@@ -37,6 +36,7 @@
         local-storage-data (if (= 'null local-storage-data_) nil local-storage-data_)]
 
     (swap! state merge posts-map local-storage-data)
+    (swap! state assoc :pinned "df4cba34-6922-4aae-90ff-521f7886d3c9")
     (println "loading data done!")
     #_(doseq [[id post] posts]
         (swap! state assoc-in [id] post))
@@ -73,9 +73,8 @@
              ))
 
 (comment
-
-  
-  
+  {:id "df4cba34-6922-4aae-90ff-521f7886d3c9", :title "P%litics", :content "", :author nil, :body ["1/2 the population believes 1/3 of the population experiences panic attacks because the other 1/2 does not exist"], :type :document}
+  (:slider @state)
   (-> (js/navigator.clipboard.writeText "foo") (.then #(println %)))
 
   (cljs.reader/read-string (:posts.edn @state))

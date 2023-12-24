@@ -6,6 +6,7 @@
    [symautre.local-storage]
    [symautre.data.sample-data]
    [symautre.web3 :refer [wallet]]
+   [symautre.slider :refer [slider]]
 
    [clojure.core.async :as a]
    [symautre.doc :as doc]))
@@ -546,7 +547,8 @@
   (fn [state]
     (println "rendering body")
     [:div.w3-container {:style {
-                                :background-color "#090909"
+                                :background-color @(r/cursor state [:slider :hex])
+                                ;; :background-color "#090909"
                                 ;; :font-size "200%"
                                 }}
 
@@ -584,17 +586,21 @@
 
       [:div#left-column.w3-cell.w3-container.w3-left {:style {:width "20%"}}
        
+       
        [(fn [state]
           [:div
 
            [:div.w3-container [new-doc state "new!"]]
            [:br]
+           
            #_[(fn [state]
                 [:div.w3-container {:style {:clear :left :float :left}}
                  [:label {:float :right} "view:"]
                  [:button.w3-btn {:key (t/uuid) :on-click #(tap> (fn[s](swap! s assoc-in [:controls :view ] :scroll)))}
                   [:input {:style {} :type :radio :checked (= :scroll @(r/cursor state [:controls :view])) :on-change #()}]
                   [:span.w3-margin "scroll"]]]) state]]) state]
+
+       [slider state]
        #_[controls state]]
 
       [:div#mid-column.w3-container.w3-cell {:style {:float :left :min-width "50%" :max-width "30px"}}
