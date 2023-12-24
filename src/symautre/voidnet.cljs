@@ -36,7 +36,7 @@
         local-storage-data (if (= 'null local-storage-data_) nil local-storage-data_)]
 
     (swap! state merge posts-map local-storage-data)
-    (swap! state assoc :pinned "df4cba34-6922-4aae-90ff-521f7886d3c9")
+    (swap! state assoc :posts/pinned "df4cba34-6922-4aae-90ff-521f7886d3c9")
     (println "loading data done!")
     #_(doseq [[id post] posts]
         (swap! state assoc-in [id] post))
