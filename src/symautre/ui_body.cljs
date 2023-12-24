@@ -672,7 +672,7 @@
      [:br]
      [:br]
      [:hr]
-     [footer-links state]
+     #_[footer-links state]
      [:br]]))
 
 
