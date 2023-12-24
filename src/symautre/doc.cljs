@@ -269,11 +269,12 @@
     (fn [state id]
       (println "rendering document " id)
       [:div.w3-container {:key id
-                          :style (if (= id (:id @selected))
-                                   {
-                                    :border-right "3px solid #f44336"
-                                    }
-                                   {})
+                          :style (merge {:min-height "100px"}
+                                        (if (= id (:id @selected))
+                                          {
+                                           :border-right "3px solid #f44336"
+                                           }
+                                          {}))
                           :on-click #(do
                                        (swap! selected assoc :id id :controls [buttons state doc-ratom]))}
        (cond
@@ -313,6 +314,17 @@
 
 
 (comment
+
+  (def foo (atom nil))
+  (a/go
+    (reset! foo (a/<! (cljs-http.client/get "/posts/posts2.edn" ))))
+  foo
+  (-> @foo :body)
+
+  [{:timestamp #inst "2023-11-24T19:31:15.317-00:00", :timestamp.unix 1700854275317, :title "Data vs Morph", :media [:iframe {:src "https://www.youtube.com/embed/p19PzA5HauY", :title "YouTube video player", :frameborder "0", :allow "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share", :allowfullscreen true}], :body ["to my knowledge all these systems implicitly or explicitly rely on an ordered sequence of actions. \nnow writing a transformation that converts these actionLogs to each other will buy you any database you want." "the thought process did not incorporate an intermediary datastructure such as JSON or EDN. so it was mostly HTTP POST & PUT requests directly mapping to storage places in tables.\n\nContent-Type: application/x-www-form-urlencoded" "with Algebra, there are multiple Voids:\nQualified Voids (Null fields) which are necessarily morphological nothings\nthere be exposure to Isomorphic indistinguishability\n(abstract walls which are ultimately the column names)\n\nwhile with pure data, types are merely symbolic links." "moving away from Tables is to go against Types & Law enforcement which scale clunkily with platonic data. \nAlgebra's simplicity is walled so: \nMatter Data |-> Algebra Morph\ngoing backwards means:\nAlgebra Morph -> Matter [Data Data]" "the dataAtom model of relationalDatabases doesn't make sense to me. since you usually get your data in document form anyway, it requires a funny conversion from document form to SQL insert form where you take each keyvalue in a document and put the value under the correct column!" "so types should be no different than a foreign key, and therefore also data.\none may need those Algebraic sophistries for other purposes such as reification of abstract computers and memory cells. but that's more a physicist's or psychoanalyst's problem."]}]
+
+  
+  
   (let [x (doc)]
     (symautre.local-storage/set-local! (:id x) x))
 
