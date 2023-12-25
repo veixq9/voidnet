@@ -37,27 +37,27 @@
                    [document state id]]))))))
 
 #_(defn doc-scrolls
-  [state]
-  (println "init doc-scrolls")
-  (fn [state]
-    (r/with-let [docs (r/cursor state [:docs])
-                 pinned-id_ (r/cursor state [:posts/pinned])]
-      
-      (let [
-            pinned-id @pinned-id_
-            doc-ids_ (remove #{pinned-id} (map :id (sort-by :timestamp.unix > (vals @docs))))
-            doc-ids (if pinned-id (cons pinned-id doc-ids_) doc-ids_)]
-        (println "render doc-scrolls")
-        ;; (println @docs)
-        ;; (println doc-ids)
-        @docs
-        (into [:div]
-              
-              (when (not (empty doc-ids))
-                (for [id doc-ids]
-                  [:div.w3-container.w3-border-bottom {:key id}
-                   (when (= id pinned-id) [:span.w3-right "🖈"])
-                   [document state id]])))))))
+    [state]
+    (println "init doc-scrolls")
+    (fn [state]
+      (r/with-let [docs (r/cursor state [:docs])
+                   pinned-id_ (r/cursor state [:posts/pinned])]
+        
+        (let [
+              pinned-id @pinned-id_
+              doc-ids_ (remove #{pinned-id} (map :id (sort-by :timestamp.unix > (vals @docs))))
+              doc-ids (if pinned-id (cons pinned-id doc-ids_) doc-ids_)]
+          (println "render doc-scrolls")
+          ;; (println @docs)
+          ;; (println doc-ids)
+          @docs
+          (into [:div]
+                
+                (when (not (empty doc-ids))
+                  (for [id doc-ids]
+                    [:div.w3-container.w3-border-bottom {:key id}
+                     (when (= id pinned-id) [:span.w3-right "🖈"])
+                     [document state id]])))))))
 
 (defn doc-scrolls-sans-pin
   [state]
