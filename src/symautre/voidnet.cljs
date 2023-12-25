@@ -35,10 +35,12 @@
               local-storage-data (if (= 'null local-storage-data_) nil local-storage-data_)
 
               posts (let [res (a/<! (cljs-http.client/get "/posts/posts.edn"))]
+                      (println res)
                       (if (:success res)
                         (:body res)
                         []))
               posts2 (let [res (a/<! (cljs-http.client/get "/posts/posts2.edn"))]
+                       (println res)
                        (if (:success res)
                          (:body res)
                          []))
