@@ -34,11 +34,21 @@
   (a/go (let [local-storage-data_ (symautre.local-storage/get-local)
               local-storage-data (if (= 'null local-storage-data_) nil local-storage-data_)
 
-              posts (:body (a/<! (cljs-http.client/get "/posts/posts.edn" )))
+              posts (let [res (a/<! (cljs-http.client/get "/posts/posts.edn"))]
+                      (if (:success res)
+                        (:body res)
+                        []))
               posts2 (:body (a/<! (cljs-http.client/get "/posts/posts2.edn" )))
 
-              posts-github (cljs.reader/read-string (:body (a/<! (cljs-http.client/get "/voidnet/resources/public/voidnet/posts/posts.edn" ))))
-              posts2-github (cljs.reader/read-string (:body (a/<! (cljs-http.client/get "/voidnet/resources/public/voidnet/posts/posts2.edn" ))))
+              
+              posts-github (let [res (a/<! (cljs-http.client/get "/voidnet/resources/public/voidnet/posts/posts.edn"))]
+                             (if (:success res)
+                               (:body res)
+                               []))
+              posts2-github (let [res (a/<! (cljs-http.client/get "/voidnet/resources/public/voidnet/posts/posts2.edn"))]
+                              (if (:success res)
+                                (:body res)
+                                []))
 
               all-posts (concat [] posts-github posts2-github posts posts2)
               _ (println all-posts)
@@ -59,7 +69,10 @@
                                         })
           )))
 
+
+
 (comment
+  (a/go (println (a/<! (cljs-http.client/get "/voidnet/resources/public/voidnet/posts/posts2.edn" ))))
   (:body (get @state "aed21d96-ddea-4352-ba33-a5f89298dcb7"))
   
   (cljs.js/eval
