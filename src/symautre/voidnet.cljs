@@ -48,11 +48,11 @@
               
               posts-github (let [res (a/<! (cljs-http.client/get "/voidnet/resources/public/voidnet/posts/posts.edn"))]
                              (if (:success res)
-                               (:body res)
+                               (cljs.reader/read-string (:body res))
                                []))
               posts2-github (let [res (a/<! (cljs-http.client/get "/voidnet/resources/public/voidnet/posts/posts2.edn"))]
                               (if (:success res)
-                                (:body res)
+                                (cljs.reader/read-string (:body res))
                                 []))
 
               all-posts (concat [] posts-github posts2-github posts posts2)
