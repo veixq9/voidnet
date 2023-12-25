@@ -21,7 +21,14 @@
     ;; (add-tap (fn [e] (swap! system update :log #(cons e %))))
     ))
 
+
+(init)
+
 (comment
-  
+
+  ::bar
+  (namespace *ns*)
+  &env
+  ns*
   (init))
 

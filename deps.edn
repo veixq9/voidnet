@@ -11,7 +11,7 @@
         reagent {:mvn/version "LATEST"}
 
         com.cognitect/transit-cljs {:mvn/version "LATEST"}
-        com.andrewmcveigh/cljs-time {:mvn/version "LATEST"}
+
 
         http-kit {:mvn/version "2.7.0"}
         ;; cljs-http {:mvn/version "0.1.46"}
@@ -71,8 +71,12 @@
         ;; enlive/enlive {:mvn/version "1.1.6"}
         ;; clj-tagsoup/clj-tagsoup {:mvn/version "LATEST"}
 
-        
-        clojure.java-time/clojure.java-time {:mvn/version "LATEST"}
+
+
+        ;; ================= time ========================================
+        tick/tick {:mvn/version "0.7.5"}
+        com.andrewmcveigh/cljs-time {:mvn/version "LATEST"}
+        ;; clojure.java-time/clojure.java-time {:mvn/version "LATEST"}
         ;; org.threeten/threeten-extra {:mvn/version "1.2"}
         
 
