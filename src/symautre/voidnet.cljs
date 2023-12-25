@@ -37,8 +37,8 @@
               posts (:body (a/<! (cljs-http.client/get "/posts/posts.edn" )))
               posts2 (:body (a/<! (cljs-http.client/get "/posts/posts2.edn" )))
 
-              posts-github (:body (a/<! (cljs-http.client/get "/voidnet/resources/public/voidnet/posts/posts.edn" )))
-              posts2-github (:body (a/<! (cljs-http.client/get "/voidnet/resources/public/voidnet/posts/posts2.edn" )))
+              posts-github (cljs.reader/read-string (:body (a/<! (cljs-http.client/get "/voidnet/resources/public/voidnet/posts/posts.edn" ))))
+              posts2-github (cljs.reader/read-string (:body (a/<! (cljs-http.client/get "/voidnet/resources/public/voidnet/posts/posts2.edn" ))))
 
               all-posts (concat [] posts-github posts2-github posts posts2)
               _ (println all-posts)
