@@ -8,7 +8,6 @@
 
             cljs.js
             [symautre.tools.core :as t]
-            [symautre.content-data :refer [posts]]
             ;; [ipfs-core]
 
 
@@ -20,7 +19,8 @@
             [symautre.ui-body :refer [body]]
             symautre.local-storage
             ajax.core
-            )
+
+            [symautre.doc :as doc])
   ;; (:import [force-graph$ForceGraph])
 
   #_(:require-macros [symautre.tools.core :as t])
@@ -31,18 +31,15 @@
 (defn load-data!
   [state]
   (println "loading data")
-  (a/go (let [
-
-              local-storage-data_ (symautre.local-storage/get-local)
+  (a/go (let [local-storage-data_ (symautre.local-storage/get-local)
               local-storage-data (if (= 'null local-storage-data_) nil local-storage-data_)
 
-              pf (:body (a/<! (cljs-http.client/get "/posts/posts.edn" )))
-              pf2 (:body (a/<! (cljs-http.client/get "/posts/posts2.edn" )))
+              posts (:body (a/<! (cljs-http.client/get "/posts/posts.edn" )))
+              posts2 (:body (a/<! (cljs-http.client/get "/posts/posts2.edn" )))
 
               
-              posts-map (reduce (fn [a b] (assoc a (:id b) b)) {} (concat posts pf pf2))
-              ]
-          (println pf)
+              posts-map (reduce (fn [a b] (assoc a (:id b) b)) {} (concat posts posts2))]
+          
 
           ;; (swap! state merge posts-map local-storage-data)
           (swap! state merge posts-map )
@@ -56,15 +53,8 @@
                                         })
           )))
 
-
-
-
-
 (comment
   (:body (get @state "aed21d96-ddea-4352-ba33-a5f89298dcb7"))
-
-
-  
   
   (cljs.js/eval
    (cljs.env/default-compiler-env)
@@ -110,18 +100,31 @@
                       (% state))))
 
 
-  (t/init-clock! state #(swap! state update :clock/counter inc) 0.01)
+  ;; (t/init-clock! state #(swap! state update :clock/counter inc) 0.01)
+
+
+  ;; TEMPORARY! SHOULD NOT BE BLOCKING
+  (a/go (a/<! (load-data! state))
+
+        (do (println "rendering view")
+            (rd/render [body state]
+                       (js/document.getElementById "main-content"))))
+
+  (let [pinned-id @(r/cursor state [:posts/pinned])
+        get-doc-ids (fn [] (println "yo") (remove #{pinned-id} (map :id (sort-by :timestamp.unix > (filter #(= :document (:type %)) (vals @state))))))]
+    @(r/track!  get-doc-ids))
 
   
-  (load-data! state)  
 
-  (println "rendering view")
-  (rd/render [body state]
-             (js/document.getElementById "main-content")
-             
-             ))
+  )
 
 (comment
+
+  (let [x (doc/doc)]
+    (swap! state assoc :foox x))
+
+  (:foo @state)
+  
   (keys @state)
   (:selected @state)
   (:control @state)

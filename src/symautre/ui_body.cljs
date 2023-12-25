@@ -9,21 +9,37 @@
    [symautre.slider :refer [slider]]
 
    [clojure.core.async :as a]
-   [symautre.doc :as doc]))
+   [symautre.doc :as doc]
+   [reagent.dom :as rd]))
 
 (declare upload-download-docs new-doc)
 
-(defn content
+(defn doc-scrolls
   [state]
-  (let [pinned-id (:posts/pinned @state)
-        doc-ids_ (remove #{pinned-id} (map :id (sort-by :timestamp.unix > (filter #(= :document (:type %)) (vals @state)))))
-        doc-ids (if pinned-id (cons pinned-id doc-ids_) doc-ids_)
-        ]
-    (into [:div]
-          (for [id doc-ids]
-            [:div.w3-container.w3-border-bottom {:key id}
-             (when (= id pinned-id) [:span.w3-right "🖈"])
-             [document state id]]))))
+  (println "init doc-scrolls")
+  (r/with-let [pinned-id @(r/cursor state [:posts/pinned])
+               doc-ids_ (remove #{pinned-id} (map :id (sort-by :timestamp.unix > (filter #(= :document (:type %)) (vals @state)))))
+               doc-ids (if pinned-id (cons pinned-id doc-ids_) doc-ids_)]
+
+    (fn [state]
+      (println "render doc-scrolls")
+      (into [:div]
+            (for [id doc-ids]
+              [:div.w3-container.w3-border-bottom {:key id}
+               (when (= id pinned-id) [:span.w3-right "🖈"])
+               [document state id]])))))
+
+(defn doc-titles
+  [state]
+  (r/with-let [pinned-id @(r/cursor state [:posts/pinned])
+               doc-ids_ (remove #{pinned-id} (map :id (sort-by :timestamp.unix > (filter #(= :document (:type %)) (vals @state)))))
+               doc-ids (if pinned-id (cons pinned-id doc-ids_) doc-ids_)]
+    (fn [state]
+      (into [:div]
+            (for [id doc-ids]
+              (when-let [title (:title (get @state id))]
+                [:div.w3-container.w3-border-bottom {:key id}
+                 [:p title]]))))))
 
 (defn animation-shite
   [state]
@@ -206,8 +222,31 @@
         [:br]
         [:p (pr-str @state)]]]))
 
+#_(defn mid-column-2
+  [state]
+  (swap! state assoc-in [:ui :body :mid-column :core :content :core] [doc-scrolls state])
+  (r/with-let [
+               mid-column_ (r/cursor state [:ui :body :mid-column])
+               content (r/cursor mid-column_ [:content])
+               tab (r/cursor state [:tab])]
+    (if-not (some? @tab) (reset! tab :content))
+    (fn [state]
+      [:div.w3-border
+       (case @tab
+         
+         :content
+         ;; @content
+         [:p "foo"]
+
+         :io
+         [upload-download-docs state]
+
+         :misc
+         [misc state])])))
+
 (defn mid-column
   [state]
+  (println "init mid-column")
   (r/with-let [tab (r/cursor state [:tab])]
     (if-not (some? @tab) (reset! tab :content))
     (fn [state]
@@ -215,17 +254,15 @@
        (case @tab
          
          :content
-         [content state]
-
+         [:div
+          [doc-scrolls state]
+          #_[doc-titles state]]
+         
          :io
          [upload-download-docs state]
 
          :misc
-         [misc state])]
-
-
-      
-      )))
+         [misc state])])))
 
 
 (defn footer-links
@@ -390,10 +427,10 @@
 
 (defn tab-item
   [state id]
+  (println "init tab item")
   (r/with-let [local-state (r/cursor state [:tab])]
     (fn [state id]
       (let [this (r/current-component)]
-        (println "hello2 " this)
         [:div {:key id
                :class (str "w3-third tablink  w3-padding")
                :style {:float :left
@@ -551,24 +588,50 @@
       (println "rendering control bar")
       (when (some? @selected) 
         [:div.w3-center.w3-black.w3-border {:style {:position :fixed
-                                                 ;; :top "90%"
-                                                 :bottom "0%"
-                                                 :left "50%"
-                                                 ;; :margin "5% auto"
-                                                 :min-height "10%"
-                                                 :width "100%"
-                                                 :transform "translateX(-50%)"
-                                                 ;; :margin-right "10%"
-                                                 ;;           :width "100%"
-                                                 }}
+                                                    ;; :top "90%"
+                                                    :bottom "0%"
+                                                    :left "50%"
+                                                    ;; :margin "5% auto"
+                                                    :min-height "10%"
+                                                    :width "100%"
+                                                    :transform "translateX(-50%)"
+                                                    ;; :margin-right "10%"
+                                                    ;;           :width "100%"
+                                                    }}
          [:div {:style {:float :right}}
           [:button.w3-button {:on-click #(swap! state dissoc :selected)} "x"]]
          [:span (subs (:id @selected) 0 20)]
          (:controls @selected)])
       )))
 
-     
 
+
+
+(defn views-controls
+  [state]
+  (fn [state]
+    (let [id "view controls" ]
+      [:div {:key id}
+       [:button.w3-border.w3-round.w3-container.w3-btn
+        {:key (t/uuid)
+         :on-click (fn []
+                     (tap>
+                      (fn[s]
+                        (swap! s update-in [:selected] merge
+                               {:id id
+                                :controls
+                                [(fn [sss]
+                                   [:div
+                                    [:button.w3-border.w3-round.w3-container.w3-btn
+                                     {:key (t/uuid)
+                                      :on-click (tap> (fn [s] (swap! s update-in [:ui :body :mid-column :content ] (constantly  [doc-scrolls]))))}
+                                     "scroll"]
+                                    [:button.w3-border.w3-round.w3-container.w3-btn
+                                     {:key (t/uuid)
+                                      :on-click (tap> (fn [s] (swap! s update-in [:ui :body :mid-column :content] (constantly  [doc-titles]) )))}
+                                     "titles"]]) state]}))))}
+        
+        "views"]])))
 
 (defn left-column
   [state]
@@ -585,6 +648,9 @@
       ;; [symautre.slider/randomize state]
       [symautre.slider/slider-button state]
       [:br]
+
+      #_[views-controls state]
+      [:br]
       #_[(fn [state]
            [:div.w3-container {:style {:clear :left :float :left}}
             [:label {:float :right} "view:"]
@@ -597,6 +663,7 @@
 
 (defn body
   [state]
+  ;; (swap! state assoc-in [:ui :body :mid-column :core] [mid-column state])
   (fn [state]
     (println "rendering body")
     [:div.w3-container {:style {
@@ -606,16 +673,16 @@
                                 }}
 
      #_[:div.w3-center.w3-black.w3-border {:style {:position :fixed
-                                                 ;; :top "90%"
-                                                 :bottom "0%"
-                                                 :left "50%"
-                                                 ;; :margin "5% auto"
-                                                 :min-height "10%"
-                                                 :width "100%"
-                                                 :transform "translateX(-50%)"
-                                                 ;; :margin-right "10%"
-                                                 ;;           :width "100%"
-                                                 }}
+                                                   ;; :top "90%"
+                                                   :bottom "0%"
+                                                   :left "50%"
+                                                   ;; :margin "5% auto"
+                                                   :min-height "10%"
+                                                   :width "100%"
+                                                   :transform "translateX(-50%)"
+                                                   ;; :margin-right "10%"
+                                                   ;;           :width "100%"
+                                                   }}
         ]
      [control-bar state]
 
@@ -627,7 +694,8 @@
      
      [:div.w3-row {:id "top"}
       ;; [modal state @(r/cursor state [:modal])] 
-      [modal state @(r/cursor state [:modal])] 
+      [modal state @(r/cursor state [:modal])]
+      
       #_[(fn [modal]
            [:div {:style {:position :absolute :z-index 3 :background-color "black"
                           :color "green"
@@ -658,7 +726,10 @@
       [:div#mid-column.w3-container.w3-cell {:style {:float :left :min-width "50%" :max-width "30px"}}
        [tab state]
        
-       [mid-column state]]
+       [mid-column state]
+       ;; @(r/cursor state [:ui :body :mid-column])
+
+       ]
       
       [:div#right-col.w3-cell.w3-container {:style {:float :left :height "100%" :width "20%" :max-width "30px"}}
        [:h1.w3-h1 "voidnet://"]
