@@ -40,7 +40,8 @@
               posts-github (:body (a/<! (cljs-http.client/get "/voidnet/resources/public/voidnet/posts/posts.edn" )))
               posts2-github (:body (a/<! (cljs-http.client/get "/voidnet/resources/public/voidnet/posts/posts2.edn" )))
 
-              all-posts (concat posts posts2 posts-github posts2-github)
+              all-posts (concat  posts-github posts2-github posts posts2)
+              _ (println all-posts)
               posts-map (reduce (fn [a b] (assoc a (:id b) b)) {} all-posts)]
           
 
