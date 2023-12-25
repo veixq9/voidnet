@@ -38,7 +38,10 @@
                       (if (:success res)
                         (:body res)
                         []))
-              posts2 (:body (a/<! (cljs-http.client/get "/posts/posts2.edn" )))
+              posts2 (let [res (a/<! (cljs-http.client/get "/posts/posts2.edn"))]
+                       (if (:success res)
+                         (:body res)
+                         []))
 
               
               posts-github (let [res (a/<! (cljs-http.client/get "/voidnet/resources/public/voidnet/posts/posts.edn"))]
