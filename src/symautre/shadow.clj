@@ -24,9 +24,7 @@
   
   (defn new-tickChannel
     [url]
-    (let url [])
-    
-    )
+    (let url []))
 
   (new-tickChannel :url "ipfs-atom://oeabfnaukf" :buffer-size )
 

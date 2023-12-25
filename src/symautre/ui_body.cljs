@@ -14,20 +14,76 @@
 
 (declare upload-download-docs new-doc)
 
+;;; could make it better by not rerendering on pin changes
+#_(defn doc-scrolls
+    [state]
+    (println "init doc-scrolls")
+    (fn [state]
+      (r/with-let [docs (r/cursor state [:docs])
+                   pinned-id @(r/cursor state [:posts/pinned])
+                   ;; doc-ids_ (remove #{pinned-id} (map :id (sort-by :timestamp.unix > (filter #(= :document (:type %)) (vals @state)))))
+                   doc-ids_ (remove #{pinned-id} (map :id (sort-by :timestamp.unix > (vals @docs))))
+                   doc-ids (if pinned-id (cons pinned-id doc-ids_) doc-ids_)]
+        (println @docs)
+        (println "render doc-scrolls")
+        (println doc-ids_)
+        (println doc-ids)
+        
+        (into [:div]
+              (when (not (empty doc-ids))
+                (for [id doc-ids]
+                  [:div.w3-container.w3-border-bottom {:key id}
+                   (when (= id pinned-id) [:span.w3-right "🖈"])
+                   [document state id]]))))))
+
+#_(defn doc-scrolls
+  [state]
+  (println "init doc-scrolls")
+  (fn [state]
+    (r/with-let [docs (r/cursor state [:docs])
+                 pinned-id_ (r/cursor state [:posts/pinned])]
+      
+      (let [
+            pinned-id @pinned-id_
+            doc-ids_ (remove #{pinned-id} (map :id (sort-by :timestamp.unix > (vals @docs))))
+            doc-ids (if pinned-id (cons pinned-id doc-ids_) doc-ids_)]
+        (println "render doc-scrolls")
+        ;; (println @docs)
+        ;; (println doc-ids)
+        @docs
+        (into [:div]
+              
+              (when (not (empty doc-ids))
+                (for [id doc-ids]
+                  [:div.w3-container.w3-border-bottom {:key id}
+                   (when (= id pinned-id) [:span.w3-right "🖈"])
+                   [document state id]])))))))
+
+(defn doc-scrolls-sans-pin
+  [state]
+  (println "init doc-scrolls")
+  (fn [state]
+    (r/with-let [docs (r/cursor state [:docs])]
+      (into [:div]
+            (for [id (keys @docs)]
+              [:div.w3-container.w3-border-bottom {:key id}
+               [document state id]])))))
+
 (defn doc-scrolls
   [state]
   (println "init doc-scrolls")
-  (r/with-let [pinned-id @(r/cursor state [:posts/pinned])
-               doc-ids_ (remove #{pinned-id} (map :id (sort-by :timestamp.unix > (filter #(= :document (:type %)) (vals @state)))))
-               doc-ids (if pinned-id (cons pinned-id doc-ids_) doc-ids_)]
+  (fn [state]
+    (r/with-let [docs (r/cursor state [:docs])]
+      (let [pinned @(r/cursor state [:posts/pinned])]
+        (into [:div
+               [:div.w3-container.w3-border-bottom {:key pinned}
+                [:span.w3-right "🖈"]
+                [document state pinned]]]
 
-    (fn [state]
-      (println "render doc-scrolls")
-      (into [:div]
-            (for [id doc-ids]
-              [:div.w3-container.w3-border-bottom {:key id}
-               (when (= id pinned-id) [:span.w3-right "🖈"])
-               [document state id]])))))
+              (for [id (remove #{pinned} (keys @docs))]
+                [:div.w3-container.w3-border-bottom {:key id}
+                 [document state id]]))))))
+
 
 (defn doc-titles
   [state]
@@ -223,26 +279,26 @@
         [:p (pr-str @state)]]]))
 
 #_(defn mid-column-2
-  [state]
-  (swap! state assoc-in [:ui :body :mid-column :core :content :core] [doc-scrolls state])
-  (r/with-let [
-               mid-column_ (r/cursor state [:ui :body :mid-column])
-               content (r/cursor mid-column_ [:content])
-               tab (r/cursor state [:tab])]
-    (if-not (some? @tab) (reset! tab :content))
-    (fn [state]
-      [:div.w3-border
-       (case @tab
-         
-         :content
-         ;; @content
-         [:p "foo"]
+    [state]
+    (swap! state assoc-in [:ui :body :mid-column :core :content :core] [doc-scrolls state])
+    (r/with-let [
+                 mid-column_ (r/cursor state [:ui :body :mid-column])
+                 content (r/cursor mid-column_ [:content])
+                 tab (r/cursor state [:tab])]
+      (if-not (some? @tab) (reset! tab :content))
+      (fn [state]
+        [:div.w3-border
+         (case @tab
+           
+           :content
+           ;; @content
+           [:p "foo"]
 
-         :io
-         [upload-download-docs state]
+           :io
+           [upload-download-docs state]
 
-         :misc
-         [misc state])])))
+           :misc
+           [misc state])])))
 
 (defn mid-column
   [state]
@@ -502,19 +558,6 @@
             [:input {:style {} :type :radio :checked (= :scroll @(r/cursor state [:controls :view])) :on-change #()}]
             [:span.w3-margin "scroll"]]) state]]])
     )
-
-(defn pinned
-  [state id]
-  (fn [state id]
-    ;; let [pinned (r/reaction (get-in @state [:posts/pinned]))]
-    [:div
-     [:h1.w3-h1 "pinned"]
-     (if (some? id)
-       [document state id]
-       [:p "placeholder"]
-       )
-     ]
-    ))
 
 #_[:post-titles
    (r/track!

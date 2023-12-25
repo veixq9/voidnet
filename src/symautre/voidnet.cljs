@@ -37,13 +37,13 @@
               posts (:body (a/<! (cljs-http.client/get "/posts/posts.edn" )))
               posts2 (:body (a/<! (cljs-http.client/get "/posts/posts2.edn" )))
 
-              
-              posts-map (reduce (fn [a b] (assoc a (:id b) b)) {} (concat posts posts2))]
+              all-posts (concat posts posts2)
+              posts-map (reduce (fn [a b] (assoc a (:id b) b)) {} all-posts)]
           
 
           ;; (swap! state merge posts-map local-storage-data)
-          (swap! state merge posts-map )
-          (swap! state assoc :posts/pinned "df4cba34-6922-4aae-90ff-521f7886d3c9")
+          (swap! state assoc :docs posts-map)
+          (swap! state assoc :posts/pinned "df4cba34-6922-4aae-90ff-521f7886d3c9") ;; rename to docs/pinned
           (println "loading data done!")
           #_(doseq [[id post] posts]
               (swap! state assoc-in [id] post))
@@ -103,20 +103,15 @@
   ;; (t/init-clock! state #(swap! state update :clock/counter inc) 0.01)
 
 
-  ;; TEMPORARY! SHOULD NOT BE BLOCKING
-  (a/go (a/<! (load-data! state))
+  (load-data! state)
 
-        (do (println "rendering view")
-            (rd/render [body state]
-                       (js/document.getElementById "main-content"))))
+  (do (println "rendering view")
+      (rd/render [body state]
+                 (js/document.getElementById "main-content")))
 
   (let [pinned-id @(r/cursor state [:posts/pinned])
         get-doc-ids (fn [] (println "yo") (remove #{pinned-id} (map :id (sort-by :timestamp.unix > (filter #(= :document (:type %)) (vals @state))))))]
-    @(r/track!  get-doc-ids))
-
-  
-
-  )
+    @(r/track!  get-doc-ids)))
 
 (comment
 
