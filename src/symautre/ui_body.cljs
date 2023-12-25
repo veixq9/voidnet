@@ -74,13 +74,14 @@
   (println "init doc-scrolls")
   (fn [state]
     (r/with-let [docs (r/cursor state [:docs])]
-      (let [pinned @(r/cursor state [:posts/pinned])]
+      (let [pinned @(r/cursor state [:posts/pinned])
+            docs-sorted (sort-by (t/>>> val :timestamp.unix) > @docs)]
         (into [:div
                [:div.w3-container.w3-border-bottom {:key pinned}
                 [:span.w3-right "🖈"]
                 [document state pinned]]]
 
-              (for [id (remove #{pinned} (keys @docs))]
+              (for [id (remove #{pinned} (keys docs-sorted))]
                 [:div.w3-container.w3-border-bottom {:key id}
                  [document state id]]))))))
 
@@ -411,11 +412,7 @@
       :on-click
       #(let [new-doc (doc (select-keys @state [:actor.evm/address ]))
              id (:id new-doc)]
-         (swap! state
-                (fn [state_]
-                  (-> state_
-                      ;; (update :doc-ids (fn [xs] (cons id xs)))
-                      (assoc id new-doc)))))}
+         (swap! state assoc-in [:docs id] new-doc))}
      [:span (if (empty? more) "new" (apply str more))]]))
 
 

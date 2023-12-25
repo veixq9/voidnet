@@ -109,14 +109,16 @@
       (rd/render [body state]
                  (js/document.getElementById "main-content")))
 
-  (let [pinned-id @(r/cursor state [:posts/pinned])
-        get-doc-ids (fn [] (println "yo") (remove #{pinned-id} (map :id (sort-by :timestamp.unix > (filter #(= :document (:type %)) (vals @state))))))]
-    @(r/track!  get-doc-ids)))
+  #_(let [pinned-id @(r/cursor state [:posts/pinned])
+          get-doc-ids (fn [] (println "yo") (remove #{pinned-id} (map :id (sort-by :timestamp.unix > (filter #(= :document (:type %)) (vals @state))))))]
+      @(r/track!  get-doc-ids))
+
+  )
 
 (comment
 
   (let [x (doc/doc)]
-    (swap! state assoc :foox x))
+    (swap! state assoc-in [:docs (:id x)] x))
 
   (:foo @state)
   
