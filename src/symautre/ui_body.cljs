@@ -98,68 +98,68 @@
                 [:div.w3-container.w3-border-bottom {:key id}
                  [:p title]]))))))
 
-(defn animation-shite
-  [state]
-  (fn [state]
-    (r/with-let [t (r/atom 0)
-                 interval-id (r/atom nil)
-                 data ["ambient barks transduce the other"
-                       "& all the nites are obsidian"
-                       "let's liquid speech for whiles"
-                       "would this breach blink across ports enveloped in toilet horizons"
-                       "rooks crows ravens dogs"
-                       "taste the blank memory of void on superzero shawties  "
-                       "bloodruns & foam obliviated in entropy edge"]
-                 dt 2000
-                 frame (fn [i t data_] [:div {:class (if (> @t (* i dt)) "fade-in-image" "hidden")}
-                                        [:p  data_]])
+#_(defn animation-shite
+    [state]
+    (fn [state]
+      (r/with-let [t (r/atom 0)
+                   interval-id (r/atom nil)
+                   data ["ambient barks transduce the other"
+                         "& all the nites are obsidian"
+                         "let's liquid speech for whiles"
+                         "would this breach blink across ports enveloped in toilet horizons"
+                         "rooks crows ravens dogs"
+                         "taste the blank memory of void on superzero shawties  "
+                         "bloodruns & foam obliviated in entropy edge"]
+                   dt 2000
+                   frame (fn [i t data_] [:div {:class (if (> @t (* i dt)) "fade-in-image" "hidden")}
+                                          [:p  data_]])
 
-                 interval-fn #(js/setInterval
-                               (fn [] (swap! t + dt))
-                               dt)
+                   interval-fn #(js/setInterval
+                                 (fn [] (swap! t + dt))
+                                 dt)
 
-                 frames (into [:div] (mapv vector (repeat frame) (range) (repeat t) data))
-                 ]
+                   frames (into [:div] (mapv vector (repeat frame) (range) (repeat t) data))
+                   ]
 
 
 
-      (into [:div
-             [:h1 "Full Digital Anvilist"]
-             [:div
-              [:img.w3-container
-               {
-                :style {
-                        :float :left
-                        :width "30%"}
-                :src
-                "https://media.tenor.com/wE_qxJqpxj0AAAAd/nether-portal-minecraft.gif"}]
+        (into [:div
+               [:h1 "Full Digital Anvilist"]
+               [:div.center
+                [:img.w3-container
+                 {
+                  ;; :style {
+                  ;;         :float :left
+                  ;;         :width "30%"}
+                  :src
+                  "https://media.tenor.com/wE_qxJqpxj0AAAAd/nether-portal-minecraft.gif"}]
+                
+                
+
+                [:div {:style {:float :left}} frames]
+                #_(doseq [x data]
+                    
+                    )
+                
+                
+
+                #_(r/with-let [x (atom (cycle ["■" ""]))]
+                    [(fn [t]
+                       @t
+                       (swap! x rest)
+                       [:span {:style {:display "block"}} (first @x)]) t])]]
               
-              
+              [(if-not @interval-id
+                 [:button.w3-button.w3-xxlarge {:on-click #(do (reset! t 0)
+                                                               (reset! interval-id (interval-fn)))}
+                  "⏵"]
+                 [:button.w3-button.w3-xxlarge {:on-click #(do (reset! t 0)
+                                                               (js/clearInterval @interval-id)
+                                                               (reset! interval-id nil))}])
+               [:div {:style {:clear :both}}]
+               [:hr]]
 
-              [:div {:style {:float :left}} frames]
-              #_(doseq [x data]
-                  
-                  )
-              
-              
-
-              #_(r/with-let [x (atom (cycle ["■" ""]))]
-                  [(fn [t]
-                     @t
-                     (swap! x rest)
-                     [:span {:style {:display "block"}} (first @x)]) t])]]
-            
-            [(if-not @interval-id
-               [:button.w3-button.w3-xxlarge {:on-click #(do (reset! t 0)
-                                                             (reset! interval-id (interval-fn)))}
-                "⏵"]
-               [:button.w3-button.w3-xxlarge {:on-click #(do (reset! t 0)
-                                                             (js/clearInterval @interval-id)
-                                                             (reset! interval-id nil))}])
-             [:div {:style {:clear :both}}]
-             [:hr]]
-
-            ))))
+              ))))
 
 (defn animation-shite-2
   [state]
@@ -185,15 +185,21 @@
          [:div.w3-container
           [:img
            {
-            :style {
-                    :float :left
-                    :width "30%"}
+            :style {:display :block
+                    :margin-left :auto
+                    :margin-right :auto
+                    :width "50%"
+                    }  #_{
+                          :float :left
+                          :width "30%"}
             :src
             "https://media.tenor.com/wE_qxJqpxj0AAAAd/nether-portal-minecraft.gif"}]
           
           
 
-          [:div.w3-container {:style {:float :left :clear :left}}
+          [:div.w3-container {:style {:float :left
+                                      ;; :clear :left
+                                      }}
            (conj (into [:div]
                        (for [x @display-data]
                          [:p {:class "fade-in-image" } x]))
@@ -753,6 +759,8 @@
      #_[:div#tab.w3-cell-row {:style {:width "100%"}}
         [tab state]]
 
+     
+     
      [:br]
 
      

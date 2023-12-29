@@ -31,8 +31,86 @@ one million days of crying on heaps of garbage
          [:p "death star"]
          [:p "parallax recursion"]]
   }
+
+ {
+  :id "c7409452-e7f0-4075-844c-75dc0ed8fb08",
+  :timestamp.unix 1703586650393,
+  :timestamp "2023-12-26T10:30:50.393889795Z",
+  :body "(fn [everything & more])"
+  :actor/public-key-ed25519
+  "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"
+  }
+
+
+ {:id "da4f8968-99cc-4106-ac99-89a25ac77239",
+  :timestamp.unix 1703668060612,
+  :timestamp "2023-12-27T09:07:40.612473625Z",
+  :body [:div.w3-container
+         [:img.w3-container {:style {:width "50%" :border-radius "10%"}
+                             :src "https://ipfs.io/ipfs/QmTXfDvieSSHno7HkwTrWcPFGDDMMZQxdwYxKdsAqNuSHF?filename=webcam_toy_photo15_by_likebad_dgmp36b-414w-2x.jpg"}]
+
+         [:img.w3-container {:style {:width "50%" :border-radius "10%" :transform "scaleY(-1) scaleX(-1)"}
+                             :src "https://ipfs.io/ipfs/QmRqjAAUYUDND82bPpGg2RQJWa5MpaNxwpZRbuZyvJtDaQ?filename=webcam_toy_photo9_by_likebad_dgmp3rp-414w-2x.jpg"}]
+         
+         ],
+  :actor/public-key-ed25519
+  "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"}
+
+ {
+  :id "4b674fdd-bd4b-4335-8111-2edd927690ee",
+  :timestamp.unix 1703748212964,
+  :timestamp "2023-12-28T07:23:32.964945586Z",
+
+  :actor/public-key-ed25519
+  "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"
+  :body "portal candy-crush angryBirds"
+  }
+
+ {:id "a525ab49-cd1b-4e6e-878a-edd009416043",
+  :timestamp.unix 1703748448942,
+  :timestamp "2023-12-28T07:27:28.942551501Z",
+  :actor/public-key-ed25519
+  "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"
+  :body ["odd in hour"
+         "slaughterhouse #5"
+         "loom video game, wizard of oz"
+         "capitalDissimulation"
+         "compπuter"]}
+
+ {:id "c43763ac-5bd2-4757-add4-ca5699c4643b",
+  :timestamp.unix 1703755088998,
+  :timestamp "2023-12-28T09:18:08.998439546Z",
+  :actor/public-key-ed25519
+  "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"
+  :post "iranian gay per-chiene malody"}
+
  
  
+ "https://c4.wallpaperflare.com/wallpaper/477/516/897/bubbles-purple-wallpaper-preview.jpg"
+
+
+ {
+  :id "d9eac6e4-0f54-4196-a7f2-51e8a2384058",
+  :timestamp.unix 1703827108507,
+  :timestamp "2023-12-29T05:18:28.507375297Z",
+  :body
+  [:div.w3-container
+   [:h1 "triVium SuiCide"]
+   [:img.w3-container {:style {:width "50%" :border-radius "10%"}
+                       :src "https://c4.wallpaperflare.com/wallpaper/477/516/897/bubbles-purple-wallpaper-preview.jpg"}]
+   [:br]
+   [:br]
+   [:br]
+   
+   ]
+  :actor/public-key-ed25519
+  "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"}
+ 
+ 
+
+
+
+
 
  ]
 

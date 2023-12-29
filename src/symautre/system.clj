@@ -1,6 +1,7 @@
 (ns symautre.system
   (:gen-class)
   (:require
+   symautre.token
    [org.httpkit.server]
    [symautre.router :as router]))
 
@@ -24,8 +25,9 @@
 
 (init)
 
-(comment
 
+
+(comment
   ::bar
   (namespace *ns*)
   &env
