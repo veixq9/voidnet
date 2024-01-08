@@ -74,6 +74,7 @@
                                         })
 
           (let [res (a/<! (cljs-http.client/get "https://vcq88ts.github.io/voidnet/resources/public/voidnet/index.html"))]
+            (println "loading " "https://vcq88ts.github.io/voidnet/resources/public/voidnet/index.html")
             (println res)
             (if (:success res)
               (do (println "foreign call successful") (:body res))
