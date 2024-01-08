@@ -72,6 +72,12 @@
                                         ;; :content-type "text/edn"
                                         :handler #(swap! state assoc :posts.edn %)
                                         })
+
+          (let [res (a/<! (cljs-http.client/get "https://vcq88ts.github.io/voidnet/resources/public/voidnet/index.html"))]
+            (println res)
+            (if (:success res)
+              (do (println "foreign call successful") (:body res))
+              []))
           )))
 
 
@@ -140,6 +146,8 @@
   )
 
 (comment
+
+  
 
   (let [x (doc/doc)]
     (swap! state assoc-in [:docs (:id x)] x))
