@@ -25,12 +25,13 @@
 
 (init)
 
-
-
 (comment
   ::bar
   (namespace *ns*)
   &env
   ns*
-  (init))
+  (init)
+  system
+  
+  )
 

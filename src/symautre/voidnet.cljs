@@ -55,7 +55,11 @@
                                 (cljs.reader/read-string (:body res))
                                 []))
 
-              all-posts (concat [] posts-github posts2-github posts posts2)
+              all-posts (concat []
+                                posts-github posts2-github
+                                posts
+                                posts2
+                                )
               _ (println all-posts)
               _ (println (type posts-github))
               _ (println (type posts2-github))
@@ -63,6 +67,7 @@
           
 
           ;; (swap! state merge posts-map local-storage-data)
+          (swap! state assoc :raw-data all-posts)
           (swap! state assoc :docs posts-map)
           (swap! state assoc :posts/pinned "df4cba34-6922-4aae-90ff-521f7886d3c9") ;; rename to docs/pinned
           (println "loading data done!")
@@ -81,9 +86,9 @@
               []))
           )))
 
-
-
 (comment
+
+  (:docs @state)
   (a/go (println (a/<! (cljs-http.client/get "/voidnet/resources/public/voidnet/posts/posts2.edn" ))))
   (:body (get @state "aed21d96-ddea-4352-ba33-a5f89298dcb7"))
   
@@ -148,7 +153,11 @@
 
 (comment
 
-  
+  (a/go (let [res (a/<! (cljs-http.client/get "/posts/posts2.edn"))]
+     (println res)
+     (if (:success res)
+       (println (:body res))
+       [])))  
 
   (let [x (doc/doc)]
     (swap! state assoc-in [:docs (:id x)] x))
