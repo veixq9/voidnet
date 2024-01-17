@@ -80,8 +80,7 @@ one million days of crying on heaps of garbage
          "slaughterhouse #5"
          "loom video game, wizard of oz"
          "capitalDissimulation"
-         "compπuter"]}b4
-
+         "compπuter"]}
  
  {
   :id "d9eac6e4-0f54-4196-a7f2-51e8a2384058",
@@ -99,6 +98,7 @@ one million days of crying on heaps of garbage
    ]
   :actor/public-key-ed25519
   "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"}
+ 
 
  {:id "c31ce9be-8be0-4117-9943-42780501e7b5",
   :timestamp.unix 1703980427704,
@@ -107,14 +107,14 @@ one million days of crying on heaps of garbage
   :actor/public-key-ed25519
   "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"}
 
- {:id "9d9924a0-df27-4c1b-94af-68f82085dfae",
-  :timestamp.unix 1703980459484,
-  :timestamp "2023-12-30T23:54:19.484348204Z",
-  :body [:p "zugangenheit ~ attitude"]
-  :actor/public-key-ed25519
-  "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"
-  
-  }
+ #_{:id "9d9924a0-df27-4c1b-94af-68f82085dfae",
+    :timestamp.unix 1703980459484,
+    :timestamp "2023-12-30T23:54:19.484348204Z",
+    :body [:p "zugangenheit ~ attitude"]
+    :actor/public-key-ed25519
+    "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"
+    
+    }
  
  {:id "87b6757c-486d-4cc5-8346-ff75a26e57cc",
   :timestamp.unix 1704467302529,
@@ -132,14 +132,15 @@ one million days of crying on heaps of garbage
   :timestamp "2024-01-06T09:54:17.782236945Z",
   :body [:p "viewer techtonics"],
   :actor/public-key-ed25519
-  "B"}
+  "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"
+  }
 
  {:id "c8a3386d-dd6f-4812-b815-d906dc73f379",
- :timestamp.unix 1704648795193,
- :timestamp "2024-01-07T17:33:15.193509246Z",
- :body #{"march into the sea" "walk into the bar"},
- :actor/public-key-ed25519
- "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"
+  :timestamp.unix 1704648795193,
+  :timestamp "2024-01-07T17:33:15.193509246Z",
+  :body #{"march into the sea" "walk into the bar"},
+  :actor/public-key-ed25519
+  "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"
 
   }
 
@@ -155,20 +156,38 @@ one million days of crying on heaps of garbage
   }
 
  {:id "67f8fdf6-f48b-4dad-98f9-3646f061c1df",
- :timestamp.unix 1704649230092,
- :timestamp "2024-01-07T17:40:30.092458310Z",
- :body "red blue tree",
- :actor/public-key-ed25519
- "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"
+  :timestamp.unix 1704649230092,
+  :timestamp "2024-01-07T17:40:30.092458310Z",
+  :body "red blue tree",
+  :actor/public-key-ed25519
+  "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"
   }
 
  {:id "e08fe457-38df-4ac4-b772-a525fdafcf15",
- :timestamp.unix 1704713617879,
- :timestamp "2024-01-08T11:33:37.880121965Z",
- :body "neon sine"
- :actor/public-key-ed25519
- "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"
+  :timestamp.unix 1704713617879,
+  :timestamp "2024-01-08T11:33:37.880121965Z",
+  :body "neon sine"
+  :actor/public-key-ed25519
+  "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"
 
+  }
+
+ {:id "5fcbf474-b681-408d-9465-bde05616ea22",
+  :timestamp.unix 1705482014584,
+  :timestamp "2024-01-17T09:00:14.584750653Z",
+  :actor/public-key-ed25519
+  "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"
+  :body "hypercube chance dice in fist, in the glass"
+
+  }
+
+ {:id "a0e165b7-cfaf-4a33-b246-4ced1ac8e413",
+  :timestamp.unix 1705482042797,
+  :timestamp "2024-01-17T09:00:42.797955992Z",
+
+  :actor/public-key-ed25519
+  "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"
+  :body "aaah aaah monad. that's interesting."
   }
  ]
 

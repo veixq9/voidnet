@@ -754,7 +754,7 @@
             [doc/document state @modal]])
          (r/cursor state [:modal])]
       [wallet state]
-      [:h1.w3-center [:a {:href "#top" :style {:text-decoration "none"}} "voidnet:://VCN88TS"]]]
+      [:h1.w3-center [:a {:href "#top" :style {:text-decoration "none"}} "VOIDGATE:://veixq9"]]]
 
      #_[:div#tab.w3-cell-row {:style {:width "100%"}}
         [tab state]]
