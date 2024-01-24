@@ -56,7 +56,7 @@
            [:div
             [:span (str (subs @addr 0 7) "..." (t/subs @addr -6 -1))]]
            [connect-btn])         
-         [:p "install metamask!"])])))
+         [:p "metamask connector"])])))
 
 
 

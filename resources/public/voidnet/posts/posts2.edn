@@ -189,9 +189,110 @@ one million days of crying on heaps of garbage
   "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"
   :body "aaah aaah monad. that's interesting."
   }
+
+ {:id "d34f680f-e6f8-45a8-8f79-250e0e38d0da",
+  :timestamp.unix 1705496369754,
+  :timestamp "2024-01-17T12:59:29.754206532Z",
+  :body "circuit maul"
+  :actor/public-key-ed25519
+  "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"
+  }
+
+ {:id "76818756-28c5-47c4-bc33-ccf4eeb2b1e5",
+  :timestamp.unix 1705497836338,
+  :timestamp "2024-01-17T13:23:56.338577522Z",
+  :body "chain bridges"
+  :actor/public-key-ed25519
+  "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"
+
+  }
+
+ {:id "e9db8d0d-0322-40a5-be43-fcd968bc3130",
+  :timestamp.unix 1705498376587,
+  :timestamp "2024-01-17T13:32:56.587851321Z",
+  :body "vacant angel tyrael"
+  :actor/public-key-ed25519
+  "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"}
+
+ {:id "0b1cf786-eb8d-436e-83ab-2c6c7673bff6",
+  :timestamp.unix 1705499869316,
+  :timestamp "2024-01-17T13:57:49.316392698Z",
+  :body "hyperdice"
+  :actor/public-key-ed25519
+  "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"}
+
+ {
+  :id "d3557d74-444f-4fcd-900a-f56aa2a2f63d",
+  :timestamp.unix 1705551540735,
+  :timestamp "2024-01-18T04:19:00.736199110Z",
+  :body [:div
+         [:p "other side conveyor belt of data"]
+         [:p "scorpion falls"]
+         [:p "6corpi9n hole-o-gram"]
+         [:p "hole-o-gram manifold"]
+         ]
+  :actor/public-key-ed25519
+  "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"}
+
+ {:id "6b9176b0-0715-4d39-b4d6-638de612735d",
+  :timestamp.unix 1705551763352,
+  :timestamp "2024-01-18T04:22:43.352455012Z",
+  :body ["or bit" "qua mechanics" "celest mechanics"]
+  :actor/public-key-ed25519
+  "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"}
+
+ {
+  :id "7cf58ac4-c42c-4194-a888-44f77ad22ac5",
+  :timestamp.unix 1705552274588,
+  :timestamp "2024-01-18T04:31:14.588919247Z",
+  :body {
+         :equivalence #{}
+         :bondage/synoname #{:wedding
+                             "spider dense-city"
+                             
+                             }
+         :bondage/instance #{}}
+  :actor/public-key-ed25519
+  "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"}
+
+ {:id "a5f661cb-3e0f-4c79-aabc-a82190367600",
+  :timestamp.unix 1705552402776,
+  :timestamp "2024-01-18T04:33:22.776740263Z",
+  :body "capital O used to be empty place"
+  :actor/public-key-ed25519
+  "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"}
+
+ {:id "7374e4cc-a386-48d5-aa54-83f196ffbe0f",
+  :timestamp.unix 1705552500317,
+  :timestamp "2024-01-18T04:35:00.317490261Z",
+  :body ["one-counters bank" "one-makers bank"]
+  :actor/public-key-ed25519
+  "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"}
+
+ {:id "8a7439fd-5606-4baa-ae61-09ada5c34c68",
+  :timestamp.unix 1705552803673,
+  :timestamp "2024-01-18T04:40:03.673652554Z",
+  :body ["delay of reaction"
+         "scales"
+         "Ω"]
+  :actor/public-key-ed25519
+  "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"
+  }
+
+ {:id "d0201b80-eee4-430e-abab-e80fd5bc6fdd",
+ :timestamp.unix 1705582612656,
+ :timestamp "2024-01-18T12:56:52.656716446Z",
+ :body ["ghost kidt" "fog of war"]
+ :actor/public-key-ed25519
+ "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"
+
+  }
+ {:id "ad5dfb9e-5d02-480e-ba7a-d577fe63ba82",
+ :timestamp.unix 1705594603192,
+ :timestamp "2024-01-18T16:16:43.192623127Z",
+  :body ["al moalim" "one faculties"]
+ :actor/public-key-ed25519
+ "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"}
+
+ 
  ]
-
-
-
-
-

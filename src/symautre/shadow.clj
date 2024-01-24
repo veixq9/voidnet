@@ -22,7 +22,7 @@
 
 (comment
   
-  (defn new-tickChannel
+  (defn new-tickChanneli
     [url]
     (let url []))
 
@@ -36,3 +36,4 @@
   (shadow/browser-repl :browser))
 
  
+
