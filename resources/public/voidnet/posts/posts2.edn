@@ -280,19 +280,77 @@ one million days of crying on heaps of garbage
   }
 
  {:id "d0201b80-eee4-430e-abab-e80fd5bc6fdd",
- :timestamp.unix 1705582612656,
- :timestamp "2024-01-18T12:56:52.656716446Z",
- :body ["ghost kidt" "fog of war"]
- :actor/public-key-ed25519
- "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"
+  :timestamp.unix 1705582612656,
+  :timestamp "2024-01-18T12:56:52.656716446Z",
+  :body ["ghost kidt" "fog of war"]
+  :actor/public-key-ed25519
+  "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"
 
   }
  {:id "ad5dfb9e-5d02-480e-ba7a-d577fe63ba82",
- :timestamp.unix 1705594603192,
- :timestamp "2024-01-18T16:16:43.192623127Z",
+  :timestamp.unix 1705594603192,
+  :timestamp "2024-01-18T16:16:43.192623127Z",
   :body ["al moalim" "one faculties"]
- :actor/public-key-ed25519
- "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"}
+  :actor/public-key-ed25519
+  "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"}
+
+ {:id "ad5dfb9e-5d02-480e-ba7a-d577fe63ba82",
+  :timestamp.unix 1705594603192,
+  :timestamp "2024-01-18T16:16:43.192623127Z",
+  :body [">>="
+         "wonung"
+         "trashtag"
+         "renew"
+         ]
+  :actor/public-key-ed25519
+  "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"}
+
+ {:id "60de9e57-fd31-43a6-8b76-e14a652a0c7f",
+  :timestamp.unix 1706380398242,
+  :timestamp "2024-01-27T18:33:18.243187561Z",
+  :body "باب
+
+بین الخرف ∅ مچژاله نیست
+
+غرق دریا غروب شراره نیست 
+
+جای مرگ حضرت فاجئهه نیست
+
+لنگ آسمون قدم فاصله نیست
+
+پیش رو وسع خاطره نیست
+
+واسه فهم لمس آینه X
+
+واسه خود خود قاسمه نیست
+
+جاذبه سوار جاذبه نیست 
+
+دوتا قاتل غیر جنازه نیست"
+  :actor/public-key-ed25519
+  "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"}
+
+ {
+  :id "b66cf466-c55a-410f-aa28-c031e17695b6",
+  :timestamp.unix 1706381740962,
+  :timestamp "2024-01-27T18:55:40.962344209Z",
+  :body "android shallow grave"
+  :actor/public-key-ed25519
+  "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"
+  }
+
+ {:id "26a1be21-72c0-4ebd-b655-2a2f6c2b5027",
+  :timestamp.unix 1706387884926,
+  :timestamp "2024-01-27T20:38:04.926655685Z",
+  :body [[:iframe {:src  "https://www.youtube.com/embed/oGPgyoRntns?si=Jf8lvWr3GPGzhVbJ&amp;clip=UgkxY8ptyCaF88zcVFzpQ8TqQJFrl04bhMpn&amp;clipt=ENDvAxjYlgQ"
+                   
+                   :title "YouTube video player", :frameborder "0", :allow "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share", :allowfullscreen true}
+          "el cid"]]
+
+  
+  :actor/public-key-ed25519
+  "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"}
+
 
  
  ]

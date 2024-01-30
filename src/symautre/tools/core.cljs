@@ -1,3 +1,4 @@
+;;; rename to index?! or what?
 (ns symautre.tools.core
   (:refer-clojure :exclude [uuid subs])
   (:require ["uuid" :as uuidjs]

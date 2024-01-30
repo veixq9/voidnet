@@ -20,7 +20,8 @@
             symautre.local-storage
             ajax.core
 
-            [symautre.doc :as doc])
+            [symautre.doc :as doc]
+            symautre.voidnet.posts)
   ;; (:import [force-graph$ForceGraph])
 
   #_(:require-macros [symautre.tools.core :as t])
@@ -50,15 +51,19 @@
                              (if (:success res)
                                (cljs.reader/read-string (:body res))
                                []))
+
               posts2-github (let [res (a/<! (cljs-http.client/get "/voidnet/resources/public/voidnet/posts/posts2.edn"))]
                               (if (:success res)
                                 (cljs.reader/read-string (:body res))
                                 []))
 
+              posts3 symautre.voidnet.posts/data
+
               all-posts (concat []
                                 posts-github posts2-github
                                 posts
                                 posts2
+                                posts3
                                 )
               _ (println all-posts)
               _ (println (type posts-github))
@@ -154,10 +159,10 @@
 (comment
 
   (a/go (let [res (a/<! (cljs-http.client/get "/posts/posts2.edn"))]
-     (println res)
-     (if (:success res)
-       (println (:body res))
-       [])))  
+          (println res)
+          (if (:success res)
+            (println (:body res))
+            [])))  
 
   (let [x (doc/doc)]
     (swap! state assoc-in [:docs (:id x)] x))

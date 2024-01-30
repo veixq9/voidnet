@@ -496,7 +496,7 @@
                        :border-bottom "5px solid grey"
                        
                        :min-width "20%"
-                       :border-color (if (= id @local-state) "red" "grey")
+                       :border-color (if (= id @local-state) "#df00a6" "grey")
                        }
                :on-click #(tap> (fn[ss] (swap! ss assoc :tab id))
                                 
@@ -670,39 +670,50 @@
                                    [:div
                                     [:button.w3-border.w3-round.w3-container.w3-btn
                                      {:key (t/uuid)
-                                      :on-click (tap> (fn [s] (swap! s update-in [:ui :body :mid-column :content ] (constantly  [doc-scrolls]))))}
+                                      :on-click #(tap> (fn [s] (swap! s update-in [:ui :body :mid-column :content ] (constantly  [doc-scrolls]))))}
                                      "scroll"]
-                                    [:button.w3-border.w3-round.w3-container.w3-btn
+                                    #_[:button.w3-border.w3-round.w3-container.w3-btn
                                      {:key (t/uuid)
                                       :on-click (tap> (fn [s] (swap! s update-in [:ui :body :mid-column :content] (constantly  [doc-titles]) )))}
-                                     "titles"]]) state]}))))}
+                                     "titles"]
+
+                                    [:button.w3-border.w3-round.w3-container.w3-btn
+                                     {:key (t/uuid)
+                                      :on-click #(tap> (fn [s] (swap! s update-in [:ui :body :mid-column :content] (constantly  [doc-titles]) )))}
+                                     "sky"]
+                                    ]) state]}))))}
         
         "views"]])))
 
+
+
 (defn left-column
-  [state]
-  (fn [state]
+  [state & more]
+  (fn [state & more]
     [:div#left-column.w3-cell.w3-container.w3-left {:style {:width "20%"}}
      
      
-     [:div
+     (into
+      [:div
 
-      [:div.w3-container [new-doc state "new!"]]
-      [:hr]
+       [:div.w3-container [new-doc state "new!"]]
+       [:hr]
 
-      ;; [slider state]
-      ;; [symautre.slider/randomize state]
-      [symautre.slider/slider-button state]
-      [:br]
-
-      #_[views-controls state]
-      [:br]
-      #_[(fn [state]
-           [:div.w3-container {:style {:clear :left :float :left}}
-            [:label {:float :right} "view:"]
-            [:button.w3-btn {:key (t/uuid) :on-click #(tap> (fn[s](swap! s assoc-in [:controls :view ] :scroll)))}
-             [:input {:style {} :type :radio :checked (= :scroll @(r/cursor state [:controls :view])) :on-change #()}]
-             [:span.w3-margin "scroll"]]]) state]]
+       ;; [slider state]
+       ;; [symautre.slider/randomize state]
+       [:div "ochannel :view content :controls pop push"]
+       [symautre.slider/slider-button state]
+       [:br]
+       #_[views-controls state]
+       [:br]
+       
+       #_[(fn [state]
+            [:div.w3-container {:style {:clear :left :float :left}}
+             [:label {:float :right} "view:"]
+             [:button.w3-btn {:key (t/uuid) :on-click #(tap> (fn[s](swap! s assoc-in [:controls :view ] :scroll)))}
+              [:input {:style {} :type :radio :checked (= :scroll @(r/cursor state [:controls :view])) :on-change #()}]
+              [:span.w3-margin "scroll"]]]) state]]
+      more)
 
      
      #_[controls state]]))
@@ -754,7 +765,7 @@
             [doc/document state @modal]])
          (r/cursor state [:modal])]
       [wallet state]
-      [:h1.w3-center [:a {:href "#top" :style {:text-decoration "none"}} "VOIDGATE:://veixq9"]]]
+      [:h1.w3-center [:a {:href "#top" :style {:text-decoration "none"}} "VOIDGATE:://VCN88TS"]]]
 
      #_[:div#tab.w3-cell-row {:style {:width "100%"}}
         [tab state]]
@@ -769,7 +780,9 @@
      
      [:div#columns.w3-cell-row
 
-      [left-column state]
+      #_[left-column state]
+      [left-column state
+       [views-controls state]]
 
       [:div#mid-column.w3-container.w3-cell {:style {:float :left :min-width "50%" :max-width "30px"}}
        [tab state]
