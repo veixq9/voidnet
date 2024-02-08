@@ -85,8 +85,38 @@
                 [:div.w3-container.w3-border-bottom {:key id}
                  [document state id]]))))))
 
+(defn doc-points
+  [state]
+  (println "init doc-scrolls")
+  (fn [state]
+    (r/with-let [docs (r/cursor state [:docs])]
+      (let [pinned @(r/cursor state [:posts/pinned])
+            docs-sorted (sort-by (t/>>> val :timestamp.unix) > @docs)]
+        (into [:div
+               [:div.w3-container.w3-border-bottom {:key pinned}
+                [:span.w3-right "🖈"]
+                [document state pinned]]]
 
-(defn doc-titles
+              (for [id (remove #{pinned} (keys docs-sorted))]
+                [:div.w3-container.w3-border-bottom {:key id}
+                 [symautre.doc/document-point state id]]))))))
+
+
+
+
+#_(defn doc-titles
+    [state]
+    (r/with-let [pinned-id @(r/cursor state [:posts/pinned])
+                 doc-ids_ (remove #{pinned-id} (map :id (sort-by :timestamp.unix > (filter #(= :document (:type %)) (vals @state)))))
+                 doc-ids (if pinned-id (cons pinned-id doc-ids_) doc-ids_)]
+      (fn [state]
+        (into [:div]
+              (for [id doc-ids]
+                (when-let [title (:title (get @state id))]
+                  [:div.w3-container.w3-border-bottom {:key id}
+                   [:p title]]))))))
+
+#_(defn doc-nodes
   [state]
   (r/with-let [pinned-id @(r/cursor state [:posts/pinned])
                doc-ids_ (remove #{pinned-id} (map :id (sort-by :timestamp.unix > (filter #(= :document (:type %)) (vals @state)))))
@@ -242,10 +272,28 @@
          [:br]
          [:hr]]))))
 
+#_(defn canvas
+    [state]
+    (swap! state assoc :canvas [:canvas {:id "canvas" :height 300}] )
+    (r/with-let [this (r/cursor state [:canvas])]
+      (fn [state]
+        (let [get-ctx #(-> (r/current-component) (.getContext "2d"))]
+          @this
+          
+          ))))
+
 (defn misc
   [state]
   (fn [state]
     [:div
+
+     #_[canvas state]
+     [:div.w3-center.w3-container
+      [:canvas.w3-border {:id "canvas" :width 400 :height 400}]]
+
+     [:br]
+
+     
      [animation-shite-2 state]
 
      
@@ -310,7 +358,8 @@
 (defn mid-column
   [state]
   (println "init mid-column")
-  (r/with-let [tab (r/cursor state [:tab])]
+  (r/with-let [tab (r/cursor state [:tab])
+               content (r/cursor state [:ui :body :mid-column :content])]
     (if-not (some? @tab) (reset! tab :content))
     (fn [state]
       [:div.w3-border
@@ -318,7 +367,9 @@
          
          :content
          [:div
-          [doc-scrolls state]
+          (or @content [doc-points state])
+          
+          #_[doc-scrolls state]
           #_[doc-titles state]]
          
          :io
@@ -508,7 +559,7 @@
 
 (defn tab
   [s]
-  (tap> (fn [state] (swap! state assoc-in [:tab] :content)))
+  (tap> (fn [state] (swap! state assoc-in [:tab] :misc)))
   (let [
         displayables [:content :io :misc]
         display (r/atom :content)]
@@ -670,22 +721,21 @@
                                    [:div
                                     [:button.w3-border.w3-round.w3-container.w3-btn
                                      {:key (t/uuid)
-                                      :on-click #(tap> (fn [s] (swap! s update-in [:ui :body :mid-column :content ] (constantly  [doc-scrolls]))))}
+                                      :on-click #(tap> (fn [s] (swap! s update-in [:ui :body :mid-column :content ] (constantly [doc-scrolls state]))))}
                                      "scroll"]
                                     #_[:button.w3-border.w3-round.w3-container.w3-btn
-                                     {:key (t/uuid)
-                                      :on-click (tap> (fn [s] (swap! s update-in [:ui :body :mid-column :content] (constantly  [doc-titles]) )))}
-                                     "titles"]
+                                       {:key (t/uuid)
+                                        :on-click (tap> (fn [s] (swap! s update-in [:ui :body :mid-column :content] (constantly  [doc-titles]) )))}
+                                       "titles"]
 
                                     [:button.w3-border.w3-round.w3-container.w3-btn
                                      {:key (t/uuid)
-                                      :on-click #(tap> (fn [s] (swap! s update-in [:ui :body :mid-column :content] (constantly  [doc-titles]) )))}
-                                     "sky"]
+                                      :on-click #(tap> (fn [s] (swap! s update-in [:ui :body :mid-column :content]
+                                                                      (constantly [doc-points state]))))}
+                                     "hovering"]
                                     ]) state]}))))}
         
         "views"]])))
-
-
 
 (defn left-column
   [state & more]
@@ -717,6 +767,14 @@
 
      
      #_[controls state]]))
+
+(defn button
+  [state {:keys [title on-click-fn]}]
+  (fn [state]
+    [:button.w3-border.w3-round.w3-container.w3-btn
+     {:on-click
+      (fn [s] (tap> on-click-fn))}
+     title]))
 
 (defn body
   [state]
@@ -782,7 +840,10 @@
 
       #_[left-column state]
       [left-column state
-       [views-controls state]]
+       [views-controls state]
+       [button state {:title "stack" :on-click-fn (fn [s])}]
+       [:br]
+       [button state {:title "UNITS" :on-click-fn (fn [s])}]]
 
       [:div#mid-column.w3-container.w3-cell {:style {:float :left :min-width "50%" :max-width "30px"}}
        [tab state]

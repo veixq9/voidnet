@@ -319,6 +319,39 @@
           [view @doc-ratom]])
        ])))
 
+(defn document-point
+  [state id]
+  (r/with-let [doc-ratom (r/cursor state [:docs id])
+               mode (r/cursor state [:ui :edit id])
+               selected (r/cursor state [:selected])]
+    (fn [state id]
+      (println "rendering document id" id)
+      ;; (println "rendering document " @doc-ratom)
+      [:div.w3-container {:key id
+                          :style (merge {:min-height "100px"}
+                                        (if (= id (:id @selected))
+                                          {
+                                           :border-right "3px solid #f44336"
+                                           }
+                                          {}))
+                          :on-click #(do
+                                       (swap! selected assoc :id id :controls [buttons state doc-ratom]))}
+       (cond
+         (= :edit @mode)
+         [edit doc-ratom mode]
+
+         (= :super-edit @mode)
+         [super-edit doc-ratom mode]
+
+         :default
+         [:div #_{:style {:position :absolute}}
+          [view @doc-ratom]])
+       ])))
+
+
+
+
+
 #_(defn document
     [document_]
     (let [doc-ratom (r/atom document_)
@@ -340,6 +373,8 @@
            "copy"]]]
         )
       ))
+
+
 
 
 

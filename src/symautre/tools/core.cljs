@@ -11,6 +11,8 @@
   []
   ((-> uuidjs .-v4)))
 
+(def $ partial)
+
 [:cell
  ;; does not work in cljs
  (defmacro cell

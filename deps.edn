@@ -86,7 +86,7 @@
         ;; ;; org.uncomplicate/clojure-sound {:mvn/version "0.3.0"}
         ;; ;; uncomplicate/clojure-sound {:mvn/version "0.4.0-SNAPSHOT"}
 
-        ;; net.mikera/core.matrix {:mvn/version "0.62.0"}
+        net.mikera/core.matrix {:mvn/version "0.63.0"}
         ;; uncomplicate/deep-diamond {:mvn/version "0.19.1"}
         ;; uncomplicate/clojurecuda {:mvn/version "0.12.0"}
         
