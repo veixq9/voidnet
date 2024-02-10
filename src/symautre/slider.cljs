@@ -104,15 +104,13 @@
     [:button.w3-border.w3-round.w3-container.w3-btn
      {:on-click
       (fn [] (tap> #(swap! state update-in [:selected]
-                           (fn [x] (if (nil? x)
+                           (fn [x] (if (= "color" (:id x))
+                                     nil
                                      {:id "color"
                                       :controls
                                       [:div
                                        [slider state]
-                                       [randomize state]]}
-                                     nil))
-
-                           )))}
+                                       [randomize state]]})))))}
      more]))
 
 (comment

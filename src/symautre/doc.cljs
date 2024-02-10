@@ -193,7 +193,7 @@
 
        [button state doc-ratom  {:id "super-edit" :on-click #(swap! mode (fn[mode_] (if (= mode_ :super-edit) :view :super-edit)))} "✎+"  ]
        
-       [button state doc-ratom  {:id "fullscreen" :on-click #(do (swap! state update-in [:modal] (fn[e] (if (nil? e) id nil))))} "⛶"] 
+       [button state doc-ratom  {:id "fullscreen" :on-click #(do (swap! state update-in [:modal] (fn[e] (if (= id e) nil id) #_(if (nil? e) id nil))))} "⛶"] 
        
        [button state doc-ratom
         {

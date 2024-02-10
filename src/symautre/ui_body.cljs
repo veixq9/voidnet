@@ -604,7 +604,9 @@
 (defn control-bar
   [state]
   (r/with-let [selected (r/cursor state [:selected])]
-    (reset! selected {:id "" :controls "click an item to interact with its methods"})
+    (reset! selected {:id "" :controls [:div
+                                        [:pre "click an item to interact with its methods"]
+                                        [:pre "NOTE: under heavy construction!"]]})
     (fn [state]
       (println "rendering control bar")
       (when (some? @selected) 
@@ -634,34 +636,38 @@
         (fn []
           (tap>
            (fn[s]
-             (swap! s update-in [:selected] merge
-                    {:id id
-                     :controls
-                     [(fn [sss]
-                        [:div
-                         [:button.w3-border.w3-round.w3-container.w3-btn
-                          {:key (t/uuid)
-                           :on-click #(tap> (fn [s] (swap! s update-in [:dom :body :mid-column :content ] (constantly [doc-scrolls state]))))}
-                          "scroll"]
-                         #_[:button.w3-border.w3-round.w3-container.w3-btn
-                            {:key (t/uuid)
-                             :on-click (tap> (fn [s] (swap! s update-in [:dom :body :mid-column :content] (constantly  [doc-titles]) )))}
-                            "titles"]
+             (swap! s update-in [:selected]
+                    (fn [selected]
+                      (if (= id (:id selected))
+                        nil
+                        (merge
+                         {:id id
+                          :controls
+                          [(fn [sss]
+                             [:div
+                              [:button.w3-border.w3-round.w3-container.w3-btn
+                               {:key (t/uuid)
+                                :on-click #(tap> (fn [s] (swap! s update-in [:dom :body :mid-column :content ] (constantly [doc-scrolls state]))))}
+                               "scroll"]
+                              #_[:button.w3-border.w3-round.w3-container.w3-btn
+                                 {:key (t/uuid)
+                                  :on-click (tap> (fn [s] (swap! s update-in [:dom :body :mid-column :content] (constantly  [doc-titles]) )))}
+                                 "titles"]
 
-                         
-                         
-                         [:button.w3-border.w3-round.w3-container.w3-btn
-                          {:key (t/uuid)
-                           :on-click #(tap> (fn [s] (swap! s update-in [:dom :body :mid-column :content]
-                                                           (constantly [doc-points state]))))}
-                          "hovering"]
+                              
+                              
+                              [:button.w3-border.w3-round.w3-container.w3-btn
+                               {:key (t/uuid)
+                                :on-click #(tap> (fn [s] (swap! s update-in [:dom :body :mid-column :content]
+                                                                (constantly [doc-points state]))))}
+                               "hovering"]
 
-                         #_[:button.w3-border.w3-round.w3-container.w3-btn
-                            {:key (t/uuid)
-                             :on-click #(tap> (fn [s] (swap! s update-in [:dom :body :mid-column :content]
-                                                             (constantly [doc-points state]))))}
-                            "succint"]
-                         ]) state]}))))
+                              #_[:button.w3-border.w3-round.w3-container.w3-btn
+                                 {:key (t/uuid)
+                                  :on-click #(tap> (fn [s] (swap! s update-in [:dom :body :mid-column :content]
+                                                                  (constantly [doc-points state]))))}
+                                 "succint"]
+                              ]) state]})))))))
         #_(fn [] (tap> #(swap! state assoc-in [:selected]
                                {:id "color"
                                 :controls
