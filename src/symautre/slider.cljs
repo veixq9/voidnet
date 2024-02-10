@@ -99,19 +99,21 @@
 
 (defn slider-button
   "rgba"
-  [state]
-  (fn [state]
+  [state & more]
+  (fn [state & more]
     [:button.w3-border.w3-round.w3-container.w3-btn
      {:on-click
-      (fn [] (tap> #(swap! state assoc-in [:selected]
-                           {:id "color"
-                            :controls
-                            [:div
-                             [slider state]
-                             [randomize state]]}
+      (fn [] (tap> #(swap! state update-in [:selected]
+                           (fn [x] (if (nil? x)
+                                     {:id "color"
+                                      :controls
+                                      [:div
+                                       [slider state]
+                                       [randomize state]]}
+                                     nil))
 
                            )))}
-     "color"]))
+     more]))
 
 (comment
 

@@ -35,39 +35,39 @@
   (a/go (let [local-storage-data_ (symautre.local-storage/get-local)
               local-storage-data (if (= 'null local-storage-data_) nil local-storage-data_)
 
-              posts (let [res (a/<! (cljs-http.client/get "/posts/posts.edn"))]
-                      (println res)
-                      (if (:success res)
-                        (:body res)
-                        []))
-              posts2 (let [res (a/<! (cljs-http.client/get "/posts/posts2.edn"))]
-                       (println res)
-                       (if (:success res)
-                         (:body res)
-                         []))
+              ;; posts (let [res (a/<! (cljs-http.client/get "/posts/posts.edn"))]
+              ;;         (println res)
+              ;;         (if (:success res)
+              ;;           (:body res)
+              ;;           []))
+              ;; posts2 (let [res (a/<! (cljs-http.client/get "/posts/posts2.edn"))]
+              ;;          (println res)
+              ;;          (if (:success res)
+              ;;            (:body res)
+              ;;            []))
 
               
-              posts-github (let [res (a/<! (cljs-http.client/get "/voidnet/resources/public/voidnet/posts/posts.edn"))]
-                             (if (:success res)
-                               (cljs.reader/read-string (:body res))
-                               []))
+              ;; posts-github (let [res (a/<! (cljs-http.client/get "/voidnet/resources/public/voidnet/posts/posts.edn"))]
+              ;;                (if (:success res)
+              ;;                  (cljs.reader/read-string (:body res))
+              ;;                  []))
 
-              posts2-github (let [res (a/<! (cljs-http.client/get "/voidnet/resources/public/voidnet/posts/posts2.edn"))]
-                              (if (:success res)
-                                (cljs.reader/read-string (:body res))
-                                []))
+              ;; posts2-github (let [res (a/<! (cljs-http.client/get "/voidnet/resources/public/voidnet/posts/posts2.edn"))]
+              ;;                 (if (:success res)
+              ;;                   (cljs.reader/read-string (:body res))
+              ;;                   []))
 
               posts3 symautre.voidnet.posts/data
 
               all-posts (concat []
-                                posts-github posts2-github
-                                posts
-                                posts2
+                                ;; posts-github posts2-github
+                                ;; posts
+                                ;; posts2
                                 posts3
                                 )
-              _ (println all-posts)
-              _ (println (type posts-github))
-              _ (println (type posts2-github))
+              ;; _ (println all-posts)
+              ;; _ (println (type posts-github))
+              ;; _ (println (type posts2-github))
               posts-map (reduce (fn [a b] (assoc a (:id b) b)) {} all-posts)]
           
 

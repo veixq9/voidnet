@@ -34,8 +34,8 @@
 (defn- view
   [document_]
   (fn [document_]
-    (let [{:keys [title media body timestamp] :as document_} document_]
-      [:div {:id title :key title}
+    (let [{:keys [id title body timestamp] :as document_} document_]
+      [:div {:id id :key id}
        [:h4.w3-bold title]
        [:span {:style {:font-style :italic}} (subs (str timestamp) 3 24)]
        
@@ -50,7 +50,7 @@
 
           :default
           body
-)]])))
+          )]])))
 
 ;;; public key address
 ;;; local storage
@@ -186,7 +186,7 @@
 
        [button state doc-ratom  {:id "super-edit" :on-click #(swap! mode (fn[mode_] (if (= mode_ :super-edit) :view :super-edit)))} "✎+"  ]
        
-       [button state doc-ratom  {:id "fullscreen" :on-click #(do (swap! state assoc :modal id))} "⛶"]
+       [button state doc-ratom  {:id "fullscreen" :on-click #(do (swap! state update-in [:modal] (fn[e] (if (nil? e) id nil))))} "⛶"] 
        
        [button state doc-ratom
         {
@@ -320,37 +320,56 @@
        ])))
 
 (defn document-point
-  [state id]
+  [state id & more]
   (r/with-let [doc-ratom (r/cursor state [:docs id])
                mode (r/cursor state [:ui :edit id])
                selected (r/cursor state [:selected])]
     (fn [state id]
       (println "rendering document id" id)
       ;; (println "rendering document " @doc-ratom)
-      [:div.w3-container {:key id
-                          :style (merge {:min-height "100px"}
-                                        (if (= id (:id @selected))
-                                          {
-                                           :border-right "3px solid #f44336"
-                                           }
-                                          {}))
-                          :on-click #(do
-                                       (swap! selected assoc :id id :controls [buttons state doc-ratom]))}
-       (cond
-         (= :edit @mode)
-         [edit doc-ratom mode]
+      [:div.w3-container.w3-margin.w3-border {:key id
+                                              :style (merge {
+                                                             ;; :overflow-x :break-word
+                                                             :overflow-wrap :break-word
+                                                             :overflow-y :hidden
+                                                             :text-overflow-y :ellipsis
+                                                             :width "200px"
+                                                             :height "200px"
+                                                             ;; :height "20%"
+                                                             ;; :max-height "300px"
+                                                             ;; :min-height "200px"
+                                                             ;; :max-width "300px"
+                                                             ;; :min-width "200px"
+                                                             :float :left
 
-         (= :super-edit @mode)
-         [super-edit doc-ratom mode]
+                                                             }
+                                                            (if (= id (:id @selected))
+                                                              {:background-color "rgba(255,0,0,0.1)"}
+                                                              #_{:border-color "#8b0000"
+                                                                 :border-right-style "solid"
+                                                                 :border-side :right}
+                                                              {}))
+                                              :on-click #(do
+                                                           (swap! selected assoc :id id :controls [buttons state doc-ratom]))}
+       (into
+        (cond
+          (= :edit @mode)
+          [edit doc-ratom mode]
 
-         :default
-         [:div #_{:style {:position :absolute}}
-          [view @doc-ratom]])
+          (= :super-edit @mode)
+          [super-edit doc-ratom mode]
+
+          :default
+          [:div
+           [view @doc-ratom]
+           #_[(fn [document_]
+                (let [{:keys [id title body timestamp] :as document_} document_]
+                  [:div {:id id :key id}
+                   [:p (str body)]
+                   ]))  @doc-ratom]])
+        more
+        )
        ])))
-
-
-
-
 
 #_(defn document
     [document_]

@@ -87,109 +87,31 @@
 
 (defn doc-points
   [state]
-  (println "init doc-scrolls")
+  (println "init doc-points")
   (fn [state]
     (r/with-let [docs (r/cursor state [:docs])]
       (let [pinned @(r/cursor state [:posts/pinned])
             docs-sorted (sort-by (t/>>> val :timestamp.unix) > @docs)]
-        (into [:div
-               [:div.w3-container.w3-border-bottom {:key pinned}
-                [:span.w3-right "🖈"]
-                [document state pinned]]]
+        (into [:div.w3-container {:id "doc-points"}
+
+               [:div {:id pinned :key pinned
+                      :style {
+                              :float :left ;; :background-color "blue"
+                              }
+                      }
+                ;; [:span {:style { :float :left}} "foo"]
+                [symautre.doc/document-point state pinned ]
+                ]]
 
               (for [id (remove #{pinned} (keys docs-sorted))]
-                [:div.w3-container.w3-border-bottom {:key id}
-                 [symautre.doc/document-point state id]]))))))
+                [symautre.doc/document-point state id]))
+
+
+        ))))
 
 
 
 
-#_(defn doc-titles
-    [state]
-    (r/with-let [pinned-id @(r/cursor state [:posts/pinned])
-                 doc-ids_ (remove #{pinned-id} (map :id (sort-by :timestamp.unix > (filter #(= :document (:type %)) (vals @state)))))
-                 doc-ids (if pinned-id (cons pinned-id doc-ids_) doc-ids_)]
-      (fn [state]
-        (into [:div]
-              (for [id doc-ids]
-                (when-let [title (:title (get @state id))]
-                  [:div.w3-container.w3-border-bottom {:key id}
-                   [:p title]]))))))
-
-#_(defn doc-nodes
-  [state]
-  (r/with-let [pinned-id @(r/cursor state [:posts/pinned])
-               doc-ids_ (remove #{pinned-id} (map :id (sort-by :timestamp.unix > (filter #(= :document (:type %)) (vals @state)))))
-               doc-ids (if pinned-id (cons pinned-id doc-ids_) doc-ids_)]
-    (fn [state]
-      (into [:div]
-            (for [id doc-ids]
-              (when-let [title (:title (get @state id))]
-                [:div.w3-container.w3-border-bottom {:key id}
-                 [:p title]]))))))
-
-#_(defn animation-shite
-    [state]
-    (fn [state]
-      (r/with-let [t (r/atom 0)
-                   interval-id (r/atom nil)
-                   data ["ambient barks transduce the other"
-                         "& all the nites are obsidian"
-                         "let's liquid speech for whiles"
-                         "would this breach blink across ports enveloped in toilet horizons"
-                         "rooks crows ravens dogs"
-                         "taste the blank memory of void on superzero shawties  "
-                         "bloodruns & foam obliviated in entropy edge"]
-                   dt 2000
-                   frame (fn [i t data_] [:div {:class (if (> @t (* i dt)) "fade-in-image" "hidden")}
-                                          [:p  data_]])
-
-                   interval-fn #(js/setInterval
-                                 (fn [] (swap! t + dt))
-                                 dt)
-
-                   frames (into [:div] (mapv vector (repeat frame) (range) (repeat t) data))
-                   ]
-
-
-
-        (into [:div
-               [:h1 "Full Digital Anvilist"]
-               [:div.center
-                [:img.w3-container
-                 {
-                  ;; :style {
-                  ;;         :float :left
-                  ;;         :width "30%"}
-                  :src
-                  "https://media.tenor.com/wE_qxJqpxj0AAAAd/nether-portal-minecraft.gif"}]
-                
-                
-
-                [:div {:style {:float :left}} frames]
-                #_(doseq [x data]
-                    
-                    )
-                
-                
-
-                #_(r/with-let [x (atom (cycle ["■" ""]))]
-                    [(fn [t]
-                       @t
-                       (swap! x rest)
-                       [:span {:style {:display "block"}} (first @x)]) t])]]
-              
-              [(if-not @interval-id
-                 [:button.w3-button.w3-xxlarge {:on-click #(do (reset! t 0)
-                                                               (reset! interval-id (interval-fn)))}
-                  "⏵"]
-                 [:button.w3-button.w3-xxlarge {:on-click #(do (reset! t 0)
-                                                               (js/clearInterval @interval-id)
-                                                               (reset! interval-id nil))}])
-               [:div {:style {:clear :both}}]
-               [:hr]]
-
-              ))))
 
 (defn animation-shite-2
   [state]
@@ -335,9 +257,9 @@
 
 #_(defn mid-column-2
     [state]
-    (swap! state assoc-in [:ui :body :mid-column :core :content :core] [doc-scrolls state])
+    (swap! state assoc-in [:dom :body :mid-column :core :content :core] [doc-scrolls state])
     (r/with-let [
-                 mid-column_ (r/cursor state [:ui :body :mid-column])
+                 mid-column_ (r/cursor state [:dom :body :mid-column])
                  content (r/cursor mid-column_ [:content])
                  tab (r/cursor state [:tab])]
       (if-not (some? @tab) (reset! tab :content))
@@ -359,7 +281,7 @@
   [state]
   (println "init mid-column")
   (r/with-let [tab (r/cursor state [:tab])
-               content (r/cursor state [:ui :body :mid-column :content])]
+               content (r/cursor state [:dom :body :mid-column :content])]
     (if-not (some? @tab) (reset! tab :content))
     (fn [state]
       [:div.w3-border
@@ -367,7 +289,7 @@
          
          :content
          [:div
-          (or @content [doc-points state])
+          (or @content [doc-scrolls state])
           
           #_[doc-scrolls state]
           #_[doc-titles state]]
@@ -559,7 +481,7 @@
 
 (defn tab
   [s]
-  (tap> (fn [state] (swap! state assoc-in [:tab] :misc)))
+  (tap> (fn [state] (swap! state assoc-in [:tab] :content)))
   (let [
         displayables [:content :io :misc]
         display (r/atom :content)]
@@ -639,14 +561,15 @@
   (fn [state modal]
     [:div.w3-container.w3-border
      {:style
-      {:position :absolute
-       :z-index 3
+      {:position :fixed
+       :overflow :auto
+       :z-index 1
        :background-color "#090909"
        ;; :background-color "darkblue"
        ;; :color "green"
        :display (if modal "block" "none")
        :width "80%"
-       ;; :height "100%"
+       :height "80%"
        :top "5%"
        :left "10%"
        ;; :bottom 0
@@ -669,13 +592,14 @@
        
        }}
 
-     [:div
-      [:div {:style {:float :right}}
-       [:button.w3-button {:on-click #(swap! state dissoc :modal)} "x"]
-       ]
-      [:br]
-      (when modal
-        [doc/document state modal])]]))
+     [:div.w3-right #_{:style {:position :fixed}}
+      [:div.w3-cell.w3-right
+       [:button.w3-button.w3-right {
+                                    :style {:float :right}
+                                    :on-click #(swap! state dissoc :modal)} "x"]]]
+     [:br]
+     (when modal
+       [doc/document state modal])]))
 
 (defn control-bar
   [state]
@@ -698,72 +622,66 @@
          [:div {:style {:float :right}}
           [:button.w3-button {:on-click #(swap! state dissoc :selected)} "x"]]
          [:span (subs (:id @selected) 0 20)]
-         (:controls @selected)])
-      )))
-
-
+         (:controls @selected)]))))
 
 
 (defn views-controls
   [state]
   (fn [state]
     (let [id "view controls" ]
-      [:div {:key id}
-       [:button.w3-border.w3-round.w3-container.w3-btn
-        {:key (t/uuid)
-         :on-click (fn []
-                     (tap>
-                      (fn[s]
-                        (swap! s update-in [:selected] merge
-                               {:id id
-                                :controls
-                                [(fn [sss]
-                                   [:div
-                                    [:button.w3-border.w3-round.w3-container.w3-btn
-                                     {:key (t/uuid)
-                                      :on-click #(tap> (fn [s] (swap! s update-in [:ui :body :mid-column :content ] (constantly [doc-scrolls state]))))}
-                                     "scroll"]
-                                    #_[:button.w3-border.w3-round.w3-container.w3-btn
-                                       {:key (t/uuid)
-                                        :on-click (tap> (fn [s] (swap! s update-in [:ui :body :mid-column :content] (constantly  [doc-titles]) )))}
-                                       "titles"]
+      [:button.w3-border.w3-round.w3-container.w3-btn
+       {:on-click
+        (fn []
+          (tap>
+           (fn[s]
+             (swap! s update-in [:selected] merge
+                    {:id id
+                     :controls
+                     [(fn [sss]
+                        [:div
+                         [:button.w3-border.w3-round.w3-container.w3-btn
+                          {:key (t/uuid)
+                           :on-click #(tap> (fn [s] (swap! s update-in [:dom :body :mid-column :content ] (constantly [doc-scrolls state]))))}
+                          "scroll"]
+                         #_[:button.w3-border.w3-round.w3-container.w3-btn
+                            {:key (t/uuid)
+                             :on-click (tap> (fn [s] (swap! s update-in [:dom :body :mid-column :content] (constantly  [doc-titles]) )))}
+                            "titles"]
 
-                                    [:button.w3-border.w3-round.w3-container.w3-btn
-                                     {:key (t/uuid)
-                                      :on-click #(tap> (fn [s] (swap! s update-in [:ui :body :mid-column :content]
-                                                                      (constantly [doc-points state]))))}
-                                     "hovering"]
-                                    ]) state]}))))}
-        
-        "views"]])))
+                         
+                         
+                         [:button.w3-border.w3-round.w3-container.w3-btn
+                          {:key (t/uuid)
+                           :on-click #(tap> (fn [s] (swap! s update-in [:dom :body :mid-column :content]
+                                                           (constantly [doc-points state]))))}
+                          "hovering"]
+
+                         #_[:button.w3-border.w3-round.w3-container.w3-btn
+                            {:key (t/uuid)
+                             :on-click #(tap> (fn [s] (swap! s update-in [:dom :body :mid-column :content]
+                                                             (constantly [doc-points state]))))}
+                            "succint"]
+                         ]) state]}))))
+        #_(fn [] (tap> #(swap! state assoc-in [:selected]
+                               {:id "color"
+                                :controls
+                                [:div
+                                 [slider state]
+                                 [randomize state]]}
+
+                               )))}
+       "views"]))
+  )
 
 (defn left-column
   [state & more]
   (fn [state & more]
     [:div#left-column.w3-cell.w3-container.w3-left {:style {:width "20%"}}
      
+
+     (into [:div]  (interpose [:div [:br]] more))
+
      
-     (into
-      [:div
-
-       [:div.w3-container [new-doc state "new!"]]
-       [:hr]
-
-       ;; [slider state]
-       ;; [symautre.slider/randomize state]
-       [:div "ochannel :view content :controls pop push"]
-       [symautre.slider/slider-button state]
-       [:br]
-       #_[views-controls state]
-       [:br]
-       
-       #_[(fn [state]
-            [:div.w3-container {:style {:clear :left :float :left}}
-             [:label {:float :right} "view:"]
-             [:button.w3-btn {:key (t/uuid) :on-click #(tap> (fn[s](swap! s assoc-in [:controls :view ] :scroll)))}
-              [:input {:style {} :type :radio :checked (= :scroll @(r/cursor state [:controls :view])) :on-change #()}]
-              [:span.w3-margin "scroll"]]]) state]]
-      more)
 
      
      #_[controls state]]))
@@ -778,7 +696,7 @@
 
 (defn body
   [state]
-  ;; (swap! state assoc-in [:ui :body :mid-column :core] [mid-column state])
+  ;; (swap! state assoc-in [:dom :body :mid-column :core] [mid-column state])
   (fn [state]
     (println "rendering body")
     [:div.w3-container {:style {
@@ -840,16 +758,23 @@
 
       #_[left-column state]
       [left-column state
+       [symautre.slider/slider-button state "theme"]
        [views-controls state]
-       [button state {:title "stack" :on-click-fn (fn [s])}]
-       [:br]
-       [button state {:title "UNITS" :on-click-fn (fn [s])}]]
+
+       (comment
+         [:hr]
+         [button state {:title "stack" :on-click-fn (fn [s])}]
+         [button state {:title "UNITS" :on-click-fn (fn [s])}]
+         [button state {:title "blocktime" :on-click-fn (fn [s])}])
+
+]
+      
 
       [:div#mid-column.w3-container.w3-cell {:style {:float :left :min-width "50%" :max-width "30px"}}
        [tab state]
        
        [mid-column state]
-       ;; @(r/cursor state [:ui :body :mid-column])
+       ;; @(r/cursor state [:dom :body :mid-column])
 
        ]
       
