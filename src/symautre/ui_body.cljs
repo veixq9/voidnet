@@ -31,7 +31,7 @@
   (r/with-let [docs (r/cursor state [:docs])
                pinned-CURSOR (r/cursor state [:posts/pinned])]
     (fn [state]
-      (let [docs-sorted (sort-by (t/>>> val :timestamp.unix) > @docs)
+      (let [docs-sorted (sort-by (t/>>> val :timestamp) > @docs)
             pinned @pinned-CURSOR]
         (into [:div
                [:div.w3-container.w3-border-bottom {:key pinned}
@@ -48,7 +48,7 @@
   (fn [state]
     (r/with-let [docs (r/cursor state [:docs])]
       (let [pinned @(r/cursor state [:posts/pinned])
-            docs-sorted (sort-by (t/>>> val :timestamp.unix) > @docs)]
+            docs-sorted (sort-by (t/>>> val :timestamp) > @docs)]
         (into [:div.w3-container {:id "doc-points"}
 
                [:div {:id pinned :key pinned
