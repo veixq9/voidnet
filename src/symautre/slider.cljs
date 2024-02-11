@@ -100,18 +100,20 @@
 (defn slider-button
   "rgba"
   [state & more]
-  (fn [state & more]
-    [:button.w3-border.w3-round.w3-container.w3-btn
-     {:on-click
-      (fn [] (tap> #(swap! state update-in [:selected]
-                           (fn [x] (if (= "color" (:id x))
-                                     nil
-                                     {:id "color"
-                                      :controls
-                                      [:div
-                                       [slider state]
-                                       [randomize state]]})))))}
-     more]))
+  (let [id "theme"]
+    (fn [state & more]
+      [:button.w3-border.w3-round.w3-container.w3-btn
+       {:id id
+        :on-click
+        #(tap> (fn[state] (swap! state update-in [:selected]
+                                 (fn [selected] (if (= id (:id selected))
+                                                  nil
+                                                  {:id id
+                                                   :controls
+                                                   [:div
+                                                    [slider state]
+                                                    [randomize state]]})))))}
+       more])))
 
 (comment
 
@@ -134,21 +136,21 @@
 
 
 #_(comment
-  (def cursor-palette (r/cursor tunnl71.webpage.core/system [:palette]))
+    (def cursor-palette (r/cursor tunnl71.webpage.core/system [:palette]))
 
-  @(r/reaction ((juxt :r :g :b :a) (hex->rgba (:background-color @cursor-palette))))
+    @(r/reaction ((juxt :r :g :b :a) (hex->rgba (:background-color @cursor-palette))))
 
-  (:col (col/as-css (apply col/rgba (map #(/ % 255) [@r @g @b @a]))))
-  (:col (col/as-css (apply col/rgba (map #(/ % 255) (col/rgba (col/as-css ))))))
+    (:col (col/as-css (apply col/rgba (map #(/ % 255) [@r @g @b @a]))))
+    (:col (col/as-css (apply col/rgba (map #(/ % 255) (col/rgba (col/as-css ))))))
 
-  (vals col/as-css (vals ))
+    (vals col/as-css (vals ))
 
-  (col/as-css (col/rgba (vals (hex->rgba (:background-color @cursor-palette )))))
-  (:col (col/as-css (col/rgba @r @g @b @a)))
-  (hex->rgba "yellow")
-  (col/as-css )
+    (col/as-css (col/rgba (vals (hex->rgba (:background-color @cursor-palette )))))
+    (:col (col/as-css (col/rgba @r @g @b @a)))
+    (hex->rgba "yellow")
+    (col/as-css )
 
-  (col/as-css {:r 2  :g 2  :b 2 :a 2 })
-  (col/as-css (col/rgba 2 2 2 2))
-  )
+    (col/as-css {:r 2  :g 2  :b 2 :a 2 })
+    (col/as-css (col/rgba 2 2 2 2))
+    )
 

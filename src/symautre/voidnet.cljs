@@ -130,7 +130,7 @@
   ^:dev/after-load
   init []
   (println "initalizing")
-  (def state (r/atom {}))
+  (def state (r/atom {:selected {:id nil}}))
   (def event-log (r/atom nil))
   (swap! state assoc :system/event-chan (a/chan))
   (add-tap #(do (swap! event-log conj %)
@@ -146,6 +146,19 @@
 
   (load-data! state)
 
+
+  ;; focus selected css class
+  (r/track!
+   #(r/with-let [old (atom nil)]
+      (let [new @%]
+        (when-not  (empty? @%)
+          (do (println "focus watch!")
+              (when-not (empty? @old) (-> (js/document.getElementById @old) .-classList (.remove "in-focus")))
+              (reset! old new)
+              (when-not (empty? new)
+                (-> (js/document.getElementById new) .-classList (.add "in-focus")))))))
+   (r/cursor state [:selected :id]))
+  
   (do (println "rendering view")
       (rd/render [body state]
                  (js/document.getElementById "main-content")))
@@ -158,6 +171,9 @@
 
 (comment
 
+  (-> (js/document.getElementById  @(r/cursor state [:selected :id])) .-classList )
+  (-> (js/document.getElementById  @(r/cursor state [:selected :id])) .-classList (.add "in-focus"))
+  
   (a/go (let [res (a/<! (cljs-http.client/get "/posts/posts2.edn"))]
           (println res)
           (if (:success res)
@@ -239,6 +255,31 @@
   (println (js/console.dir js/window.localStorage.))
 
   (.log js/console js/window.localStorage)
+
+
+
+  (add-watch (r/cursor state [:selected :id])
+             :selected
+             (fn [k r o n] (do @r
+                               (println "focus watch!")
+                               (.prepend
+                                (js/document.getElementById n)
+                                [:pre "fooby"]))) )
+
+  (r/rswap!)
+
+
+  
+  
+  
+
+  (-> (js/document.getElementById @(r/cursor state [:selected :id])) .-classList (.remove "in-focus"))
+  
+
+  (.prepend (js/document.getElementById @(r/cursor state [:selected :id])) [:pre "ass"])
+
+  
+  
 
 
   

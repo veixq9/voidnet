@@ -40,3 +40,8 @@ html{overflow-x:hidden}
     margin-right: auto;
     width: 50%;
 }
+
+
+.document .in-focus{
+    border-right: 3px solid #f44336;
+}

@@ -7,57 +7,13 @@
    [symautre.data.sample-data]
    [symautre.web3 :refer [wallet]]
    [symautre.slider :refer [slider]]
+   [symautre.voidnet.misc :refer [misc]]
 
    [clojure.core.async :as a]
    [symautre.doc :as doc]
    [reagent.dom :as rd]))
 
 (declare upload-download-docs new-doc)
-
-;;; could make it better by not rerendering on pin changes
-#_(defn doc-scrolls
-    [state]
-    (println "init doc-scrolls")
-    (fn [state]
-      (r/with-let [docs (r/cursor state [:docs])
-                   pinned-id @(r/cursor state [:posts/pinned])
-                   ;; doc-ids_ (remove #{pinned-id} (map :id (sort-by :timestamp.unix > (filter #(= :document (:type %)) (vals @state)))))
-                   doc-ids_ (remove #{pinned-id} (map :id (sort-by :timestamp.unix > (vals @docs))))
-                   doc-ids (if pinned-id (cons pinned-id doc-ids_) doc-ids_)]
-        (println @docs)
-        (println "render doc-scrolls")
-        (println doc-ids_)
-        (println doc-ids)
-        
-        (into [:div]
-              (when (not (empty doc-ids))
-                (for [id doc-ids]
-                  [:div.w3-container.w3-border-bottom {:key id}
-                   (when (= id pinned-id) [:span.w3-right "🖈"])
-                   [document state id]]))))))
-
-#_(defn doc-scrolls
-    [state]
-    (println "init doc-scrolls")
-    (fn [state]
-      (r/with-let [docs (r/cursor state [:docs])
-                   pinned-id_ (r/cursor state [:posts/pinned])]
-        
-        (let [
-              pinned-id @pinned-id_
-              doc-ids_ (remove #{pinned-id} (map :id (sort-by :timestamp.unix > (vals @docs))))
-              doc-ids (if pinned-id (cons pinned-id doc-ids_) doc-ids_)]
-          (println "render doc-scrolls")
-          ;; (println @docs)
-          ;; (println doc-ids)
-          @docs
-          (into [:div]
-                
-                (when (not (empty doc-ids))
-                  (for [id doc-ids]
-                    [:div.w3-container.w3-border-bottom {:key id}
-                     (when (= id pinned-id) [:span.w3-right "🖈"])
-                     [document state id]])))))))
 
 (defn doc-scrolls-sans-pin
   [state]
@@ -72,10 +28,11 @@
 (defn doc-scrolls
   [state]
   (println "init doc-scrolls")
-  (fn [state]
-    (r/with-let [docs (r/cursor state [:docs])]
-      (let [pinned @(r/cursor state [:posts/pinned])
-            docs-sorted (sort-by (t/>>> val :timestamp.unix) > @docs)]
+  (r/with-let [docs (r/cursor state [:docs])
+               pinned-CURSOR (r/cursor state [:posts/pinned])]
+    (fn [state]
+      (let [docs-sorted (sort-by (t/>>> val :timestamp.unix) > @docs)
+            pinned @pinned-CURSOR]
         (into [:div
                [:div.w3-container.w3-border-bottom {:key pinned}
                 [:span.w3-right "🖈"]
@@ -104,95 +61,11 @@
                 ]]
 
               (for [id (remove #{pinned} (keys docs-sorted))]
-                [symautre.doc/document-point state id]))
-
-
-        ))))
+                [symautre.doc/document-point state id]))))))
 
 
 
 
-
-(defn animation-shite-2
-  [state]
-  (fn [state]
-    (r/with-let [t (r/atom 0)
-                 interval-id (r/atom nil)
-                 data ["ambient barks transduce the other"
-                       "& all the nites are obsidian"
-                       "let's liquid speech for whiles"
-                       "would this breach blink across ports enveloped in toilet horizons"
-                       "rooks crows ravens dogs"
-                       "taste the blank memory of void on superzero shawties  "
-                       "bloodruns & foam obliviated in entropy edge"]
-                 dt 2000
-                 display-data (r/atom [])
-                 data-chan-atom (atom (a/to-chan! data))
-
-                 ]
-
-      (r/with-let [player (r/atom :stop)]
-        [:div.w3-container
-         [:h1 "Full Digital Anvilist"]
-         [:div.w3-container
-          [:img
-           {
-            :style {:display :block
-                    :margin-left :auto
-                    :margin-right :auto
-                    :width "50%"
-                    }  #_{
-                          :float :left
-                          :width "30%"}
-            :src
-            "https://media.tenor.com/wE_qxJqpxj0AAAAd/nether-portal-minecraft.gif"}]
-          
-          
-
-          [:div.w3-container {:style {:float :left
-                                      ;; :clear :left
-                                      }}
-           (conj (into [:div]
-                       (for [x @display-data]
-                         [:p {:class "fade-in-image" } x]))
-                 (when (and (= @player :play) (not (empty? @display-data)))
-                   [:span {:class "cursor-blinking"} "█"])
-                 [:br])]]
-
-         (case @player
-           :stop [:button.w3-button.w3-xxlarge
-                  {
-                   :on-click #(do
-                                (reset! display-data [])
-                                (reset! data-chan-atom (a/to-chan! data))
-                                (reset! player :play)
-                                (a/go-loop [c @data-chan-atom]
-                                  (case @player
-                                    :play
-                                    (let [x (a/<! c)]
-                                      (if (some? x)
-                                        (do  (swap! display-data conj x)
-                                             (a/<! (a/timeout dt))
-                                             (recur c))
-                                        (do (reset! player :stop)
-                                            )))
-                                    :pause
-                                    (do (a/<! (a/timeout 1000))
-                                        (recur c)))))
-                   } "⏵"]
-           
-
-           :play [:button.w3-button.w3-xxlarge
-                  {:on-click  #(do (reset! player :pause)
-                                   )}
-                  "⏸"]
-
-           :pause [:button.w3-button.w3-xxlarge {
-                                                 :on-click #(do (reset! player :play))}
-                   "⏵"])
-
-         [:br]
-         [:hr]]))))
 
 #_(defn canvas
     [state]
@@ -203,57 +76,6 @@
           @this
           
           ))))
-
-(defn misc
-  [state]
-  (fn [state]
-    [:div
-
-     #_[canvas state]
-     [:div.w3-center.w3-container
-      [:canvas.w3-border {:id "canvas" :width 400 :height 400}]]
-
-     [:br]
-
-     
-     [animation-shite-2 state]
-
-     
-     
-     [t/collapsible :root symautre.data.sample-data/sample-map  ]
-     [:br]
-     [:hr]
-     [t/edn->hiccup symautre.data.sample-data/sample-map  ]
-     
-     (r/with-let [pinned (r/cursor state [:posts/pinned])]
-       [:div
-        [:h1.w3-h1 "pinned"]
-        (if-let [pinned_ @pinned]
-          [document state pinned_])])
-
-     #_(r/with-let [id (r/cursor state [:posts/pinned])]
-         (let [id_ @id]
-           [pinned state id_]))
-
-     [:div
-      [:h1.w3-h1 "pubsub model"]
-      [:h1.w3-h1 "new color new weather"]]
-
-     [:div
-      [:h1.w3-h1 "n!structions"]
-      [:p "fork site"]
-      [:p "add own namespace"]]
-     
-
-     [:h1.w3-h1 "trollbox"]
-     [:p "[topic placeholder]"]
-
-     #_[:p (pr-str @state)]
-     #_[:div
-        [:h1.w3-h1 "state"]
-        [:p (pr-str (remove #(= :document (:type (val %))) @state))]
-        [:br]
-        [:p (pr-str @state)]]]))
 
 #_(defn mid-column-2
     [state]
@@ -631,8 +453,9 @@
   [state]
   (fn [state]
     (let [id "view controls" ]
-      [:button.w3-border.w3-round.w3-container.w3-btn
-       {:on-click
+      [:button.w3-border.w3-round.w3-container.w3-btn 
+       {:id id
+        :on-click
         (fn []
           (tap>
            (fn[s]
@@ -667,17 +490,8 @@
                                   :on-click #(tap> (fn [s] (swap! s update-in [:dom :body :mid-column :content]
                                                                   (constantly [doc-points state]))))}
                                  "succint"]
-                              ]) state]})))))))
-        #_(fn [] (tap> #(swap! state assoc-in [:selected]
-                               {:id "color"
-                                :controls
-                                [:div
-                                 [slider state]
-                                 [randomize state]]}
-
-                               )))}
-       "views"]))
-  )
+                              ]) state]})))))))}
+       "views"])))
 
 (defn left-column
   [state & more]
@@ -724,10 +538,6 @@
                                                    }}
         ]
      [control-bar state]
-
-
-
-
      
      ;; [:a {:href "/posts.edn"} "posts"]
      
@@ -750,15 +560,9 @@
       [:h1.w3-center [:a {:href "#top" :style {:text-decoration "none"}} "VOIDGATE:://VCN88TS"]]]
 
      #_[:div#tab.w3-cell-row {:style {:width "100%"}}
-        [tab state]]
-
-     
+        [tab state]]     
      
      [:br]
-
-     
-
-
      
      [:div#columns.w3-cell-row
 
@@ -766,14 +570,15 @@
       [left-column state
        [symautre.slider/slider-button state "theme"]
        [views-controls state]
-
+       [button state {:title "bucket!" :on-click-fn (fn [s] (println "bucket goes here!"))}]
+       
        (comment
          [:hr]
          [button state {:title "stack" :on-click-fn (fn [s])}]
          [button state {:title "UNITS" :on-click-fn (fn [s])}]
          [button state {:title "blocktime" :on-click-fn (fn [s])}])
 
-]
+       ]
       
 
       [:div#mid-column.w3-container.w3-cell {:style {:float :left :min-width "50%" :max-width "30px"}}
