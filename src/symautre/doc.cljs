@@ -61,15 +61,18 @@
 
 ;;; public key address
 ;;; local storage
-(defn- edit
+(defn- edit-body
   [doc_ mode]
-  (r/with-let [transient-state (r/atom (pr-str (:body @doc_)))]
+  (r/with-let [transient-state (r/atom
+                                (with-out-str (cljs.pprint/pprint (:body @doc_)))
+                                ;; (pr-str (:body @doc_))
+                                )]
     (fn [doc_ mode]
       [:div
 
        [:textarea {:rows 10 :style {:width "100%" :color "white" :background-color "black" }
                    :value @transient-state
-                   :on-change #(reset! transient-state (-> % .-target .-value))}]
+                   :on-change #(reset! transient-state (with-out-str (cljs.pprint/pprint (-> % .-target .-value))))}]
 
        [:button {:on-click #(tap> (fn[s] (do (swap! doc_ assoc :body (cljs.reader/read-string @transient-state))
                                              (swap! mode (fn[mode_] (if (= mode_ :edit) :view :edit))))))}
@@ -79,15 +82,15 @@
         "cancel"]
        ])))
 
-(defn- super-edit
+(defn- edit
   [doc_ mode]
-  (r/with-let [transient-state (r/atom (pr-str @doc_))]
+  (r/with-let [transient-state (r/atom (with-out-str (cljs.pprint/pprint @doc_)))]
     (fn [doc_ mode]
       [:div
 
        [:textarea {:rows 10 :style { :width "100%" :height "100%" :color "white" :background-color "black" }
                    :value @transient-state
-                   :on-change #(reset! transient-state (-> % .-target .-value))}]
+                   :on-change #(reset! transient-state (with-out-str (cljs.pprint/pprint (-> % .-target .-value))) )}]
 
        [:button {:on-click #(tap> (fn[s] (do (reset! doc_ (cljs.reader/read-string @transient-state))
                                              (swap! mode (fn[mode_] (if (= mode_ :edit) :view :edit))))))}
@@ -107,8 +110,6 @@
        [button state doc-ratom  {:id "refer" :on-click #(println "new doc shit goes here!!!")} #_"↩" "↪"  ]
        
        [button state doc-ratom  {:id "edit" :on-click #(swap! mode (fn[mode_] (if (= mode_ :edit) :view :edit)))} "✎"  ]
-
-       [button state doc-ratom  {:id "super-edit" :on-click #(swap! mode (fn[mode_] (if (= mode_ :super-edit) :view :super-edit)))} "✎+"  ]
        
        [button state doc-ratom  {:id "fullscreen" :on-click #(tap> (fn[state](do (swap! state update-in [:modal] (fn[e] (if (= id e) nil id) #_(if (nil? e) id nil))))))} "⛶"] 
        
@@ -190,8 +191,8 @@
            (= :edit @mode)
            [edit doc-ratom mode]
 
-           (= :super-edit @mode)
-           [super-edit doc-ratom mode]
+           (= :edit @mode)
+           [edit doc-ratom mode]
 
            :default
            [:div
@@ -235,8 +236,8 @@
           (= :edit @mode)
           [edit doc-ratom mode]
 
-          (= :super-edit @mode)
-          [super-edit doc-ratom mode]
+          (= :edit @mode)
+          [edit doc-ratom mode]
 
           :default
           [:div
