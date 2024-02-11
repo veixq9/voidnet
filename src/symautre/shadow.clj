@@ -10,14 +10,17 @@
   ;; (shadow/browser-repl :voidnet)
   )
 
-"https://code.thheller.com/blog/shadow-cljs/2017/10/14/bootstrap-support.html"
+(comment
+  
+  
+  "https://code.thheller.com/blog/shadow-cljs/2017/10/14/bootstrap-support.html"
 
-(do
-  (shadow/watch :voidnet-node)
-  (shadow/node-repl {:build-id :voidnet-node })
-  (shadow/repl  :voidnet-node )
-  ;; (shadow/browser-repl :voidnet)
-  )
+  (do
+    (shadow/watch :voidnet-node)
+    (shadow/node-repl {:build-id :voidnet-node })
+    (shadow/repl  :voidnet-node )
+    ;; (shadow/browser-repl :voidnet)
+    ))
 
 
 (comment
