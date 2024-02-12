@@ -247,28 +247,29 @@
 
 (def rangev+
   (>>> range+ vec))
-        
+
 (assert (= (rangev+ 2 10 2) (conj (into [] (range 2 10 2)) 10) [2 4 6 8 10]))
+
 
 (defn subs
   ([s start_]
    (subs s start_ -1))
   ([s start_ end_]
    (let [length (count s)
-         convet-negative #(if (neg? %)
-                            (+ length % 1)
-                            %)
-         start (convet-negative start_)
-         end (convet-negative end_)]
+         convert-negative #(if (neg? %)
+                             (+ length % 1)
+                             %)
+         start (convert-negative start_)
+         end (convert-negative end_)]
 
      (clojure.core/subs s start end))))
 
 (let [s "fuck you bobby!"]
 
   (assert (= s (subs s 0 -1)))
-  (assert (= s (subs s 0 -1)))
   (assert (= s (subs s 0)))
   (assert (= (subs s -3 -1) (subs s (- (count s) 2))  (subs s -3))))
+
 
 ;; ================= find fixpoint ========================================
 (defn iterate-fix
@@ -279,10 +280,10 @@
 
 ;; ================= html ========================================
 #_(defn html->hiccup
-  [string_]
-  (-> (hickory.core/as-hiccup
-     (hickory.core/parse
-      string_))
-      first nnext next first nnext first))
+    [string_]
+    (-> (hickory.core/as-hiccup
+         (hickory.core/parse
+          string_))
+        first nnext next first nnext first))
 
 

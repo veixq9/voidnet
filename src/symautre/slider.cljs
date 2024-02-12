@@ -3,12 +3,22 @@
             [reagent.core :as r]))
 
 (def hex->rgba (fn [hex] (reduce-kv (fn [acc k v] (assoc acc k (* v 255))) {} (col/as-rgba (col/hex->int hex)))))
-(defn rgba->hex
+(defn rgba-map->rgba-string
   "does not include alpha!!!"
   [map-rgba]
   (:col (col/as-css (apply col/rgba (map #(/ % 255) (map (partial get map-rgba) [:r :g :b :a]))))))
 
-
+(defn rgba->hex
+  "does not include alpha!!!"
+  [rgba]
+  ;; (:col (col/as-css (col/as-int24 (col/css "rgba(92,50,156,0.7098039215686275)"))))
+  ;; (col/as-int24 (col/css (col/->CSS rgba)))
+  (cond
+      (string? rgba) (:col (col/as-css (col/as-int24 (col/css rgba))))
+      :default
+      (rgba->hex (:col rgba)))
+  ;; (:col (col/as-css (apply col/rgba (map #(/ % 255) (map (partial get map-rgba) [:r :g :b :a])))))
+  )
 
 (defn slider-input
   [color-element]
@@ -20,33 +30,7 @@
                    (let [new-value (js/parseInt (.. e -target -value))]
                      (reset! color-element new-value)))}]))
 
-#_(defn slider-old
-    "rgba"
-    [cursor-palette]
 
-    (let [state (r/atom (hex->rgba (:background-color @cursor-palette)))
-          [r g b a] (mapv (partial r/cursor state) [[:r] [:g] [:b] [:a]])]
-      (r/track! #(swap! cursor-palette assoc :background-color (rgba->hex {:r @r :g @g :b @b :a @a})))
-      (r/track! #(reset! state (hex->rgba (:background-color @cursor-palette))))
-      
-      (fn [cursor-palette]
-        [:div.w3-container {:width "300%" :clear :both}
-         [:div.w3-row
-          ;; [:p (pr-str @cursor-palette)]
-          ;; [:p (pr-str [@r @g @b @a])]
-          [:p.w3-cell "colors"]]
-         (into [:div.w3-row
-                [:div.w3-cell
-                 [:span {:style {:color "white" :margin-right "10px"}} (:background-color @cursor-palette)]]]
-               (map #(identity [:div.w3-cell
-                                [:span {:style {:color %1 :margin-right "10px"}} (str %2)]
-                                #_[:i.material-icons "blank"]
-                                #_[:span " "]]) ["red" "green" "blue" "white"] [@r @g @b @a]))
-         [slider-input r]
-         [slider-input g]
-         [slider-input b]
-         #_[slider-input a]
-         ])))
 
 (defn slider
   "rgba"
@@ -59,11 +43,12 @@
                b (r/cursor this [:b])
                a (r/cursor this [:a])
 
-               hex (r/cursor state [:slider :hex])
-
-               ]
+               hex (r/cursor state [:slider :hex])]
     ;; NOTE: does not take into account alpha!
-    (r/track! #(reset! hex (rgba->hex {:r @r :g @g :b @b :a @a})))
+    (r/track! #(reset! hex
+                       (rgba->hex (rgba-map->rgba-string {:r @r :g @g :b @b :a @a}))
+                       ;; (rgba->hex {:r @r :g @g :b @b :a @a})
+                       ))
 
     (fn [state]
       [:div.w3-container {:width "300%" :clear :both}
@@ -84,6 +69,16 @@
        [slider-input (r/cursor this [:a])]
        [:span @hex]
        ])))
+
+(comment
+
+  (def c {:r 0 :g 0 :b 0 :a 0})
+
+  (col/css c)
+
+  (rgba->hex (rgba->hex-false c))
+  (rgba->hex (rgba-map->rgba-string c))
+  )
 
 (defn randomize
   "rgba"

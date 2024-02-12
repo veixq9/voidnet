@@ -9,6 +9,7 @@
   [refactor-nrepl/refactor-nrepl "3.9.0"]
   [org.clojure/spec.alpha "LATEST" ]
   [taipei.404/html-to-hiccup "0.1.8"]
+  [hiccups "0.3.0"]
   [cljs-http "0.1.48"]
   [com.rpl/specter "1.1.4"]
   [cljs-ajax "0.8.4"]

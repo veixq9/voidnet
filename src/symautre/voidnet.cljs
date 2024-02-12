@@ -21,7 +21,8 @@
             ajax.core
 
             [symautre.doc :as doc]
-            symautre.voidnet.posts)
+            symautre.voidnet.posts
+            [thi.ng.color.core :as col])
   ;; (:import [force-graph$ForceGraph])
 
   #_(:require-macros [symautre.tools.core :as t])
@@ -158,11 +159,16 @@
               (when-not (empty? new)
                 (-> (js/document.getElementById new) .-classList (.add "in-focus")))))))
    (r/cursor state [:selected :id]))
-  
+
   (do (println "rendering view")
       (rd/render [body state]
                  (js/document.getElementById "main-content")))
 
+    (swap! state assoc-in [:slider :hex]  "#0")
+
+  
+
+  
   #_(let [pinned-id @(r/cursor state [:posts/pinned])
           get-doc-ids (fn [] (println "yo") (remove #{pinned-id} (map :id (sort-by :timestamp.unix > (filter #(= :document (:type %)) (vals @state))))))]
       @(r/track!  get-doc-ids))
@@ -170,7 +176,17 @@
   )
 
 (comment
+  (keys @state)
+  (:slider @state)
 
+  
+
+
+
+
+
+  
+  (or @(r/cursor state [:slider :hex]) "red")
   (-> (js/document.getElementById  @(r/cursor state [:selected :id])) .-classList )
   (-> (js/document.getElementById  @(r/cursor state [:selected :id])) .-classList (.add "in-focus"))
   

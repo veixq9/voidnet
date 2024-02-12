@@ -32,8 +32,8 @@
     (into [:button.w3-cell.w3-button] more)))
 
 (defn- view
-  [document_]
-  (fn [document_]
+  [state document_]
+  (fn [state document_]
     (let [{:keys [id title body timestamp] :as document_} document_]
       [:div {:id id :key id}
        [:h4.w3-bold title]
@@ -55,6 +55,9 @@
           (for [x body]
             [:p {:key (t/uuid)} x])
 
+          (isa? (type body) (type (fn [])))
+          [body state]
+          
           :default
           body
           )]])))
@@ -196,7 +199,7 @@
 
            :default
            [:div
-            [view @doc-ratom]])
+            [view state @doc-ratom]])
          ]))))
 
 (defn document-point
@@ -241,7 +244,7 @@
 
           :default
           [:div
-           [view @doc-ratom]
+           [view state @doc-ratom]
            #_[(fn [document_]
                 (let [{:keys [id title body timestamp] :as document_} document_]
                   [:div {:id id :key id}
