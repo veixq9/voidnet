@@ -160,7 +160,7 @@
                 (-> (js/document.getElementById new) .-classList (.add "in-focus")))))))
    (r/cursor state [:selected :id]))
 
-  (swap! state assoc-in [:slider :hex]  (first '("#0a1b25" "#255d61" "#0")))
+  (swap! state assoc-in [:slider :hex]  (first '( "#0" "#0a1b25" "#255d61")))
   
   (do (println "rendering view")
       (rd/render [body state]
