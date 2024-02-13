@@ -67,8 +67,10 @@
 
  (defn timestamp
    "for unix use 'timestamp-unix'"
-   []
-   (-> (new js/Date ) .toISOString))
+   ([]
+    (-> (new js/Date ) .toISOString))
+   ([unix-timestamp]
+    (-> (new js/Date unix-timestamp) .toISOString)))
 
  (def now timestamp)
 

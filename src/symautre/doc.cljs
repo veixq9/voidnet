@@ -37,14 +37,17 @@
     (let [{:keys [id title body timestamp] :as document_} document_]
       [:div {:id id :key id}
        [:h4.w3-bold title]
-       [:span {:style {:font-style :italic}} (let [t_ (clojure.string/replace (subs (str timestamp) 0 19) \T \ )
-                                                   [t-date t-hour] (clojure.string/split t_ \ )
-                                                   t-date-3 (clojure.string/split t-date \-)
-                                                   ]
+       (when (and (some? timestamp) (not (zero? timestamp)))
+         [:span {:style {:font-style :italic}} (let [
+                                                     timestamp (t/timestamp timestamp) ;; MASKING!
+                                                     t_ (clojure.string/replace (subs (str timestamp) 0 19) \T \ )
+                                                     [t-date t-hour] (clojure.string/split t_ \ )
+                                                     t-date-3 (clojure.string/split t-date \-)
+                                                     ]
 
-                                               (str (apply str (interpose \- (reverse t-date-3)) ) \  t-hour)
-                                               
-                                               )]
+                                                 (str (apply str (interpose \- (reverse t-date-3)) ) \  t-hour)
+                                                 
+                                                 )])
        
        [:div {:style {:white-space :pre-line}}
         (cond
