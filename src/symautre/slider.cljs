@@ -14,9 +14,9 @@
   ;; (:col (col/as-css (col/as-int24 (col/css "rgba(92,50,156,0.7098039215686275)"))))
   ;; (col/as-int24 (col/css (col/->CSS rgba)))
   (cond
-      (string? rgba) (:col (col/as-css (col/as-int24 (col/css rgba))))
-      :default
-      (rgba->hex (:col rgba)))
+    (string? rgba) (:col (col/as-css (col/as-int24 (col/css rgba))))
+    :default
+    (rgba->hex (:col rgba)))
   ;; (:col (col/as-css (apply col/rgba (map #(/ % 255) (map (partial get map-rgba) [:r :g :b :a])))))
   )
 
@@ -30,45 +30,45 @@
                    (let [new-value (js/parseInt (.. e -target -value))]
                      (reset! color-element new-value)))}]))
 
-
-
 (defn slider
   "rgba"
   [state]
-  (when (nil? (:slider @state)) (swap! state assoc-in [:slider] (hex->rgba "#0")))
   (r/with-let [this (r/cursor state [:slider])
-
-               r (r/cursor this [:r])
-               g (r/cursor this [:g])
-               b (r/cursor this [:b])
-               a (r/cursor this [:a])
-
-               hex (r/cursor state [:slider :hex])]
-    ;; NOTE: does not take into account alpha!
-    (r/track! #(reset! hex
-                       (rgba->hex (rgba-map->rgba-string {:r @r :g @g :b @b :a @a}))
-                       ;; (rgba->hex {:r @r :g @g :b @b :a @a})
-                       ))
-
+               hex (r/cursor this [:hex])
+               rgba (r/cursor this [:rgba])
+               ]
     (fn [state]
-      [:div.w3-container {:width "300%" :clear :both}
+      (when (nil? @hex) (reset! hex "#0" ))
+      
+      (reset! rgba (hex->rgba @hex))
 
-       #_[:div.w3-row
-          ;; [:p.w3-cell "colors"]
-          #_[:label.w3-cell "colors"]
-          [:span "color"]
-          ]
-       (into [:div.w3-row
-              #_[:div.w3-cell
-                 [:span {:style {:color "white" :margin-right "10px"}} @this]]]
-             (map #(identity [:div.w3-cell
-                              [:span {:style {:color %1 :margin-right "10px"}} (str %2)]]) ["red" "green" "blue" "white"] [@r @g @b @a]))
-       [slider-input (r/cursor this [:r])]
-       [slider-input (r/cursor this [:g])]
-       [slider-input (r/cursor this [:b])]
-       [slider-input (r/cursor this [:a])]
-       [:span @hex]
-       ])))
+      
+      
+      (r/with-let [
+                   r (r/cursor rgba [:r])
+                   g (r/cursor rgba [:g])
+                   b (r/cursor rgba [:b])
+                   a (r/cursor rgba [:a])
+
+                   hex (r/cursor state [:slider :hex])]
+        ;; NOTE: does not take into account alpha!
+        (r/track! #(reset! hex
+                           (rgba->hex (rgba-map->rgba-string {:r @r :g @g :b @b :a @a}))
+                           ;; (rgba->hex {:r @r :g @g :b @b :a @a})
+                           ))
+
+        (fn [state]
+          [:div.w3-container {:width "300%" :clear :both}
+
+           (into [:div.w3-row]
+                 (map #(identity [:div.w3-cell
+                                  [:span {:style {:color %1 :margin-right "10px"}} (str %2)]]) ["red" "green" "blue" "white"] [@r @g @b @a]))
+           [slider-input (r/cursor rgba [:r])]
+           [slider-input (r/cursor rgba [:g])]
+           [slider-input (r/cursor rgba [:b])]
+           [slider-input (r/cursor rgba [:a])]
+           [:span @hex]
+           ])))))
 
 (comment
 
@@ -83,14 +83,17 @@
 (defn randomize
   "rgba"
   [state]
-  (fn [state]
-    [:button.w3-border.w3-round.w3-container.w3-btn
-     {:on-click
-      (fn [] (tap> #(swap! state update :slider merge
-                           #_(hex->rgba (str "#" (.toString (rand-int (inc 0xffffff)) 16)))
-                           (zipmap [:r :g :b :a] [(rand-int 256) (rand-int 256) (rand-int 256) (rand-int 256) ])
-                           )))}
-     "randomize"]))
+  (let [slider-cursor (r/cursor state [:slider])]
+    (fn [state]
+      [:button.w3-border.w3-round.w3-container.w3-btn
+       {:on-click
+        (fn [] (tap> #(swap! slider-cursor assoc-in [:rgba]
+                             ;; merge
+                             ;; #_(hex->rgba (str "#" (.toString (rand-int (inc 0xffffff)) 16)))
+                             (zipmap [:r :g :b :a] [(rand-int 256) (rand-int 256) (rand-int 256) (rand-int 256) ])
+                             
+                             )))}
+       "randomize"])))
 
 (defn slider-button
   "rgba"
