@@ -108,7 +108,7 @@ one million days of crying on heaps of garbage
 
                :actor/public-key-ed25519
                "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"
-               :body "portal candy-crush angryBirds"
+               :body [:p "portal candy-crush angryBirds"]
                }
 
               {:id "a525ab49-cd1b-4e6e-878a-edd009416043",
