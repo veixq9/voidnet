@@ -40,7 +40,7 @@ an actor may be assigned its own environment inside a contract
 ## roadmap
 
 - permissionlessness
-- ~~decentralization~~ conflict-free replication
+- ~~decentralization~~ conflict-free realtime replication
 
 ## Tech
 
