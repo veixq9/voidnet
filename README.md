@@ -40,9 +40,9 @@ an actor may be assigned its own environment inside a contract
 ## roadmap
 
 - permissionlessness
-- decentralization
+- ~~decentralization~~ conflict-free replication
 
-## tech
+## Tech
 
 - Clojure
 - Clojurescript
