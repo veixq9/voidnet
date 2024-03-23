@@ -519,7 +519,11 @@
   ;; (swap! state assoc-in [:dom :body :mid-column :core] [mid-column state])
   (fn [state]
     (println "rendering body")
-    [:div.w3-container {:style {
+    [:div.w3-container {:style {:color
+                                "#696969"
+                                ;; "#d3d3d3"
+
+                                
                                 :background-color @(r/cursor state [:slider :hex])
                                 ;; :background-color "#090909"
                                 ;; :font-size "200%"

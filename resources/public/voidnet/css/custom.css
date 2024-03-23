@@ -1,4 +1,6 @@
-html,body{font-family:Verdana,sans-serif;font-size:15px;line-height:1.5; background-color:black; color:grey}
+html,body{font-family:Verdana,sans-serif;font-size:15px;line-height:1.5; background-color:black;
+	 
+	 }
 html{overflow-x:hidden}
 .edn-kw{color:green}
 .edn-brackets{color:green}
