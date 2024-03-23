@@ -1931,13 +1931,60 @@ z2muchmazvhole
                              (partial map second)
                              ($ interpose "\n")
                              ($ apply str))]])
-   
+               
                :actor/public-key-ed25519
                "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"}
               
               
 
-              
+              {:id "320a9694-7815-4cf3-9d82-462cb521b439",
+               :timestamp 1711234666958,
+               :body [:div
+                      [:h1 "homeless/necessities"]
+                      [:p.w3-bold-xxlarge " when politics of slave labour and real-estate price-manipulation drives people into trashcans"]
+                      [:p 
+                       "Sleeping bag
+Hammock
+tent
+
+                       Boots
+Underwear
+Socks
+Handschuhe
+
+
+                       Zahnseide
+Toothbrush
+Mundwasch
+
+                       
+                       Lighter
+Gas kocher capsule
+Alu folie
+
+
+                       Swiss messer
+Flashlight
+Pen
+Paper
+Cash
+
+                       First aid kit
+Aspirin
+Taschentücher
+
+
+                       Sim card
+Phone and extra battery
+
+
+                       Biscuits
+"
+                       ]
+
+                      ],
+               :actor/public-key-ed25519
+               "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"}
               
 
               

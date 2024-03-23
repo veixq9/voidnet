@@ -31,16 +31,16 @@ note: 'this' is the closed environment in which a particular actor is operating
 - this.actions.copy(token-belonging-to-actor-x)
 
 
-
-
 ## notes
 some actors may purely be in the business of curating others' creations  
 an actor may be assigned its own environment inside a contract  
 
 ## roadmap
 
+- search engine
 - permissionlessness
 - ~~decentralization~~ conflict-free realtime replication
+
 
 ## Tech
 
@@ -48,6 +48,6 @@ an actor may be assigned its own environment inside a contract
 - Clojurescript
 - IPFS
 - Web3
-- EthereumVM
+- EVM
 - ConvexVM
 - maybe OrbitDB
