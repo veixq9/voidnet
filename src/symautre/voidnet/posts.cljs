@@ -28,6 +28,11 @@
             [thi.ng.color.core :as col]))
 
 
+(defn img
+  [url]
+  (fn [url]
+    [:img {:style {:max-width "50%"}, :src url}]))
+
 (def data
   (transduce (comp (map #(if (contains? % :timestamp.unix)
                            (dissoc (assoc % :timestamp (:timestamp.unix %)) :timestamp.unix)
@@ -1924,6 +1929,8 @@ z2muchmazvhole
 : it may sound like christianity all over again with all the capital stuff, but it is not my paraontology that will become a religion, quite the opposite"]
                  [:div
                   [:h1 "void-11 tr%p caxe"]
+                  [img "https://ipfs.io/ipfs/QmS4oiFj9Yo8ePpRmSCSbNsWeFYvWKHLaYfNpUMDix5xcV?filename=cache-a-site-watercolor-painting-v0-tlazanxf0mk91.png"]
+
                   [:p (t/--> x
                              ;; clojure.string/split-lines
                              ;; #(partition 2 % )
@@ -1988,14 +1995,11 @@ batbase
                :actor/public-key-ed25519
                "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"}
 
-              {:id "b0f28f11-36aa-4367-b00c-61675988ed44",
+              #_{:id "b0f28f11-36aa-4367-b00c-61675988ed44",
                :timestamp 1711258611100,
                :body [:h1 "foobar"],
                :actor/public-key-ed25519
                "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"}
-              
-              (-> js/Document .-ipfs)
-              (-> js/Document .-Ipfs)
               
               
               ]
