@@ -2013,9 +2013,30 @@ batbase
               
 
               {:id "f4c283dd-38df-4925-ba2b-696555959ac1", :timestamp 1711285989717, :body
-               [:div
-                [:h1 "think-matter"]
-                [:p "shouldn't be talking in terms of a 'database' with imaginary concepts such as 'bitemporality'."]]}
+               (let [hex [:div.hex
+                          [:div.left]
+                          [:div.middle]
+                          [:div.right]]
+                     hex-even [:div.hex.even
+                          [:div.left]
+                          [:div.middle]
+                          [:div.right]]]
+                 [:div
+
+                  [:div
+                   [:br]
+                   [:br]
+                   [:h1 "think-matter"]
+                   [:p.hex "shouldn't be talking in terms of a 'database' with imaginary concepts such as 'bitemporality'."]]
+                  [:div.w3-container {:style {:overflow :hidden :opacity 0.01 :z-index 10}}
+                   [:div.hex {:style {:overflow :auto :background-color "black"}}
+                    [:div.board
+                     (into [:div.hex-row]                     (take 10 (cycle [hex hex-even])))
+                     (into [:div.hex-row]
+                           (take 10 (cycle [hex hex-even])))]]]
+
+
+                  ])}
               ]
 
              )
