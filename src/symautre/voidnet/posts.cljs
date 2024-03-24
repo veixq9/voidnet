@@ -27,6 +27,17 @@
             [hiccups.runtime :as h]
             [thi.ng.color.core :as col]))
 
+(defn token
+  ([]
+   {
+    :id (t/uuid)
+    :timestamp (t/timestamp-unix)
+    :body #{}
+    })
+
+  ([m]
+   (merge (token) m)))
+
 
 (defn img
   [url]
@@ -1850,7 +1861,8 @@ asselemental
 
 
               {:id "a4d08638-f6b5-4bd0-83f7-e0ee63935800",
-               :timestamp 1711231151265,
+               :timestamp/creation 1711231151265,
+               :timestamp 1711285647135
                :body
                (let [x  "10:18
 turtleinabox7
@@ -1941,9 +1953,7 @@ z2muchmazvhole
                
                :actor/public-key-ed25519
                "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"}
-              
-              
-
+                            
               {:id "320a9694-7815-4cf3-9d82-462cb521b439",
                :timestamp 1711234666958,
                :body [:div
@@ -2001,7 +2011,11 @@ batbase
                :actor/public-key-ed25519
                "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"}
               
-              
+
+              {:id "f4c283dd-38df-4925-ba2b-696555959ac1", :timestamp 1711285989717, :body
+               [:div
+                [:h1 "think-matter"]
+                [:p "shouldn't be talking in terms of a 'database' with imaginary concepts such as 'bitemporality'."]]}
               ]
 
              )
