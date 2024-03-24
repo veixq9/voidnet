@@ -43,6 +43,7 @@ an actor may be assigned its own environment inside a contract
 
 ## requirements
 - https://github.com/ipfs/ipfs-companion
+
 ## Tech
 
 - Clojure
