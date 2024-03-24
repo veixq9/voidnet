@@ -1979,14 +1979,24 @@ Phone and extra battery
 
 
                        Biscuits
-"
-                       ]
 
-                      ],
+subversion of control
+
+batbase
+"]
+                      ]
+               :actor/public-key-ed25519
+               "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"}
+
+              {:id "b0f28f11-36aa-4367-b00c-61675988ed44",
+               :timestamp 1711258611100,
+               :body [:h1 "foobar"],
                :actor/public-key-ed25519
                "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"}
               
-
+              (-> js/Document .-ipfs)
+              (-> js/Document .-Ipfs)
+              
               
               ]
 

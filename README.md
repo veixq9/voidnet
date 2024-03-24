@@ -41,7 +41,8 @@ an actor may be assigned its own environment inside a contract
 - permissionlessness
 - ~~decentralization~~ conflict-free realtime replication
 
-
+## requirements
+- https://github.com/ipfs/ipfs-companion
 ## Tech
 
 - Clojure
