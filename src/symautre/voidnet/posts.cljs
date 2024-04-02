@@ -1941,6 +1941,8 @@ z2muchmazvhole
 : it may sound like christianity all over again with all the capital stuff, but it is not my paraontology that will become a religion, quite the opposite"]
                  [:div
                   [:h1 "void-11 tr%p caxe"]
+                  #_[img
+                   "https://www.reddit.com/r/csgo/comments/x0j1fr/cache_a_site_watercolor_painting/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button"]
                   [img "https://ipfs.io/ipfs/QmS4oiFj9Yo8ePpRmSCSbNsWeFYvWKHLaYfNpUMDix5xcV?filename=cache-a-site-watercolor-painting-v0-tlazanxf0mk91.png"]
 
                   [:p (t/--> x
@@ -1953,7 +1955,7 @@ z2muchmazvhole
                
                :actor/public-key-ed25519
                "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"}
-                            
+              
               {:id "320a9694-7815-4cf3-9d82-462cb521b439",
                :timestamp 1711234666958,
                :body [:div
@@ -2006,10 +2008,10 @@ batbase
                "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"}
 
               #_{:id "b0f28f11-36aa-4367-b00c-61675988ed44",
-               :timestamp 1711258611100,
-               :body [:h1 "foobar"],
-               :actor/public-key-ed25519
-               "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"}
+                 :timestamp 1711258611100,
+                 :body [:h1 "foobar"],
+                 :actor/public-key-ed25519
+                 "0xec077faa8a230c86aa0b958c137a25a1dadae77c69edca95d2a1d5045ba79ca8"}
               
 
               {:id "f4c283dd-38df-4925-ba2b-696555959ac1", :timestamp 1711285989717, :body
@@ -2018,9 +2020,9 @@ batbase
                           [:div.middle]
                           [:div.right]]
                      hex-even [:div.hex.even
-                          [:div.left]
-                          [:div.middle]
-                          [:div.right]]]
+                               [:div.left]
+                               [:div.middle]
+                               [:div.right]]]
                  [:div
 
                   [:div
@@ -2033,10 +2035,71 @@ batbase
                     [:div.board
                      (into [:div.hex-row]                     (take 10 (cycle [hex hex-even])))
                      (into [:div.hex-row]
-                           (take 10 (cycle [hex hex-even])))]]]
+                           (take 10 (cycle [hex hex-even])))]]]])}
 
+              {:id "20e6b35b-ab3f-4cb1-878b-f81649938a70",
+               :timestamp 1711311599186,
+               :body 
+               [:p "𝚽 didn't need
+all the torques in stead
+atmotectoklaus of islamic sadistics
+ugly in bed ugly in bed
+this good self-sacrificial fuckmanfather
+this asexual goth bureaucrat offspring of handoutgrants to be
+this torque-ish carrotcloud
+this kike anderson cooliohead
 
-                  ])}
+in purple i lay bare
+corruptors of aesthetics of pain
+
+'...qua was your day qua was your day...'
+nites of korea i say
+one in a million
+dissimulation of p1ece
+one in a million
+summon MΣ from framefall!!!!
+what can happen?
+you bitchass bored physicist kike of academia
+what could possibly happen?
+"]
+
+               }
+
+              {:id "e25c6fd4-d9a9-4c8b-bfad-abe5e098a151",
+               :timestamp 1711312226072,
+               :body [:p "𝚽 didn't need
+all the torques in stead
+atmotectoklaus of islamic sadistics & sadisstics
+your party was boring junk rich i know and your christtron was cax a disseimulation
+ugly in bed <-iso-morphene-> ugly in bed
+this good self-sacrificial fuckmanfather
+this asexual goth bureaucrat offspring of handoutgrants to be
+this torque-ish carrotcloud
+this kike anders going on cooliohead
+
+in purple i lay bare
+corruptors of aesthetics of pain
+
+\"...qua was your day
+qua was your day...\"
+
+SUMMON ___MΣ___ FROM NOWHERE OF GEDÆCHTNISTREPPEN!
+eternal flramefall
+one in a million
+i was the oublier icecream of flramefall until
+reAlity could not hide getting kyueued on the world
+
+now i throw you my power
+now i jekt my florhass my fawns
+now i corrrrrrrrupt all rs js yas
+now i sPEAQ a back of ryes
+
+now i live in cide
+maggot <-cpu-> maggot
+my combputer dyied so hard
+
+"]}
+              
               ]
 
              )

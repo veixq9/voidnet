@@ -519,8 +519,9 @@
   ;; (swap! state assoc-in [:dom :body :mid-column :core] [mid-column state])
   (fn [state]
     (println "rendering body")
-    [:div.w3-container {:style {:color
-                                "#696969"
+    [:div.w3-container {:style {
+                                ;; :color
+                                ;; "#696969"
                                 ;; "#d3d3d3"
 
                                 
@@ -561,7 +562,7 @@
             [doc/document state @modal]])
          (r/cursor state [:modal])]
       [wallet state]
-      [:h1.w3-center [:a {:href "#top" :style {:text-decoration "none"}} "VOIDGATE:://VCN88TS"]]]
+      [:h1.w3-center [:a {:href "#top" :style {:text-decoration "none"}} "VOIDGATE:://VCQ88NS"]]]
 
      #_[:div#tab.w3-cell-row {:style {:width "100%"}}
         [tab state]]     
